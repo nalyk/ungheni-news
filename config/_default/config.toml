@@ -1,0 +1,29 @@
+baseURL = "/"
+title = "Newsroom"
+timeZone = "Europe/Chisinau"
+defaultContentLanguage = "ro"
+enableRobotsTXT = true
+paginate = 12
+pluralizeListTitles = false
+removePathAccents = true
+
+theme = "hugo-theme-stack"
+
+[module]
+  [[module.imports]]
+    path = "github.com/CaiChenghan/hugo-theme-stack"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[permalinks]
+  news = "/news/:slug/"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[taxonomies]
+  tag = "tags"
+  author = "authors"

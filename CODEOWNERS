@@ -1,0 +1,6 @@
+# Protect content by path. Replace with actual GitHub handles.
+content/ro/news/ @editors-team
+content/ru/news/ @editors-team
+layouts/ @web-team
+config/ @web-team
+

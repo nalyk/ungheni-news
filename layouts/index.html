@@ -1,0 +1,21 @@
+{{ define "main" }}
+  {{ partial "search.html" . }}
+  <section>
+    <h2>{{ i18n "latest_news" | default "Latest News" }}</h2>
+    {{ $news := where .Site.RegularPages "Section" "news" }}
+    {{ $sorted := sort $news "Date" "desc" }}
+    {{ $p := .Paginate $sorted }}
+    <ul>
+      {{ range $p.Pages }}
+        <li>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          <small> · {{ .Date.Format "2006-01-02" }}</small>
+        </li>
+      {{ end }}
+    </ul>
+    <nav>
+      {{ template "_internal/pagination.html" . }}
+    </nav>
+  </section>
+{{ end }}
+

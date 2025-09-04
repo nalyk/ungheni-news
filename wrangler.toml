@@ -1,0 +1,10 @@
+name = "newsroom-cron"
+main = "workers/cron.js"
+compatibility_date = "2024-09-01"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[vars]
+BUILD_HOOK_URL = "" # Set your Cloudflare Pages Deploy Hook URL
+

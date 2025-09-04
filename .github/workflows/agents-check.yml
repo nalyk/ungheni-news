@@ -1,0 +1,20 @@
+name: AGENTS guard
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate AGENTS.md
+        run: bash scripts/update_agents.sh
+      - name: Fail if AGENTS.md changed
+        run: |
+          git diff --exit-code -- AGENTS.md || {
+            echo 'AGENTS.md is out of date. Run `make docs` and commit.'
+            exit 1
+          }
+

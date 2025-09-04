@@ -1,0 +1,72 @@
+backend:
+  name: github
+  repo: ORG/REPO   # TODO: set to your GitHub org/repo
+  branch: main
+
+site_url: /
+logo_url: /admin/logo.svg
+
+publish_mode: editorial_workflow
+
+media_folder: "static/uploads"          # Fallback bucket in repo (small assets only)
+public_folder: "/uploads"
+
+# Optional: Cloudinary free tier; create an unsigned upload preset and fill values.
+media_library:
+  name: cloudinary
+  config:
+    cloud_name: "YOUR_CLOUD_NAME"       # e.g. demo
+    api_key: "YOUR_API_KEY"
+    default_transformations:
+      - - fetch_format: auto
+        - quality: auto
+
+collections:
+  - name: "news_ro"
+    label: "Știri (RO)"
+    folder: "content/ro/news"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    format: "frontmatter"
+    fields:
+      - { name: title, label: Title }
+      - { name: slug, label: Slug, required: false, hint: "Explicit slug recommended (latin)" }
+      - { name: date, label: Date, widget: datetime }
+      - { name: publishDate, label: Publish At, widget: datetime, required: false }
+      - { name: expiryDate, label: Expire At, widget: datetime, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: authors, label: Authors, widget: list, required: false }
+      - { name: tags, label: Tags, widget: list, required: false }
+      - { name: body, label: Body, widget: markdown }
+
+  - name: "news_ru"
+    label: "Новости (RU)"
+    folder: "content/ru/news"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    format: "frontmatter"
+    fields:
+      - { name: title, label: Title }
+      - { name: slug, label: Slug, required: false, hint: "Explicit slug recommended (latin)" }
+      - { name: date, label: Date, widget: datetime }
+      - { name: publishDate, label: Publish At, widget: datetime, required: false }
+      - { name: expiryDate, label: Expire At, widget: datetime, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: authors, label: Authors, widget: list, required: false }
+      - { name: tags, label: Tags, widget: list, required: false }
+      - { name: body, label: Body, widget: markdown }
+
+  - name: "pages"
+    label: "Pages"
+    folder: "content/pages"
+    create: true
+    slug: "{{slug}}"
+    path: "{{slug}}/index"
+    format: "frontmatter"
+    fields:
+      - { name: title, label: Title }
+      - { name: slug, label: Slug, required: false }
+      - { name: body, label: Body, widget: markdown }
+

@@ -1,0 +1,15 @@
+{{ define "main" }}
+<article>
+  <h1>{{ .Title }}</h1>
+  <p><small>{{ .Date.Format "2006-01-02 15:04" }}</small></p>
+  {{ with .Params.authors }}
+    <p><small>
+      {{ range $i, $a := . }}
+        {{ if $i }}, {{ end }}
+        <a href="{{ (site.GetPage (printf "/authors/%s" (urlize $a))).RelPermalink }}">{{ $a }}</a>
+      {{ end }}
+    </small></p>
+  {{ end }}
+  <div>{{ .Content }}</div>
+</article>
+{{ end }}

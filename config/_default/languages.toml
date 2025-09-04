@@ -1,0 +1,10 @@
+[languages]
+
+  [languages.ro]
+    languageName = "Română"
+    weight = 1
+
+  [languages.ru]
+    languageName = "Русский"
+    weight = 2
+

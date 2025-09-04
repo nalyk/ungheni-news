@@ -1,0 +1,16 @@
+# Hugo build artifacts
+public/
+resources/_gen/
+.hugo_build.lock
+
+# Node / tooling
+node_modules/
+
+# OS/editor
+.DS_Store
+.idea/
+*.swp
+
+# Env
+.env
+
