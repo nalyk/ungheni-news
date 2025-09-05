@@ -10,6 +10,7 @@ Note: This file is auto-generated. Edit source config/files; run `make docs` to 
   - `layouts/` (+ `layouts/partials/`): templates; SEO in `partials/head/seo.html`.
   - `layouts/partials/search.html`: Pagefind-based search UI.
   - `admin/`: Decap CMS (`index.html`, `config.yml`).
+  - `static/uploads/`: small fallback uploads (prefer external media).
   - `workers/` + `wrangler.toml`: Cloudflare Worker cron (5‑min scheduled builds).
   - `scripts/`, `Makefile`, `.env.example`, `CODEOWNERS`.
   - `docs/`: operations notes (Cloudflare Access, Cloudinary unsigned preset).
