@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: ORG/REPO   # TODO: set to your GitHub org/repo
+  repo: nalyk/ungheni-news
   branch: main
 
 site_url: /
@@ -69,4 +69,3 @@ collections:
       - { name: title, label: Title }
       - { name: slug, label: Slug, required: false }
       - { name: body, label: Body, widget: markdown }
-
