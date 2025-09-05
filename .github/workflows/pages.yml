@@ -31,6 +31,10 @@ jobs:
           extended: true
       - name: Hugo get modules (themes)
         run: hugo mod get github.com/CaiChenghan/hugo-theme-stack
+        env:
+          GOPROXY: https://proxy.golang.org
+          HUGO_MOD_PROXY: https://proxy.golang.org
+          GIT_TERMINAL_PROMPT: 0
       - name: Hugo build
         run: hugo --gc --minify
       - name: Build Pagefind index
