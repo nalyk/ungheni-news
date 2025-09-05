@@ -1,6 +1,14 @@
 <footer class="site">
   <div class="container">
-    <p class="meta">© {{ now.Year }} {{ .Site.Title }} · Built with Hugo. </p>
+    <nav class="footer-nav" aria-label="Secondary">
+      <a href="{{ (site.GetPage "taxonomyTerm" "authors").RelPermalink }}">Autori</a>
+      {{ $lang := .Site.Language.Lang }}
+      <a href="{{ (site.GetPage (printf "/%s/pages/despre-noi" $lang)).RelPermalink }}">{{ if eq $lang "ru" }}О нас{{ else }}Despre noi{{ end }}</a>
+      <a href="{{ (site.GetPage (printf "/%s/pages/termeni" $lang)).RelPermalink }}">{{ if eq $lang "ru" }}Условия{{ else }}Termeni si conditii{{ end }}</a>
+      <a href="{{ (site.GetPage (printf "/%s/pages/confidentialitate" $lang)).RelPermalink }}">{{ if eq $lang "ru" }}Конфиденциальность{{ else }}Politica de confidentialitate{{ end }}</a>
+      <a href="{{ (site.GetPage (printf "/%s/pages/contact" $lang)).RelPermalink }}">{{ if eq $lang "ru" }}Контакт{{ else }}Contact{{ end }}</a>
+      <button class="theme-toggle" data-action="toggle-theme" type="button">Theme</button>
+    </nav>
+    <p class="meta">© {{ now.Year }} {{ .Site.Title }} · Built with Hugo.</p>
   </div>
 </footer>
-

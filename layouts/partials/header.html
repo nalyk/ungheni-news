@@ -1,19 +1,22 @@
 <header class="site">
   <div class="container wrap">
     <div class="brand"><a href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a></div>
-    <nav aria-label="Main">
+    <nav aria-label="Main" class="main-nav">
       {{ $cats := site.Data.categories }}
       {{ range $i, $c := $cats }}
         {{ $title := cond (eq $.Site.Language.Lang "ru") ($c.ru | default $c.ro) $c.ro }}
         <a href="{{ (site.GetPage (printf "/categories/%s" $c.slug)).RelPermalink }}">{{ $title }}</a>
       {{ end }}
-      <a href="{{ (site.GetPage "taxonomyTerm" "authors").RelPermalink }}" {{ if eq .Kind "term" }}aria-current="page"{{ end }}>Autori</a>
-      <span class="lang-switch" aria-label="Language">
-        {{ range $.Sites }}
-          <a href="{{ .Home.RelPermalink }}" {{ if eq $.Site.Language.Lang .Language.Lang }}aria-current="page"{{ end }}>{{ .Language.Lang | upper }}</a>
-        {{ end }}
-      </span>
-      <button class="theme-toggle" data-action="toggle-theme" type="button">Theme</button>
+      <details class="lang-picker">
+        <summary>{{ .Site.Language.Lang | upper }}</summary>
+        <div class="menu">
+          {{ range $.Sites }}
+            {{ if ne .Language.Lang $.Site.Language.Lang }}
+              <a href="{{ .Home.RelPermalink }}">{{ .Language.LanguageName }}</a>
+            {{ end }}
+          {{ end }}
+        </div>
+      </details>
     </nav>
   </div>
 </header>
