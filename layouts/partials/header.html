@@ -1,0 +1,16 @@
+<header class="site">
+  <div class="container wrap">
+    <div class="brand"><a href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a></div>
+    <nav aria-label="Main">
+      <a href="{{ (.Site.GetPage "/news").RelPermalink }}" {{ if eq .Section "news" }}aria-current="page"{{ end }}>Știri</a>
+      <a href="{{ (site.GetPage "taxonomyTerm" "authors").RelPermalink }}" {{ if eq .Kind "term" }}aria-current="page"{{ end }}>Autori</a>
+      <span class="lang-switch" aria-label="Language">
+        {{ range $.Sites }}
+          <a href="{{ .Home.RelPermalink }}" {{ if eq $.Site.Language.Lang .Language.Lang }}aria-current="page"{{ end }}>{{ .Language.Lang | upper }}</a>
+        {{ end }}
+      </span>
+      <button class="theme-toggle" data-action="toggle-theme" type="button">Theme</button>
+    </nav>
+  </div>
+</header>
+

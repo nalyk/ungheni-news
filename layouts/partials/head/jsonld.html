@@ -1,0 +1,17 @@
+{{- $authorList := slice -}}
+{{- with .Params.authors -}}
+  {{- range . -}}{{ $authorList = $authorList | append (dict "@type" "Person" "name" .) -}}{{- end -}}
+{{- end -}}
+<script type="application/ld+json">
+{{ dict 
+  "@context" "https://schema.org" 
+  "@type" "Article" 
+  "headline" .Title 
+  "datePublished" (.PublishDate | default .Date | time.Format "2006-01-02T15:04:05Z07:00") 
+  "dateModified" (.Lastmod | time.Format "2006-01-02T15:04:05Z07:00") 
+  "inLanguage" .Site.Language.Lang 
+  "author" $authorList 
+  "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink) 
+ | jsonify }}
+</script>
+

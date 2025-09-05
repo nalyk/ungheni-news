@@ -1,15 +1,16 @@
 {{ define "main" }}
-<article>
+<article class="card">
   <h1>{{ .Title }}</h1>
-  <p><small>{{ .Date.Format "2006-01-02 15:04" }}</small></p>
-  {{ with .Params.authors }}
-    <p><small>
+  <p class="byline">
+    <span class="meta">{{ .Date.Format "2006-01-02 15:04" }}</span>
+    {{ with .Params.authors }} · 
       {{ range $i, $a := . }}
         {{ if $i }}, {{ end }}
         <a href="{{ (site.GetPage (printf "/authors/%s" (urlize $a))).RelPermalink }}">{{ $a }}</a>
       {{ end }}
-    </small></p>
-  {{ end }}
-  <div>{{ .Content }}</div>
+    {{ end }}
+  </p>
+  {{ partial "head/jsonld.html" . }}
+  <div class="content">{{ .Content }}</div>
 </article>
 {{ end }}
