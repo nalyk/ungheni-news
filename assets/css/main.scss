@@ -101,6 +101,8 @@ a:hover { text-decoration: underline; }
 header.site { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--border); }
 header .wrap { display: flex; gap: 1rem; align-items: center; justify-content: space-between; padding: .75rem 0; }
 .brand { font-weight: 700; letter-spacing: .2px; }
+/* Stronger editorial masthead */
+.brand { font-family: var(--font-serif); font-weight: 700; letter-spacing: -0.01em; }
 nav a { color: var(--fg); opacity: .9; margin-left: 1rem; }
 nav a[aria-current="page"] { color: var(--accent); }
 
@@ -119,6 +121,8 @@ footer.site { border-top: 1px solid var(--border); padding: 2rem 0; color: var(-
 @media (min-width: 48rem) { .home .lead { grid-column: 1 / span 8; } .home .rails .rail { grid-column: span 4; } }
 .list { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
 .list li { display: flex; align-items: baseline; gap: .5rem; }
+.rail h3 { font-family: var(--font-serif); font-variant-caps: small-caps; font-weight: 400; letter-spacing: .04em; margin: 0; padding-bottom: .35rem; }
+.rail h3::after { content: ""; display: block; height: 1px; background: linear-gradient(90deg, var(--accent) 0%, var(--border) 60%, transparent 100%); border-radius: 1px; margin-top: .35rem; }
 .meta { color: var(--muted); font-size: .9rem; }
 .tag { display: inline-block; font-size: .75rem; padding: .15rem .5rem; border-radius: 999px; background: rgba(127,127,127,.15); color: var(--muted); }
 
@@ -127,10 +131,21 @@ footer.site { border-top: 1px solid var(--border); padding: 2rem 0; color: var(-
   .home .lead { grid-column: 1 / span 8; }
 }
 
-article h1 { font-family: var(--font-serif); font-weight: 700; font-size: clamp(1.75rem, 2.5vw, 2.5rem); margin: .25rem 0 .5rem; }
+/* Editorial headline system */
+article h1 { font-family: var(--font-serif); font-weight: 700; letter-spacing: -0.01em; font-size: clamp(1.85rem, 3vw, 2.75rem); margin: .25rem 0 .6rem; }
+.hero h2, .list .title { font-family: var(--font-serif); font-weight: 700; letter-spacing: -0.01em; }
+/* Elevate section and taxonomy titles */
+main h1, main h2, main h3 { font-family: var(--font-serif); font-weight: 700; letter-spacing: -0.01em; }
+/* Editorial headlines on home/cards use serif for brand voice */
+.hero h2, .list .title { font-family: var(--font-serif); font-weight: 700; }
 article .byline { color: var(--muted); font-size: .95rem; }
 article .content img { max-width: 100%; height: auto; border-radius: var(--radius); }
 article .content figure { margin: 1rem 0; }
+/* Pull quotes & captions with secondary accent */
+article .content blockquote { font-family: var(--font-serif); font-style: italic; color: var(--accent-2); border-left: 3px solid var(--accent-2); padding-left: 1rem; margin: 1rem 0; }
+article .content figure figcaption { font-family: var(--font-serif); font-style: italic; color: var(--muted); font-size: .95rem; margin-top: .5rem; }
+/* Standfirst (first paragraph) for editorial feel */
+article .content p:first-of-type { font-family: var(--font-serif); font-size: clamp(1.05rem, 1.2vw, 1.25rem); line-height: 1.7; }
 
 .search { margin: 1rem 0 1.5rem; }
 .lang-switch { display: inline-flex; gap: .5rem; }
@@ -145,3 +160,6 @@ article .content figure { margin: 1rem 0; }
 .list.thumb li { display: grid; grid-template-columns: 128px 1fr; align-items: center; gap: .75rem; }
 .list.thumb .thumb img { width: 128px; height: 86px; object-fit: cover; border-radius: 6px; display: block; background: rgba(127,127,127,.15); }
 .list.thumb .title { display: inline-block; font-weight: 600; }
+/* Section/list titles hairline ornament */
+main > section > h1 { position: relative; padding-bottom: .4rem; }
+main > section > h1::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: linear-gradient(90deg, var(--accent-2) 0%, var(--border) 50%, transparent 100%); }
