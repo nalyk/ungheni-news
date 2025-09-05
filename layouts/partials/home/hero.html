@@ -5,7 +5,7 @@
 {{ $hero := cond (gt (len $featured) 0) (index $featured 0) (cond (gt (len $pages) 0) (index $pages 0) nil) }}
 {{ if $hero }}
   <article class="card hero">
-    {{ $img := or $hero.Params.cover (cond (in $hero.Params.tags "politic") "/img/placeholders/politic.svg" "/img/placeholders/local.svg") }}
+    {{ $img := or $hero.Params.cover (cond (in $hero.Params.tags "politic") "img/placeholders/politic.svg" "img/placeholders/local.svg") }}
     {{ with $img }}
       {{ $res := $hero.Resources.GetMatch . | default (resources.Get .) }}
       {{ if and $res (ne $res.MediaType.SubType "svg") }}
@@ -16,7 +16,7 @@
           <img src="{{ $lg.RelPermalink }}" srcset="{{ $sm.RelPermalink }} 800w, {{ $md.RelPermalink }} 1200w, {{ $lg.RelPermalink }} 1600w" sizes="(max-width: 50rem) 100vw, 50vw" width="1600" height="900" alt="" loading="eager" fetchpriority="high" />
         </a>
       {{ else }}
-        {{ $static := . | absURL }}
+        {{ $static := . | relURL }}
         <a href="{{ $hero.RelPermalink }}" class="hero-media">
           <img src="{{ $static }}" width="1600" height="900" alt="" loading="eager" fetchpriority="high" />
         </a>

@@ -14,7 +14,7 @@
   <h3>{{ $title }}</h3>
   <ul class="list thumb">
   {{ range $pages }}
-    {{ $img := or .Params.cover (cond (in .Params.tags "politic") "/img/placeholders/politic.svg" (cond (in .Params.tags "sports") "/img/placeholders/politic.svg" (cond (in .Params.tags "education") "/img/placeholders/local.svg" "/img/placeholders/local.svg"))) }}
+    {{ $img := or .Params.cover (cond (in .Params.tags "politic") "img/placeholders/politic.svg" (cond (in .Params.tags "sports") "img/placeholders/politic.svg" (cond (in .Params.tags "education") "img/placeholders/local.svg" "img/placeholders/local.svg"))) }}
     {{ $res := .Resources.GetMatch $img | default (resources.Get $img) }}
     <li>
       <a class="thumb" href="{{ .RelPermalink }}">
@@ -23,7 +23,7 @@
           {{ $sm := $res.Fill "360x240 webp" | resources.Fingerprint }}
           <img src="{{ $sm.RelPermalink }}" srcset="{{ $sm.RelPermalink }} 360w, {{ $lg.RelPermalink }} 600w" sizes="(max-width: 48rem) 33vw, 180px" width="300" height="200" alt="" loading="lazy" />
         {{ else }}
-          <img src="{{ $img | absURL }}" width="300" height="200" alt="" loading="lazy" />
+          <img src="{{ $img | relURL }}" width="300" height="200" alt="" loading="lazy" />
         {{ end }}
       </a>
       <div class="item">

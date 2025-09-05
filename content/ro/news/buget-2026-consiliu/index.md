@@ -7,7 +7,7 @@ draft: false
 authors: ["Redacția"]
 tags: ["politic", "education"]
 featured: true
-cover: "/img/placeholders/politic.svg"
+cover: "img/placeholders/politic.svg"
 summary: Bugetul orașului pentru anul 2026 a fost votat în ședință publică; accent pe infrastructură și educație.
 ---
 
