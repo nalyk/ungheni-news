@@ -23,7 +23,7 @@
           {{ $sm := $res.Fill "360x240 webp" | resources.Fingerprint }}
           <img src="{{ $sm.RelPermalink }}" srcset="{{ $sm.RelPermalink }} 360w, {{ $lg.RelPermalink }} 600w" sizes="(max-width: 48rem) 33vw, 180px" width="300" height="200" alt="" loading="lazy" />
         {{ else }}
-          <img src="{{ $img }}" width="300" height="200" alt="" loading="lazy" />
+          <img src="{{ $img | relURL }}" width="300" height="200" alt="" loading="lazy" />
         {{ end }}
       </a>
       <div class="item">
