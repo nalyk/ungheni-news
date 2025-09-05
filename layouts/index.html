@@ -2,7 +2,10 @@
   {{ partial "search.html" . }}
   <section>
     <h2>{{ i18n "latest_news" | default "Latest News" }}</h2>
-    {{ $sec := .Site.GetPage "section" "news" }}
+    {{ $sec := .GetPage "/news" }}
+    {{ if not $sec }}
+      {{ $sec = .GetPage (print "/" .Site.Language.Lang "/news") }}
+    {{ end }}
     {{ $list := cond (ne $sec nil) $sec.RegularPages (slice) }}
     <p><small>News pages: {{ len $list }}</small></p>
     {{ $sorted := sort $list "Date" "desc" }}
