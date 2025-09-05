@@ -3,7 +3,8 @@ title = "Newsroom"
 timeZone = "Europe/Chisinau"
 defaultContentLanguage = "ro"
 enableRobotsTXT = true
-paginate = 12
+[pagination]
+  pagerSize = 12
 pluralizeListTitles = false
 removePathAccents = true
 
@@ -18,10 +19,17 @@ removePathAccents = true
   news = "/news/:slug/"
 
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS"]
 
 [params]
   theme_palette = "modern"
+  # Triunghi.md editorial configuration
+  editorial_ratio = "60/30/10"  # Local/National/International
+  cutia_ungheni_required = ["national", "ue-romania"]
+  
+  # Site branding
+  publisher = "Triunghi.md"
+  tagline = "Presă locală pentru Ungheni cu minte rece și coloană vertebrală"
 
 [taxonomies]
   tag = "tags"

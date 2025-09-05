@@ -44,3 +44,125 @@
   translation: "Мнение"
 - id: format_factcheck
   translation: "Фактчек"
+# Navigation and UI elements
+- id: menu
+  translation: "Меню"
+- id: search
+  translation: "Поиск"
+- id: archive
+  translation: "Архив"
+- id: all_categories
+  translation: "Все категории"
+- id: all_formats
+  translation: "Все форматы"
+- id: read_more
+  translation: "Читать далее"
+- id: share
+  translation: "Поделиться"
+- id: tags
+  translation: "Теги"
+- id: authors
+  translation: "Авторы"
+- id: cutia_ungheni
+  translation: "Коробка Унген"
+- id: local_impact
+  translation: "Местное влияние"
+# Service Rail Components
+- id: border_wait_title
+  translation: "Время ожидания на границе"
+- id: last_updated
+  translation: "Обновлено"
+- id: auto
+  translation: "Авто"
+- id: pedestrian
+  translation: "Пешеходы"
+- id: freight
+  translation: "Грузы"
+- id: minutes
+  translation: "мин"
+- id: view_details
+  translation: "Смотреть полную информацию"
+- id: border_data_source
+  translation: "Данные от Пограничной полиции"
+- id: outages_title
+  translation: "Плановые/текущие отключения"
+- id: electricity
+  translation: "Электричество"
+- id: water
+  translation: "Вода"
+- id: internet
+  translation: "Интернет"
+- id: planned
+  translation: "Запланировано"
+- id: current
+  translation: "Текущее"
+- id: next_day
+  translation: "следующий день"
+- id: no_outages
+  translation: "Нет отключений"
+- id: no_planned_outages
+  translation: "Нет запланированных отключений"
+- id: report_outage
+  translation: "Сообщить об отключении"
+- id: outages_data_source
+  translation: "Данные от местных поставщиков"
+- id: roadworks_title
+  translation: "Дорожные работы сегодня"
+- id: minor_impact
+  translation: "Незначительное влияние"
+- id: major_impact
+  translation: "Значительное влияние"
+- id: road_closed
+  translation: "Закрыто"
+- id: road_repairs
+  translation: "Ремонт дорожного покрытия, движение по одной полосе"
+- id: asphalt_works
+  translation: "Работы по асфальтированию"
+- id: all_day
+  translation: "Весь день"
+- id: estimated_completion
+  translation: "Предполагаемое завершение"
+- id: end_of_week
+  translation: "конец недели"
+- id: no_other_works
+  translation: "Других работ не сообщалось"
+- id: report_roadwork
+  translation: "Сообщить о работах"
+- id: roadworks_data_source
+  translation: "Данные от мэрии Унгены и граждан"
+- id: prut_brief_title
+  translation: "Прут Бриф - Местная рассылка"
+- id: prut_brief_description
+  translation: "Самые важные местные новости, ежедневно в 18:00"
+- id: subscribers
+  translation: "подписчиков"
+- id: email_address
+  translation: "Адрес электронной почты"
+- id: email_placeholder
+  translation: "адрес@email.com"
+- id: subscribe_free
+  translation: "Подписаться бесплатно"
+- id: sample_newsletter
+  translation: "Посмотреть пример рассылки"
+- id: privacy_note
+  translation: "Никакого спама, отписаться можно в любое время. Данные защищены согласно GDPR."
+- id: invalid_email
+  translation: "Пожалуйста, введите действительный адрес электронной почты"
+- id: subscribing
+  translation: "Подписываемся..."
+- id: subscription_success
+  translation: "Спасибо! Первую рассылку получите сегодня в 18:00."
+- id: services_sidebar
+  translation: "Услуги и полезная информация"
+- id: border_status
+  translation: "Граница"
+- id: outages_short
+  translation: "Отключения"
+- id: roadworks_short
+  translation: "Работы"
+- id: newsletter_short
+  translation: "Рассылка"
+- id: services_note
+  translation: "Услуги обновляются автоматически. По вопросам или предложениям"
+- id: contact_us
+  translation: "связывайтесь с нами"

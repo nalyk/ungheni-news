@@ -1,0 +1,86 @@
+{{/* Main Sidebar with Service Rail Components */}}
+<aside class="sidebar" role="complementary" aria-label="{{ i18n "services_sidebar" | default "Servicii și informații utile" }}">
+  
+  {{/* Mobile Service Bar - visible only on mobile */}}
+  <div class="mobile-service-bar">
+    <a href="#border-wait" class="service-link">{{ i18n "border_status" | default "Frontieră" }}</a>
+    <a href="#outages" class="service-link">{{ i18n "outages_short" | default "Întreruperi" }}</a>
+    <a href="#roadworks" class="service-link">{{ i18n "roadworks_short" | default "Lucrări" }}</a>
+    <a href="#newsletter" class="service-link">{{ i18n "newsletter_short" | default "Newsletter" }}</a>
+  </div>
+  
+  {{/* Desktop Service Rail Components */}}
+  <div class="service-rail-container">
+    
+    {{/* Border Wait Times */}}
+    <div id="border-wait">
+      {{ partial "service-rail/border-wait.html" . }}
+    </div>
+    
+    {{/* Outages Tracker */}}
+    <div id="outages">
+      {{ partial "service-rail/outages.html" . }}
+    </div>
+    
+    {{/* Road Works */}}
+    <div id="roadworks">
+      {{ partial "service-rail/roadworks.html" . }}
+    </div>
+    
+    {{/* Newsletter Signup */}}
+    <div id="newsletter">
+      {{ partial "service-rail/prut-brief.html" . }}
+    </div>
+    
+    {{/* Additional space for future service components */}}
+    {{/*
+    <div id="weather">
+      {{ partial "service-rail/weather.html" . }}
+    </div>
+    
+    <div id="events">
+      {{ partial "service-rail/events.html" . }}
+    </div>
+    */}}
+    
+  </div>
+  
+  {{/* Service Rail Footer */}}
+  <div class="service-rail-footer">
+    <div class="service-note">
+      <small>
+        {{ i18n "services_note" | default "Serviciile sunt actualizate automat. Pentru probleme sau sugestii" }}
+        <a href="mailto:contact@triunghi.md">{{ i18n "contact_us" | default "contactați-ne" }}</a>.
+      </small>
+    </div>
+  </div>
+  
+</aside>
+
+{{/* Smooth scrolling for mobile service links */}}
+<script>
+(function() {
+  const serviceLinks = document.querySelectorAll('.service-link[href^="#"]');
+  
+  serviceLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href').substring(1);
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        const offset = 80; // Account for sticky header
+        const targetPosition = targetElement.offsetTop - offset;
+        
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+        
+        // Update URL without triggering scroll
+        history.pushState(null, null, '#' + targetId);
+      }
+    });
+  });
+})();
+</script>

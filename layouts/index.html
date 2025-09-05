@@ -1,19 +1,66 @@
 {{ define "main" }}
-  <div class="home grid" style="container-type:inline-size;">
-    <section class="lead">
+  <div class="homepage" style="container-type:inline-size;">
+    {{/* Hero Section - Prioritizes local news */}}
+    <section class="hero-section" aria-labelledby="hero-title">
       {{ partial "home/hero.html" . }}
     </section>
-    <section class="rails">
-      {{ range $.Site.Data.rails }}
-        {{ $title := i18n .key }}
-        {{ if .tag }}
-          {{ partial "home/rail.html" (dict "ctx" $ "title" $title "tag" .tag "limit" (.limit | default 6)) }}
-        {{ else if .category }}
-          {{ partial "home/rail.html" (dict "ctx" $ "title" $title "category" .category "limit" (.limit | default 6)) }}
-        {{ else }}
-          {{ partial "home/rail.html" (dict "ctx" $ "title" $title "limit" (.limit | default 8)) }}
+
+    {{/* Latest News Section - Recent articles with deduplication */}}
+    <section class="latest-news-section" aria-labelledby="latest-news-title">
+      <div class="container">
+        <h2 id="latest-news-title" class="section-title">{{ i18n "latest_news" }}</h2>
+        
+        {{/* Get latest articles and exclude hero */}}
+        {{ $sec := .GetPage (printf "/%s/news" .Site.Language.Lang) }}
+        {{ $allPages := cond (ne $sec nil) (sort $sec.RegularPages "Date" "desc") (slice) }}
+        
+        {{/* Get hero article for deduplication */}}
+        {{ $localPages := where $allPages "Params.categories" "intersect" (slice "local") }}
+        {{ $heroPage := cond (gt (len $localPages) 0) (index $localPages 0) nil }}
+        {{ if not $heroPage }}
+          {{ $featured := where $allPages ".Params.featured" true }}
+          {{ $heroPage = cond (gt (len $featured) 0) (index $featured 0) nil }}
         {{ end }}
-      {{ end }}
+        {{ if not $heroPage }}
+          {{ $heroPage = cond (gt (len $allPages) 0) (index $allPages 0) nil }}
+        {{ end }}
+        
+        {{/* Filter out hero from latest news */}}
+        {{ $latestPages := slice }}
+        {{ $count := 0 }}
+        {{ range $allPages }}
+          {{ if and (lt $count 6) (ne .RelPermalink $heroPage.RelPermalink) }}
+            {{ $latestPages = $latestPages | append . }}
+            {{ $count = add $count 1 }}
+          {{ end }}
+        {{ end }}
+        
+        {{ if gt (len $latestPages) 0 }}
+          <div class="cards-grid">
+            {{ range $latestPages }}
+              {{ partial "card.html" . }}
+            {{ end }}
+          </div>
+        {{ else }}
+          <div class="empty-state">
+            <p>{{ i18n "no_articles_yet" | default "Nu există articole încă" }}</p>
+          </div>
+        {{ end }}
+      </div>
+    </section>
+
+    {{/* Category Rails in Priority Order */}}
+    <section class="category-rails" aria-label="Secțiuni de categorie">
+      <div class="container">
+        {{ range $.Site.Data.rails }}
+          {{ if ne .type "latest" }}
+            {{ $title := i18n .key }}
+            {{ if .category }}
+              {{ partial "home/category-rail.html" (dict "ctx" $ "title" $title "category" .category "limit" (.limit | default 6)) }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      </div>
     </section>
   </div>
 {{ end }}

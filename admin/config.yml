@@ -30,21 +30,121 @@ collections:
     path: "{{slug}}/index"
     format: "frontmatter"
     fields:
-      - { name: title, label: Title }
-      - { name: summary, label: Summary, widget: text, required: false }
-      - { name: categories, label: Categoria, widget: select, multiple: true, options: ["local","frontiera-transport","economie-fez","servicii-publice","educatie-sanatate","national","ue-romania"] }
-      - { name: formats, label: Format, widget: select, multiple: true, options: ["stire","analiza","explainer","opinie","factcheck"], required: false }
-      - { name: impact, label: "Ce înseamnă pentru Ungheni (Național)", widget: text, required: false }
-      - { name: slug, label: Slug, required: false, hint: "Explicit slug recommended (latin)" }
-      - { name: date, label: Date, widget: datetime }
-      - { name: publishDate, label: Publish At, widget: datetime, required: false }
-      - { name: expiryDate, label: Expire At, widget: datetime, required: false }
-      - { name: draft, label: Draft, widget: boolean, default: true }
-      - { name: featured, label: Featured on homepage, widget: boolean, default: false }
-      - { name: cover, label: Cover image (path or URL), widget: image, required: false }
-      - { name: authors, label: Authors, widget: list, required: false }
-      - { name: tags, label: Tags, widget: list, required: false }
-      - { name: body, label: Body, widget: markdown }
+      # Basic Article Information
+      - { name: title, label: "Titlul articolului", widget: string, hint: "Titlu clar și descriptiv pentru cititori și SEO" }
+      - { name: summary, label: "Rezumat", widget: text, required: true, hint: "1-2 propoziții care rezumă esența articolului. Obligatoriu pentru SEO și social sharing." }
+      - { name: slug, label: "URL Slug", required: false, hint: "Se generează automat din titlu, dar poate fi personalizat (doar caractere latine, fără diacritice)" }
+      
+      # Editorial Classification
+      - name: categories
+        label: "Categorie"
+        widget: "select"
+        options:
+          - { label: "🏛️ Local Ungheni", value: "local" }
+          - { label: "🚂 Frontieră & Transport", value: "frontiera-transport" }
+          - { label: "💼 Economie & FEZ", value: "economie-fez" }
+          - { label: "🏥 Servicii Publice", value: "servicii-publice" }
+          - { label: "🎓 Educație & Sănătate", value: "educatie-sanatate" }
+          - { label: "🇲🇩 Național", value: "national" }
+          - { label: "🇪🇺 UE & România", value: "ue-romania" }
+        hint: "Selectează o singură categorie principală. Pentru Național/UE completează obligatoriu 'Cutia Ungheni'."
+      
+      - name: formats
+        label: "Format Editorial"
+        widget: "select"
+        options:
+          - { label: "📰 Știre (300-800 cuvinte) - Cine, ce, când, unde, cum", value: "stire" }
+          - { label: "📊 Analiză (800-1500 cuvinte) - Context și interpretare", value: "analiza" }
+          - { label: "❓ Explainer (600-1200 cuvinte) - 'Cum funcționează?'", value: "explainer" }
+          - { label: "💭 Opinie (400-1000 cuvinte) - Punct de vedere cu disclaimer", value: "opinie" }
+          - { label: "✅ Fact-check (500-1200 cuvinte) - Verificare cu metodologie", value: "factcheck" }
+        hint: "Selectează formatul editorial care definește structura și lungimea articolului."
+        
+      # Cutia Ungheni (conditional for national/EU content)
+      - name: cutia_ungheni
+        label: "📦 Cutia Ungheni"
+        widget: "object"
+        collapsed: true
+        hint: "OBLIGATORIU pentru articole Naționale și UE/România. Explică ce înseamnă știrea pentru locuitorii din Ungheni."
+        fields:
+          - { name: impact_local, label: "Impact Local", widget: text, required: false, hint: "Cum afectează această știre comunitatea din Ungheni?" }
+          - { name: ce_se_schimba, label: "Ce se schimbă pentru locuitori", widget: text, required: false, hint: "Schimbări concrete în viața de zi cu zi a unghenilor" }
+          - { name: termene, label: "Termene importante", widget: text, required: false, hint: "Deadline-uri, date limită, calendare relevante" }
+          - { name: unde_aplici, label: "Unde aplici/informații", widget: text, required: false, hint: "Instituții locale, contacte, proceduri pentru Ungheni" }
+      
+      # Publishing & Workflow
+      - { name: date, label: "Data creării", widget: datetime, format: "YYYY-MM-DD HH:mm", time_format: "HH:mm", date_format: "DD.MM.YYYY" }
+      - { name: publishDate, label: "Programează publicarea", widget: datetime, required: false, format: "YYYY-MM-DD HH:mm", time_format: "HH:mm", date_format: "DD.MM.YYYY", hint: "Lasă gol pentru publicare imediată după aprobare" }
+      - { name: expiryDate, label: "Data expirării", widget: datetime, required: false, format: "YYYY-MM-DD HH:mm", time_format: "HH:mm", date_format: "DD.MM.YYYY", hint: "Pentru articole cu relevanță temporară limitată" }
+      - { name: draft, label: "Draft (nepublicat)", widget: boolean, default: true, hint: "Marchează ca draft până la finalizare" }
+      - { name: featured, label: "Promovează pe homepage", widget: boolean, default: false, hint: "Afișează pe prima pagină în secțiunea hero" }
+      
+      # Media & Visuals
+      - name: cover
+        label: "Imagine principală"
+        widget: "image"
+        required: false
+        hint: "Imagine pentru hero, social sharing și preview. Optimă: 1200x630px, sub 500KB"
+      - name: cover_alt
+        label: "Text alternativ imagine"
+        widget: "string"
+        required: false
+        hint: "Descriere pentru accesibilitate și SEO (obligatoriu dacă există imagine)"
+      - name: gallery
+        label: "Galerie imagini"
+        widget: "list"
+        required: false
+        collapsed: true
+        field: { name: image, label: "Imagine", widget: image }
+        hint: "Imagini suplimentare pentru articol"
+        
+      # Attribution & Metadata  
+      - name: authors
+        label: "Autori"
+        widget: "list"
+        required: false
+        hint: "Lista autorilor care au contribuit la articol"
+      - name: tags
+        label: "Etichete"
+        widget: "list"
+        required: false
+        hint: "Cuvinte cheie pentru căutare și clasificare (3-7 etichete recomandate)"
+        
+      # SEO & Social
+      - name: seo
+        label: "🔍 SEO & Social Sharing"
+        widget: "object"
+        collapsed: true
+        fields:
+          - { name: meta_description, label: "Meta descriere", widget: text, required: false, hint: "Descriere pentru motoare de căutare (150-160 caractere)" }
+          - { name: social_image, label: "Imagine social sharing", widget: image, required: false, hint: "Imagine specifică pentru Facebook/Twitter (dacă diferă de cover)" }
+          - { name: social_title, label: "Titlu social sharing", widget: string, required: false, hint: "Titlu optimizat pentru social media (dacă diferă de titlul principal)" }
+      
+      # Verification & Sources (especially for fact-checks)
+      - name: verification
+        label: "📋 Verificare & Surse"
+        widget: "object"
+        collapsed: true
+        hint: "OBLIGATORIU pentru fact-check, recomandat pentru analize"
+        fields:
+          - name: sources
+            label: "Surse documentate"
+            widget: "list"
+            required: false
+            fields:
+              - { name: name, label: "Numele sursei", widget: string }
+              - { name: url, label: "Link/Document", widget: string, required: false }
+              - { name: type, label: "Tip", widget: select, options: ["document oficial", "declarație publică", "studiu", "statistici", "interviu", "observație directă", "altul"] }
+          - { name: methodology, label: "Metodologie", widget: text, required: false, hint: "Pentru fact-check: cum s-a verificat informația" }
+          - name: fact_check_rating
+            label: "Rating fact-check"
+            widget: "select"
+            required: false
+            options: ["Adevărat", "În mare parte adevărat", "Mixt/Parțial", "În mare parte fals", "Fals", "Nedeterminat"]
+            hint: "Doar pentru articole de tip fact-check"
+            
+      # Article Content
+      - { name: body, label: "Conținutul articolului", widget: markdown, hint: "Corpul principal al articolului. Folosește formatarea Markdown pentru structură." }
 
   - name: "news_ru"
     label: "Новости (RU)"
@@ -54,21 +154,121 @@ collections:
     path: "{{slug}}/index"
     format: "frontmatter"
     fields:
-      - { name: title, label: Title }
-      - { name: summary, label: Summary, widget: text, required: false }
-      - { name: categories, label: Категория, widget: select, multiple: true, options: ["local","frontiera-transport","economie-fez","servicii-publice","educatie-sanatate","national","ue-romania"] }
-      - { name: formats, label: Формат, widget: select, multiple: true, options: ["stire","analiza","explainer","opinie","factcheck"], required: false }
-      - { name: impact, label: "Что это значит для Унгень (Нац.)", widget: text, required: false }
-      - { name: slug, label: Slug, required: false, hint: "Explicit slug recommended (latin)" }
-      - { name: date, label: Date, widget: datetime }
-      - { name: publishDate, label: Publish At, widget: datetime, required: false }
-      - { name: expiryDate, label: Expire At, widget: datetime, required: false }
-      - { name: draft, label: Draft, widget: boolean, default: true }
-      - { name: featured, label: Featured on homepage, widget: boolean, default: false }
-      - { name: cover, label: Cover image (path or URL), widget: image, required: false }
-      - { name: authors, label: Authors, widget: list, required: false }
-      - { name: tags, label: Tags, widget: list, required: false }
-      - { name: body, label: Body, widget: markdown }
+      # Basic Article Information
+      - { name: title, label: "Заголовок статьи", widget: string, hint: "Ясный и описательный заголовок для читателей и SEO" }
+      - { name: summary, label: "Резюме", widget: text, required: true, hint: "1-2 предложения, резюмирующие суть статьи. Обязательно для SEO и социальных сетей." }
+      - { name: slug, label: "URL Слаг", required: false, hint: "Генерируется автоматически из заголовка, но может быть настроен (только латинские символы)" }
+      
+      # Editorial Classification
+      - name: categories
+        label: "Категория"
+        widget: "select"
+        options:
+          - { label: "🏛️ Местные Унгень", value: "local" }
+          - { label: "🚂 Граница и транспорт", value: "frontiera-transport" }
+          - { label: "💼 Экономика и СЭЗ", value: "economie-fez" }
+          - { label: "🏥 Общественные услуги", value: "servicii-publice" }
+          - { label: "🎓 Образование и здоровье", value: "educatie-sanatate" }
+          - { label: "🇲🇩 Национальные", value: "national" }
+          - { label: "🇪🇺 ЕС и Румыния", value: "ue-romania" }
+        hint: "Выберите одну основную категорию. Для Национальных/ЕС обязательно заполните 'Коробка Унгень'."
+      
+      - name: formats
+        label: "Формат редакции"
+        widget: "select"
+        options:
+          - { label: "📰 Новость (300-800 слов) - Кто, что, когда, где, как", value: "stire" }
+          - { label: "📊 Аналитика (800-1500 слов) - Контекст и интерпретация", value: "analiza" }
+          - { label: "❓ Эксплейнер (600-1200 слов) - 'Как это работает?'", value: "explainer" }
+          - { label: "💭 Мнение (400-1000 слов) - Точка зрения с дисклеймером", value: "opinie" }
+          - { label: "✅ Фактчек (500-1200 слов) - Проверка с методологией", value: "factcheck" }
+        hint: "Выберите формат редакции, определяющий структуру и длину статьи."
+        
+      # Cutia Ungheni (conditional for national/EU content)
+      - name: cutia_ungheni
+        label: "📦 Коробка Унгень"
+        widget: "object"
+        collapsed: true
+        hint: "ОБЯЗАТЕЛЬНО для национальных статей и ЕС/Румыния. Объясните, что означает новость для жителей Унгень."
+        fields:
+          - { name: impact_local, label: "Местное воздействие", widget: text, required: false, hint: "Как эта новость влияет на общину Унгень?" }
+          - { name: ce_se_schimba, label: "Что изменится для жителей", widget: text, required: false, hint: "Конкретные изменения в повседневной жизни жителей Унгень" }
+          - { name: termene, label: "Важные сроки", widget: text, required: false, hint: "Дедлайны, предельные даты, актуальные календари" }
+          - { name: unde_aplici, label: "Где подавать/информация", widget: text, required: false, hint: "Местные учреждения, контакты, процедуры для Унгень" }
+      
+      # Publishing & Workflow
+      - { name: date, label: "Дата создания", widget: datetime, format: "YYYY-MM-DD HH:mm", time_format: "HH:mm", date_format: "DD.MM.YYYY" }
+      - { name: publishDate, label: "Запланировать публикацию", widget: datetime, required: false, format: "YYYY-MM-DD HH:mm", time_format: "HH:mm", date_format: "DD.MM.YYYY", hint: "Оставьте пустым для немедленной публикации после одобрения" }
+      - { name: expiryDate, label: "Дата истечения", widget: datetime, required: false, format: "YYYY-MM-DD HH:mm", time_format: "HH:mm", date_format: "DD.MM.YYYY", hint: "Для статей с ограниченной временной актуальностью" }
+      - { name: draft, label: "Черновик (неопубликованный)", widget: boolean, default: true, hint: "Отметить как черновик до завершения" }
+      - { name: featured, label: "Продвигать на главной", widget: boolean, default: false, hint: "Отображать на главной странице в разделе hero" }
+      
+      # Media & Visuals
+      - name: cover
+        label: "Основное изображение"
+        widget: "image"
+        required: false
+        hint: "Изображение для hero, социальных сетей и preview. Оптимально: 1200x630px, менее 500KB"
+      - name: cover_alt
+        label: "Альтернативный текст изображения"
+        widget: "string"
+        required: false
+        hint: "Описание для доступности и SEO (обязательно при наличии изображения)"
+      - name: gallery
+        label: "Галерея изображений"
+        widget: "list"
+        required: false
+        collapsed: true
+        field: { name: image, label: "Изображение", widget: image }
+        hint: "Дополнительные изображения для статьи"
+        
+      # Attribution & Metadata  
+      - name: authors
+        label: "Авторы"
+        widget: "list"
+        required: false
+        hint: "Список авторов, внесших вклад в статью"
+      - name: tags
+        label: "Теги"
+        widget: "list"
+        required: false
+        hint: "Ключевые слова для поиска и классификации (рекомендуется 3-7 тегов)"
+        
+      # SEO & Social
+      - name: seo
+        label: "🔍 SEO и социальные сети"
+        widget: "object"
+        collapsed: true
+        fields:
+          - { name: meta_description, label: "Мета описание", widget: text, required: false, hint: "Описание для поисковых систем (150-160 символов)" }
+          - { name: social_image, label: "Изображение для соцсетей", widget: image, required: false, hint: "Специфическое изображение для Facebook/Twitter (если отличается от основного)" }
+          - { name: social_title, label: "Заголовок для соцсетей", widget: string, required: false, hint: "Заголовок, оптимизированный для социальных медиа (если отличается от основного)" }
+      
+      # Verification & Sources (especially for fact-checks)
+      - name: verification
+        label: "📋 Проверка и источники"
+        widget: "object"
+        collapsed: true
+        hint: "ОБЯЗАТЕЛЬНО для фактчека, рекомендуется для аналитики"
+        fields:
+          - name: sources
+            label: "Документированные источники"
+            widget: "list"
+            required: false
+            fields:
+              - { name: name, label: "Название источника", widget: string }
+              - { name: url, label: "Ссылка/Документ", widget: string, required: false }
+              - { name: type, label: "Тип", widget: select, options: ["официальный документ", "публичное заявление", "исследование", "статистика", "интервью", "прямое наблюдение", "другое"] }
+          - { name: methodology, label: "Методология", widget: text, required: false, hint: "Для фактчека: как проверялась информация" }
+          - name: fact_check_rating
+            label: "Рейтинг фактчека"
+            widget: "select"
+            required: false
+            options: ["Правда", "В основном правда", "Смешанный/Частичный", "В основном ложь", "Ложь", "Неопределенный"]
+            hint: "Только для статей типа фактчек"
+            
+      # Article Content
+      - { name: body, label: "Содержание статьи", widget: markdown, hint: "Основная часть статьи. Используйте форматирование Markdown для структуры." }
 
   - name: "pages"
     label: "Pages"

@@ -1,53 +1,871 @@
+{{/*
+  Single Article Template - Individual Article Page
+  
+  Purpose: Display individual articles with full content, sidebar, and related articles
+  Features: Breadcrumbs, meta info, Cutia Ungheni, share buttons, tags, related content
+  
+  Used for: All individual article pages
+*/}}
+
 {{ define "main" }}
-<article class="card">
-  <h1>{{ .Title }}</h1>
-  <p class="byline">
-    <span class="meta">{{ i18n "published" | default "Publicat" }} {{ (.PublishDate | default .Date).Format "2006-01-02 15:04" }}</span>
-    {{ with .Params.authors }} · {{ i18n "by" | default "de" }}
-      {{ range $i, $a := . }}
-        {{ if $i }}, {{ end }}
-        <a href="{{ (site.GetPage (printf "/authors/%s" (urlize $a))).RelPermalink }}">{{ $a }}</a>
-      {{ end }}
-    {{ end }}
-    {{ if gt .Lastmod.Unix (.Date.Unix) }} · <span class="meta">{{ i18n "updated" | default "Actualizat" }} {{ .Lastmod.Format "2006-01-02 15:04" }}</span>{{ end }}
-    · <span class="meta">{{ .ReadingTime }} {{ i18n "min_read" | default "min" }}</span>
-  </p>
-  {{/* Format badge and category */}}
-  <p class="meta">
-    {{ with .Params.formats }}
-      {{ range . }}<span class="tag">{{ i18n (print "format_" .) | default . }}</span>{{ end }}
-    {{ end }}
-    {{ with .Params.categories }}
-      · {{ range $i, $c := . }}{{ if $i }}, {{ end }}<a href="{{ (site.GetPage (printf "/categories/%s" $c)).RelPermalink }}">{{ $c }}</a>{{ end }}
-    {{ end }}
-  </p>
-  {{ partial "head/jsonld.html" . }}
-  <div class="content">{{ .Content }}</div>
-  {{ if in .Params.categories "national" }}
-    {{ with .Params.impact }}
-      <aside class="card" style="border-left:3px solid var(--accent); padding: 1rem; margin-top:1rem">
-        <strong>Ce înseamnă pentru Ungheni</strong>
-        <div style="margin-top:.5rem">{{ . | markdownify }}</div>
+{{- $page := . -}}
+{{- $categories := $page.Params.categories | default slice -}}
+{{- $category := $categories | first -}}
+{{- $formats := $page.Params.formats | default slice -}}
+{{- $format := $formats | first -}}
+{{- $authors := $page.Params.authors | default slice -}}
+{{- $tags := $page.Params.tags | default slice -}}
+
+{{- /* Featured image handling */ -}}
+{{- $featuredImage := "" -}}
+{{- $featuredImageAlt := "" -}}
+{{- with $page.Resources.GetMatch "featured*" -}}
+  {{- $featuredImage = .RelPermalink -}}
+  {{- $featuredImageAlt = .Title | default $page.Title -}}
+{{- else -}}
+  {{- with $page.Params.image -}}
+    {{- $featuredImage = . -}}
+    {{- $featuredImageAlt = $page.Params.image_alt | default $page.Title -}}
+  {{- end -}}
+{{- end -}}
+
+<div class="article-layout">
+  <div class="article-content">
+    {{/* Article Header */}}
+    <header class="article-header">
+      {{/* Breadcrumbs */}}
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol class="breadcrumb-list">
+          <li class="breadcrumb-item">
+            <a href="{{ "/" | relURL }}" class="breadcrumb-link">
+              {{- i18n "home" | default "Acasă" -}}
+            </a>
+          </li>
+          {{- if $category -}}
+            <li class="breadcrumb-item">
+              <a href="{{ (site.GetPage (printf "/categories/%s" $category)).RelPermalink }}" class="breadcrumb-link">
+                {{- i18n (printf "category_%s" $category) | default $category -}}
+              </a>
+            </li>
+          {{- end -}}
+          <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            {{- $page.Title | truncate 50 -}}
+          </li>
+        </ol>
+      </nav>
+
+      {{/* Pills for Category and Format */}}
+      <div class="article-meta-pills">
+        {{- partial "pills.html" (dict "category" $category "format" $format "size" "medium") -}}
+      </div>
+
+      {{/* Article Title */}}
+      <h1 class="article-title" itemprop="headline">{{- $page.Title -}}</h1>
+
+      {{/* Article Summary/Lead */}}
+      {{- with $page.Params.summary -}}
+        <div class="article-lead">
+          <p>{{- . | markdownify -}}</p>
+        </div>
+      {{- end -}}
+
+      {{/* Meta Information */}}
+      <div class="article-meta">
+        <div class="article-meta-primary">
+          {{/* Publication Date */}}
+          <time datetime="{{ (.PublishDate | default .Date).Format "2006-01-02T15:04:05Z07:00" }}" 
+                itemprop="datePublished"
+                class="article-date">
+            {{- i18n "published" | default "Publicat" -}} {{- (.PublishDate | default .Date).Format "2 January 2006, 15:04" -}}
+          </time>
+
+          {{/* Authors */}}
+          {{- if $authors -}}
+            <span class="article-authors">
+              {{- i18n "by" | default "de" -}}
+              {{- range $i, $author := $authors -}}
+                {{- if $i -}}, {{- end -}}
+                <a href="{{ (site.GetPage (printf "/authors/%s" (urlize $author))).RelPermalink }}" 
+                   class="article-author-link">{{- $author -}}</a>
+              {{- end -}}
+            </span>
+          {{- end -}}
+
+          {{/* Reading Time */}}
+          <span class="article-reading-time">
+            {{- $page.ReadingTime -}} {{- i18n "min_read" | default "min citire" -}}
+          </span>
+        </div>
+
+        {{/* Updated Date */}}
+        {{- if gt .Lastmod.Unix (.Date.Unix) -}}
+          <div class="article-meta-secondary">
+            <time datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}" 
+                  itemprop="dateModified"
+                  class="article-updated">
+              {{- i18n "updated" | default "Actualizat" -}} {{- .Lastmod.Format "2 January 2006, 15:04" -}}
+            </time>
+          </div>
+        {{- end -}}
+
+        {{/* Share Buttons */}}
+        <div class="article-share">
+          <span class="article-share-label">{{- i18n "share" | default "Distribuie" -}}:</span>
+          <div class="share-buttons">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ .Permalink }}" 
+               target="_blank" 
+               rel="noopener"
+               class="share-button share-facebook"
+               aria-label="Distribuie pe Facebook">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="https://twitter.com/intent/tweet?url={{ .Permalink }}&text={{ .Title }}" 
+               target="_blank" 
+               rel="noopener"
+               class="share-button share-twitter"
+               aria-label="Distribuie pe Twitter">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+              </svg>
+            </a>
+            <a href="https://wa.me/?text={{ .Title }}%20{{ .Permalink }}" 
+               target="_blank" 
+               rel="noopener"
+               class="share-button share-whatsapp"
+               aria-label="Distribuie pe WhatsApp">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+              </svg>
+            </a>
+            <button class="share-button share-copy" 
+                    onclick="copyToClipboard('{{ .Permalink }}')"
+                    aria-label="Copiază link-ul">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {{/* Featured Image */}}
+    {{- if $featuredImage -}}
+      <figure class="article-featured-image">
+        <img src="{{ $featuredImage }}" 
+             alt="{{ $featuredImageAlt }}" 
+             class="featured-image"
+             itemprop="image">
+        {{- with $page.Params.image_caption -}}
+          <figcaption class="featured-image-caption">{{- . | markdownify -}}</figcaption>
+        {{- end -}}
+      </figure>
+    {{- end -}}
+
+    {{/* Cutia Ungheni - Local Impact Box for National/EU Articles */}}
+    {{- partial "cutia-ungheni.html" . -}}
+
+    {{/* Article Content */}}
+    <div class="article-body" itemprop="articleBody">
+      {{- $page.Content -}}
+    </div>
+
+    {{/* "Cum am verificat" - Verification Section */}}
+    {{- if or $page.Params.surse $page.Params.metodologie $page.Params.cum_am_verificat -}}
+      <aside class="article-verification" role="complementary">
+        <h3 class="verification-title">Cum am verificat</h3>
+        
+        {{- if $page.Params.cum_am_verificat -}}
+          <div class="verification-section">
+            <h4>Metodologia de verificare</h4>
+            <div class="verification-content">{{- $page.Params.cum_am_verificat | markdownify -}}</div>
+          </div>
+        {{- end -}}
+        
+        {{- if $page.Params.surse -}}
+          <div class="verification-section">
+            <h4>Surse folosite</h4>
+            <div class="verification-content">{{- $page.Params.surse | markdownify -}}</div>
+          </div>
+        {{- end -}}
+        
+        {{- if $page.Params.metodologie -}}
+          <div class="verification-section">
+            <h4>Detalii metodologie</h4>
+            <div class="verification-content">{{- $page.Params.metodologie | markdownify -}}</div>
+          </div>
+        {{- end -}}
       </aside>
-    {{ end }}
-  {{ end }}
-  {{/* Related by tags */}}
-  {{ $tags := .Params.tags }}
-  {{ if $tags }}
-    {{ $all := where .Site.RegularPages "Section" "news" }}
-    {{ $rel := first 3 (where $all "Params.tags" "intersect" $tags) }}
-    {{ if gt (len $rel) 0 }}
-    <aside class="card" style="margin-top:1.5rem">
-      <h3>{{ i18n "related" | default "Articole similare" }}</h3>
-      <ul class="list">
-      {{ range $rel }}
-        {{ if ne .Permalink $.Permalink }}
-          <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <span class="meta">· {{ .Date.Format "2006-01-02" }}</span></li>
-        {{ end }}
-      {{ end }}
-      </ul>
-    </aside>
-    {{ end }}
-  {{ end }}
-</article>
+    {{- end -}}
+
+    {{/* JSON-LD Structured Data */}}
+    {{- partial "head/jsonld.html" . -}}
+  </div>
+
+  {{/* Sidebar */}}
+  <aside class="article-sidebar" role="complementary" aria-label="{{- i18n "services_sidebar" | default "Servicii și informații utile" -}}">
+    {{- partial "sidebar.html" . -}}
+  </aside>
+</div>
+
+{{/* Article Footer */}}
+<footer class="article-footer">
+  {{/* Tags */}}
+  {{- if $tags -}}
+    <div class="article-tags">
+      <h4 class="tags-title">{{- i18n "tags" | default "Etichete" -}}:</h4>
+      <div class="tags-list">
+        {{- range $tags -}}
+          <a href="{{ (site.GetPage (printf "/tags/%s" (urlize .))).RelPermalink }}" 
+             class="tag-link">{{- . -}}</a>
+        {{- end -}}
+      </div>
+    </div>
+  {{- end -}}
+
+  {{/* Navigation within Category */}}
+  {{- if $category -}}
+    {{- $categoryPage := site.GetPage (printf "/categories/%s" $category) -}}
+    {{- $categoryPages := where site.RegularPages.ByDate.Reverse "Section" "news" -}}
+    {{- $categoryPages = where $categoryPages "Params.categories" "intersect" (slice $category) -}}
+    
+    {{- $currentIndex := 0 -}}
+    {{- range $i, $p := $categoryPages -}}
+      {{- if eq $p.Permalink $page.Permalink -}}
+        {{- $currentIndex = $i -}}
+      {{- end -}}
+    {{- end -}}
+    
+    <nav class="article-navigation" aria-label="Navigare articole">
+      <div class="nav-links">
+        {{- if gt $currentIndex 0 -}}
+          {{- $prevPage := index $categoryPages (sub $currentIndex 1) -}}
+          <a href="{{ $prevPage.RelPermalink }}" class="nav-link nav-prev" rel="prev">
+            <span class="nav-label">← Articol anterior</span>
+            <span class="nav-title">{{ $prevPage.Title | truncate 60 }}</span>
+          </a>
+        {{- end -}}
+        
+        {{- if lt $currentIndex (sub (len $categoryPages) 1) -}}
+          {{- $nextPage := index $categoryPages (add $currentIndex 1) -}}
+          <a href="{{ $nextPage.RelPermalink }}" class="nav-link nav-next" rel="next">
+            <span class="nav-label">Articol următor →</span>
+            <span class="nav-title">{{ $nextPage.Title | truncate 60 }}</span>
+          </a>
+        {{- end -}}
+      </div>
+    </nav>
+  {{- end -}}
+
+  {{/* Related Articles */}}
+  {{- if $tags -}}
+    {{- $relatedPages := slice -}}
+    {{- $allPages := where site.RegularPages "Section" "news" -}}
+    {{- range $allPages -}}
+      {{- if ne .Permalink $page.Permalink -}}
+        {{- $commonTags := intersect .Params.tags $tags -}}
+        {{- if $commonTags -}}
+          {{- $relatedPages = $relatedPages | append . -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    
+    {{- if $relatedPages -}}
+      {{- $relatedPages = first 4 $relatedPages -}}
+      <section class="related-articles">
+        <h3 class="related-title">{{- i18n "related" | default "Articole similare" -}}</h3>
+        <div class="related-grid">
+          {{- range $relatedPages -}}
+            {{- partial "card.html" . -}}
+          {{- end -}}
+        </div>
+      </section>
+    {{- end -}}
+  {{- end -}}
+</footer>
+
+{{/* JavaScript for share functionality */}}
+<script>
+  function copyToClipboard(text) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function() {
+        // Show success feedback
+        const button = event.target.closest('.share-copy');
+        const originalContent = button.innerHTML;
+        button.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+        button.setAttribute('aria-label', 'Copiat!');
+        
+        setTimeout(() => {
+          button.innerHTML = originalContent;
+          button.setAttribute('aria-label', 'Copiază link-ul');
+        }, 2000);
+      });
+    } else {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+  }
+</script>
+
+{{/* CSS Styles */}}
+<style>
+  .article-layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 3rem;
+    align-items: start;
+  }
+  
+  .article-content {
+    max-width: none;
+  }
+  
+  /* Header Styles */
+  .article-header {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(127, 127, 127, 0.15);
+  }
+  
+  /* Breadcrumbs */
+  .breadcrumbs {
+    margin-bottom: 1.5rem;
+  }
+  
+  .breadcrumb-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .breadcrumb-item {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  
+  .breadcrumb-item:not(:last-child)::after {
+    content: "›";
+    margin-left: 0.5rem;
+    color: rgba(127, 127, 127, 0.4);
+  }
+  
+  .breadcrumb-link {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .breadcrumb-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  
+  .breadcrumb-current {
+    color: var(--fg);
+    font-weight: 500;
+  }
+  
+  /* Pills */
+  .article-meta-pills {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Title */
+  .article-title {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+    margin: 0 0 1rem 0;
+  }
+  
+  /* Lead/Summary */
+  .article-lead {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: rgba(var(--fg-rgb), 0.8);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+  
+  .article-lead p {
+    margin: 0;
+  }
+  
+  /* Meta Information */
+  .article-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .article-meta-primary {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  
+  .article-date {
+    font-weight: 500;
+    color: var(--fg);
+  }
+  
+  .article-authors {
+    font-weight: 500;
+  }
+  
+  .article-author-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .article-author-link:hover {
+    text-decoration: underline;
+  }
+  
+  .article-reading-time {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  
+  .article-updated {
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+  
+  /* Share Buttons */
+  .article-share {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .article-share-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  
+  .share-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .share-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .share-button svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .share-facebook {
+    background: #1877f2;
+    color: white;
+  }
+  
+  .share-facebook:hover {
+    background: #166fe5;
+    transform: scale(1.1);
+  }
+  
+  .share-twitter {
+    background: #1da1f2;
+    color: white;
+  }
+  
+  .share-twitter:hover {
+    background: #1a91da;
+    transform: scale(1.1);
+  }
+  
+  .share-whatsapp {
+    background: #25d366;
+    color: white;
+  }
+  
+  .share-whatsapp:hover {
+    background: #128c7e;
+    transform: scale(1.1);
+  }
+  
+  .share-copy {
+    background: var(--bg-elev);
+    color: var(--fg);
+    border: 1px solid rgba(127, 127, 127, 0.3);
+  }
+  
+  .share-copy:hover {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    transform: scale(1.1);
+  }
+  
+  /* Featured Image */
+  .article-featured-image {
+    margin: 0 0 2rem 0;
+  }
+  
+  .featured-image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+  
+  .featured-image-caption {
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 1rem;
+    font-style: italic;
+    line-height: 1.5;
+  }
+  
+  /* Article Body */
+  .article-body {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--fg);
+    margin-bottom: 3rem;
+  }
+  
+  .article-body h2,
+  .article-body h3,
+  .article-body h4 {
+    font-family: var(--font-serif);
+    margin: 2rem 0 1rem 0;
+    color: var(--fg);
+  }
+  
+  .article-body h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+  
+  .article-body h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+  
+  .article-body h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  .article-body p {
+    margin: 0 0 1.5rem 0;
+  }
+  
+  .article-body a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+  }
+  
+  .article-body blockquote {
+    border-left: 4px solid var(--accent);
+    margin: 2rem 0;
+    padding: 1rem 1.5rem;
+    background: rgba(var(--accent-rgb), 0.05);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+  
+  /* Verification Section */
+  .article-verification {
+    background: linear-gradient(135deg, rgba(74, 144, 226, 0.05), rgba(74, 144, 226, 0.02));
+    border: 1px solid rgba(74, 144, 226, 0.2);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    margin: 2rem 0;
+    padding: 1.5rem;
+  }
+  
+  .verification-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0 0 1.5rem 0;
+    text-transform: uppercase;
+    font-variant-caps: small-caps;
+    letter-spacing: 0.02em;
+  }
+  
+  .verification-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .verification-section:last-child {
+    margin-bottom: 0;
+  }
+  
+  .verification-section h4 {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--fg);
+    margin: 0 0 0.75rem 0;
+  }
+  
+  .verification-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(var(--fg-rgb), 0.9);
+  }
+  
+  /* Article Footer */
+  .article-footer {
+    max-width: 1200px;
+    margin: 3rem auto 0;
+    padding: 0 1rem;
+    border-top: 1px solid rgba(127, 127, 127, 0.15);
+    padding-top: 2rem;
+  }
+  
+  /* Tags */
+  .article-tags {
+    margin-bottom: 2rem;
+  }
+  
+  .tags-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--fg);
+    margin: 0 0 1rem 0;
+  }
+  
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .tag-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--bg-elev);
+    color: var(--fg);
+    text-decoration: none;
+    border-radius: var(--radius-small);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid rgba(127, 127, 127, 0.2);
+    transition: all 0.2s ease;
+  }
+  
+  .tag-link:hover {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+  
+  /* Navigation */
+  .article-navigation {
+    margin-bottom: 3rem;
+  }
+  
+  .nav-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    background: var(--bg-elev);
+    border: 1px solid rgba(127, 127, 127, 0.15);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--fg);
+    transition: all 0.2s ease;
+  }
+  
+  .nav-link:hover {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.05);
+    text-decoration: none;
+  }
+  
+  .nav-prev {
+    text-align: left;
+  }
+  
+  .nav-next {
+    text-align: right;
+  }
+  
+  .nav-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  
+  .nav-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--fg);
+  }
+  
+  /* Related Articles */
+  .related-articles {
+    margin-top: 3rem;
+  }
+  
+  .related-title {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--fg);
+    margin: 0 0 1.5rem 0;
+  }
+  
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 64rem) {
+    .article-layout {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    
+    .article-sidebar {
+      order: -1;
+    }
+    
+    .nav-links {
+      grid-template-columns: 1fr;
+    }
+    
+    .related-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+  }
+  
+  @media (max-width: 48rem) {
+    .article-layout {
+      padding: 0 0.5rem;
+    }
+    
+    .article-footer {
+      padding: 0 0.5rem 2rem;
+    }
+    
+    .article-title {
+      font-size: 2rem;
+    }
+    
+    .article-lead {
+      font-size: 1.1rem;
+    }
+    
+    .article-meta-primary {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    
+    .share-buttons {
+      flex-wrap: wrap;
+    }
+    
+    .article-body {
+      font-size: 1rem;
+    }
+    
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .share-button {
+      border: 2px solid currentColor;
+    }
+    
+    .tag-link {
+      border-width: 2px;
+    }
+    
+    .nav-link {
+      border-width: 2px;
+    }
+  }
+  
+  /* Print styles */
+  @media print {
+    .article-share,
+    .article-sidebar,
+    .article-navigation,
+    .related-articles {
+      display: none;
+    }
+    
+    .article-layout {
+      display: block;
+      max-width: none;
+      padding: 0;
+    }
+    
+    .article-footer {
+      max-width: none;
+      padding: 1rem 0;
+    }
+    
+    .article-title {
+      font-size: 1.8rem;
+    }
+    
+    .article-body {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+  }
+</style>
 {{ end }}

@@ -1,0 +1,72 @@
+{{/* Road Works Service Rail Component */}}
+<section class="service-rail roadworks card">
+  <h3>{{ i18n "roadworks_title" | default "Lucrări rutiere azi" }}</h3>
+  
+  <div class="roadworks-list">
+    <div class="roadwork-item">
+      <div class="roadwork-header">
+        <div class="road-info">
+          <span class="road-name">Str. 31 August</span>
+          <div class="impact-indicator minor">
+            <span class="impact-dot"></span>
+            <span class="impact-text">{{ i18n "minor_impact" | default "Impact minor" }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="roadwork-details">
+        <div class="work-description">{{ i18n "road_repairs" | default "Reparații carosabil, circulația pe o bandă" }}</div>
+        <div class="work-schedule">{{ i18n "all_day" | default "Toată ziua" }}</div>
+      </div>
+    </div>
+    
+    <div class="roadwork-item">
+      <div class="roadwork-header">
+        <div class="road-info">
+          <span class="road-name">Bd. Independenței</span>
+          <div class="impact-indicator major">
+            <span class="impact-dot"></span>
+            <span class="impact-text">{{ i18n "major_impact" | default "Impact major" }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="roadwork-details">
+        <div class="work-description">{{ i18n "asphalt_works" | default "Lucrări de asfaltare" }}</div>
+        <div class="work-schedule">09:00-17:00</div>
+      </div>
+      <div class="completion-estimate">
+        <small>{{ i18n "estimated_completion" | default "Finalizare estimată" }}: {{ i18n "end_of_week" | default "sfârșitul săptămânii" }}</small>
+      </div>
+    </div>
+    
+    <div class="roadwork-item no-works">
+      <div class="road-info">
+        <span class="road-status">{{ i18n "no_other_works" | default "Nu sunt alte lucrări raportate" }}</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="roadworks-legend">
+    <div class="legend-item">
+      <span class="legend-dot minor"></span>
+      <span class="legend-label">{{ i18n "minor_impact" | default "Impact minor" }}</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-dot major"></span>
+      <span class="legend-label">{{ i18n "major_impact" | default "Impact major" }}</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-dot closed"></span>
+      <span class="legend-label">{{ i18n "road_closed" | default "Închis" }}</span>
+    </div>
+  </div>
+  
+  <div class="roadworks-actions">
+    <a href="#" class="action-link secondary">
+      {{ i18n "report_roadwork" | default "Raportează lucrări" }}
+    </a>
+  </div>
+  
+  <div class="service-note">
+    <small>{{ i18n "roadworks_data_source" | default "Date de la Primăria Ungheni și cetățeni" }}</small>
+  </div>
+</section>

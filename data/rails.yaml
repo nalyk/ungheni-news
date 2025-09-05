@@ -1,17 +1,15 @@
 - key: latest_news
   tag: ""
-  limit: 8
-- key: category_local
-  category: "local"
+  limit: 6
+  type: "latest"
+- key: category_servicii_publice
+  category: "servicii-publice"
   limit: 6
 - key: category_frontiera_transport
   category: "frontiera-transport"
   limit: 6
 - key: category_economie_fez
   category: "economie-fez"
-  limit: 6
-- key: category_servicii_publice
-  category: "servicii-publice"
   limit: 6
 - key: category_educatie_sanatate
   category: "educatie-sanatate"

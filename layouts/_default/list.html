@@ -1,17 +1,637 @@
-{{ define "main" }}
-<section>
-  <h1>{{ .Title }}</h1>
-  <ul>
-    {{ range .Paginator.Pages }}
-      <li>
-        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-        <small> · {{ .Date.Format "2006-01-02" }}</small>
-      </li>
-    {{ end }}
-  </ul>
-  <nav>
-    {{ template "_internal/pagination.html" . }}
-  </nav>
-</section>
-{{ end }}
+{{/*
+  List Template - Category and Section Listings
+  
+  Purpose: Display article listings with filters, sorting, and sidebar integration
+  Features: Breadcrumbs, category info, card-based grid, pagination, empty states
+  
+  Used for: Category pages, tag pages, format pages, author pages
+*/}}
 
+{{ define "main" }}
+{{- $currentPage := . -}}
+{{- $pages := .Paginator.Pages -}}
+{{- $categoryData := index site.Data.categories -}}
+{{- $categorySlug := .Title | urlize -}}
+
+{{/* Find category data for current page */}}
+{{- $categoryInfo := dict -}}
+{{- range $categoryData -}}
+  {{- if eq .slug $categorySlug -}}
+    {{- $categoryInfo = . -}}
+  {{- end -}}
+{{- end -}}
+
+{{/* Get URL parameters for filtering/sorting */}}
+{{- $format := .Params.format | default ($.Param "format") -}}
+{{- $sort := .Params.sort | default ($.Param "sort") | default "date" -}}
+
+{{/* Filter pages if format parameter is set */}}
+{{- if $format -}}
+  {{- $pages = where $pages "Params.formats" "intersect" (slice $format) -}}
+{{- end -}}
+
+{{/* Sort pages based on parameter */}}
+{{- if eq $sort "title" -}}
+  {{- $pages = $pages.ByTitle -}}
+{{- else -}}
+  {{- $pages = $pages.ByDate.Reverse -}}
+{{- end -}}
+
+<div class="list-layout">
+  {{/* Header Section */}}
+  <header class="list-header">
+    {{/* Breadcrumbs */}}
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a href="{{ "/" | relURL }}" class="breadcrumb-link">
+            {{- i18n "home" | default "Acasă" -}}
+          </a>
+        </li>
+        {{- if .IsHome -}}
+          <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            {{- i18n "latest_news" | default "Ultimele știri" -}}
+          </li>
+        {{- else -}}
+          <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            {{- if $categoryInfo.ro -}}
+              {{- $categoryInfo.ro -}}
+            {{- else -}}
+              {{- .Title -}}
+            {{- end -}}
+          </li>
+        {{- end -}}
+      </ol>
+    </nav>
+
+    {{/* Category Title and Description */}}
+    <div class="list-title-section">
+      <h1 class="list-title">
+        {{- if $categoryInfo.ro -}}
+          {{- $categoryInfo.ro -}}
+        {{- else if .IsHome -}}
+          {{- i18n "latest_news" | default "Ultimele știri" -}}
+        {{- else -}}
+          {{- .Title -}}
+        {{- end -}}
+      </h1>
+      
+      {{/* Article count */}}
+      <div class="list-meta">
+        {{- $totalCount := len $pages -}}
+        {{- if gt $totalCount 0 -}}
+          <span class="article-count">
+            {{- $totalCount -}} 
+            {{- if eq $totalCount 1 -}}
+              articol
+            {{- else -}}
+              articole
+            {{- end -}}
+          </span>
+        {{- end -}}
+        
+        {{/* Last updated */}}
+        {{- if $pages -}}
+          {{- $lastUpdated := (index $pages 0).Date -}}
+          <span class="last-updated">
+            {{- i18n "last_updated" | default "Actualizat" -}} {{- $lastUpdated.Format "2 Jan 2006" -}}
+          </span>
+        {{- end -}}
+      </div>
+
+      {{/* Category description if available */}}
+      {{- with $categoryInfo.description -}}
+        <p class="list-description">{{- . | markdownify -}}</p>
+      {{- end -}}
+    </div>
+
+    {{/* Filter and Sort Controls */}}
+    <div class="list-controls">
+      <div class="list-filters">
+        {{/* Format Filter */}}
+        <div class="filter-group">
+          <label for="format-filter" class="filter-label">Format:</label>
+          <select id="format-filter" class="filter-select" onchange="updateFilters()">
+            <option value="">{{- i18n "all_formats" | default "Toate formatele" -}}</option>
+            <option value="stire" {{- if eq $format "stire" -}} selected{{- end -}}>
+              {{- i18n "format_stire" | default "Știre" -}}
+            </option>
+            <option value="analiza" {{- if eq $format "analiza" -}} selected{{- end -}}>
+              {{- i18n "format_analiza" | default "Analiză" -}}
+            </option>
+            <option value="explainer" {{- if eq $format "explainer" -}} selected{{- end -}}>
+              {{- i18n "format_explainer" | default "Explainer" -}}
+            </option>
+            <option value="opinie" {{- if eq $format "opinie" -}} selected{{- end -}}>
+              {{- i18n "format_opinie" | default "Opinie" -}}
+            </option>
+            <option value="factcheck" {{- if eq $format "factcheck" -}} selected{{- end -}}>
+              {{- i18n "format_factcheck" | default "Fact-check" -}}
+            </option>
+          </select>
+        </div>
+
+        {{/* Sort Options */}}
+        <div class="filter-group">
+          <label for="sort-filter" class="filter-label">Sortare:</label>
+          <select id="sort-filter" class="filter-select" onchange="updateFilters()">
+            <option value="date" {{- if eq $sort "date" -}} selected{{- end -}}>
+              Cel mai recent
+            </option>
+            <option value="title" {{- if eq $sort "title" -}} selected{{- end -}}>
+              Alfabetic
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{/* Content Grid with Sidebar */}}
+  <div class="list-content">
+    <div class="list-main">
+      {{- if gt (len $pages) 0 -}}
+        {{/* Articles Grid */}}
+        <div class="articles-grid" role="main" aria-label="Lista articolelor">
+          {{- range $pages -}}
+            {{- partial "card.html" . -}}
+          {{- end -}}
+        </div>
+
+        {{/* Pagination */}}
+        {{- $paginator := .Paginator -}}
+        {{- if gt $paginator.TotalPages 1 -}}
+          <nav class="pagination" aria-label="Paginare" role="navigation">
+            <div class="pagination-info">
+              Pagina {{- $paginator.PageNumber -}} din {{- $paginator.TotalPages -}}
+            </div>
+            
+            <div class="pagination-links">
+              {{- if $paginator.HasPrev -}}
+                <a href="{{- $paginator.Prev.URL -}}" class="pagination-link pagination-prev" rel="prev">
+                  <span aria-hidden="true">←</span>
+                  <span>Anterioară</span>
+                </a>
+              {{- end -}}
+              
+              {{/* Page numbers */}}
+              {{- $current := $paginator.PageNumber -}}
+              {{- $total := $paginator.TotalPages -}}
+              {{- $start := 1 -}}
+              {{- $end := $total -}}
+              
+              {{- if gt $total 7 -}}
+                {{- if gt $current 4 -}}
+                  {{- $start = sub $current 3 -}}
+                {{- end -}}
+                {{- if lt (add $current 3) $total -}}
+                  {{- $end = add $current 3 -}}
+                {{- end -}}
+              {{- end -}}
+              
+              {{- if gt $start 1 -}}
+                <a href="{{- (index $paginator.Pagers 0).URL -}}" class="pagination-link">1</a>
+                {{- if gt $start 2 -}}
+                  <span class="pagination-ellipsis">…</span>
+                {{- end -}}
+              {{- end -}}
+              
+              {{- range seq $start $end -}}
+                {{- if eq . $current -}}
+                  <span class="pagination-link pagination-current" aria-current="page">{{- . -}}</span>
+                {{- else -}}
+                  <a href="{{- (index $paginator.Pagers (sub . 1)).URL -}}" class="pagination-link">{{- . -}}</a>
+                {{- end -}}
+              {{- end -}}
+              
+              {{- if lt $end $total -}}
+                {{- if lt $end (sub $total 1) -}}
+                  <span class="pagination-ellipsis">…</span>
+                {{- end -}}
+                <a href="{{- (index $paginator.Pagers (sub $total 1)).URL -}}" class="pagination-link">{{- $total -}}</a>
+              {{- end -}}
+              
+              {{- if $paginator.HasNext -}}
+                <a href="{{- $paginator.Next.URL -}}" class="pagination-link pagination-next" rel="next">
+                  <span>Următoare</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              {{- end -}}
+            </div>
+          </nav>
+        {{- end -}}
+      {{- else -}}
+        {{/* Empty State */}}
+        <div class="empty-state" role="region" aria-label="Nu există articole">
+          <div class="empty-state-content">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" 
+                    fill="currentColor"/>
+            </svg>
+            <h3 class="empty-state-title">
+              {{- i18n "no_articles_yet" | default "Nu există articole încă" -}}
+            </h3>
+            <p class="empty-state-description">
+              {{- if $format -}}
+                Nu există articole cu formatul "{{- i18n (printf "format_%s" $format) | default $format -}}" în această categorie.
+              {{- else -}}
+                Această categorie nu conține încă articole. Revin în curând cu conținut nou.
+              {{- end -}}
+            </p>
+            <a href="{{- "/" | relURL -}}" class="empty-state-link">
+              ← Înapoi la pagina principală
+            </a>
+          </div>
+        </div>
+      {{- end -}}
+    </div>
+
+    {{/* Sidebar */}}
+    <aside class="list-sidebar" role="complementary" aria-label="{{- i18n "services_sidebar" | default "Servicii și informații utile" -}}">
+      {{- partial "sidebar.html" . -}}
+    </aside>
+  </div>
+</div>
+
+{{/* JavaScript for filter handling */}}
+<script>
+  function updateFilters() {
+    const formatSelect = document.getElementById('format-filter');
+    const sortSelect = document.getElementById('sort-filter');
+    const currentUrl = new URL(window.location);
+    
+    // Update URL parameters
+    if (formatSelect.value) {
+      currentUrl.searchParams.set('format', formatSelect.value);
+    } else {
+      currentUrl.searchParams.delete('format');
+    }
+    
+    if (sortSelect.value !== 'date') {
+      currentUrl.searchParams.set('sort', sortSelect.value);
+    } else {
+      currentUrl.searchParams.delete('sort');
+    }
+    
+    // Reload with new parameters
+    window.location.href = currentUrl.toString();
+  }
+  
+  // Initialize filters from URL parameters
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const formatParam = urlParams.get('format');
+    const sortParam = urlParams.get('sort');
+    
+    if (formatParam) {
+      const formatSelect = document.getElementById('format-filter');
+      if (formatSelect) formatSelect.value = formatParam;
+    }
+    
+    if (sortParam) {
+      const sortSelect = document.getElementById('sort-filter');
+      if (sortSelect) sortSelect.value = sortParam;
+    }
+  });
+</script>
+
+{{/* CSS Styles */}}
+<style>
+  .list-layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .list-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(127, 127, 127, 0.15);
+    padding-bottom: 2rem;
+  }
+  
+  /* Breadcrumbs */
+  .breadcrumbs {
+    margin-bottom: 1.5rem;
+  }
+  
+  .breadcrumb-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .breadcrumb-item {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  
+  .breadcrumb-item:not(:last-child)::after {
+    content: "›";
+    margin-left: 0.5rem;
+    color: rgba(127, 127, 127, 0.4);
+  }
+  
+  .breadcrumb-link {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .breadcrumb-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  
+  .breadcrumb-current {
+    color: var(--fg);
+    font-weight: 500;
+  }
+  
+  /* Title Section */
+  .list-title-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .list-title {
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 0.75rem 0;
+    color: var(--fg);
+    letter-spacing: -0.02em;
+  }
+  
+  .list-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  
+  .article-count {
+    font-weight: 600;
+    color: var(--accent);
+  }
+  
+  .last-updated {
+    opacity: 0.8;
+  }
+  
+  .list-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(var(--fg-rgb), 0.8);
+    margin: 0;
+    max-width: 60ch;
+  }
+  
+  /* Controls */
+  .list-controls {
+    margin-top: 1.5rem;
+  }
+  
+  .list-filters {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .filter-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  
+  .filter-select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(127, 127, 127, 0.3);
+    border-radius: var(--radius-small);
+    background: var(--bg-elev);
+    color: var(--fg);
+    font-size: 0.9rem;
+    min-width: 140px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .filter-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.2);
+  }
+  
+  /* Content Layout */
+  .list-content {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 3rem;
+    align-items: start;
+  }
+  
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  /* Pagination */
+  .pagination {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(127, 127, 127, 0.15);
+  }
+  
+  .pagination-info {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  
+  .pagination-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .pagination-link {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    min-height: 44px;
+    border: 1px solid rgba(127, 127, 127, 0.2);
+    border-radius: var(--radius-small);
+    background: var(--bg-elev);
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+  
+  .pagination-link:hover {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.05);
+    color: var(--accent);
+    text-decoration: none;
+  }
+  
+  .pagination-current {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+  
+  .pagination-ellipsis {
+    padding: 0.5rem;
+    color: var(--muted);
+  }
+  
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    margin: 2rem 0;
+  }
+  
+  .empty-state-content {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .empty-state-icon {
+    width: 4rem;
+    height: 4rem;
+    color: rgba(127, 127, 127, 0.4);
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-state-title {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--fg);
+    margin: 0 0 1rem 0;
+  }
+  
+  .empty-state-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0 0 2rem 0;
+  }
+  
+  .empty-state-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+  }
+  
+  .empty-state-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 64rem) {
+    .list-content {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    
+    .list-sidebar {
+      order: -1;
+    }
+    
+    .articles-grid {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+  }
+  
+  @media (max-width: 48rem) {
+    .list-layout {
+      padding: 0 0.5rem;
+    }
+    
+    .list-title {
+      font-size: 1.75rem;
+    }
+    
+    .list-filters {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .filter-group {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+    }
+    
+    .filter-select {
+      width: 100%;
+      min-width: unset;
+    }
+    
+    .articles-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .pagination-links {
+      gap: 0.25rem;
+    }
+    
+    .pagination-link {
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .filter-select {
+      border-width: 2px;
+    }
+    
+    .pagination-link {
+      border-width: 2px;
+    }
+  }
+  
+  /* Print styles */
+  @media print {
+    .list-controls,
+    .pagination,
+    .list-sidebar {
+      display: none;
+    }
+    
+    .list-content {
+      display: block;
+    }
+    
+    .articles-grid {
+      display: block;
+    }
+  }
+</style>
+{{ end }}

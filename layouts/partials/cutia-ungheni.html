@@ -1,0 +1,128 @@
+{{/*
+  Cutia Ungheni - Local Impact Box for National/EU Articles
+  
+  Purpose: Display local impact information for national/EU articles
+  Logic: Only renders if article is in national/ue-romania categories 
+         AND has at least one local impact field defined
+  
+  Required front matter fields (at least one must exist):
+  - impact_local: General local impact description  
+  - ce_se_schimba: What changes locally
+  - termene: Important deadlines/timelines
+  - unde_aplici: Where to apply/get more info
+  
+  Usage: {{ partial "cutia-ungheni.html" . }}
+*/}}
+
+{{- $page := . -}}
+{{- $categories := $page.Params.categories | default slice -}}
+{{- $isNational := or (in $categories "national") (in $categories "ue-romania") -}}
+
+{{- if $isNational -}}
+  {{- $impactLocal := $page.Params.impact_local -}}
+  {{- $ceSeSchimba := $page.Params.ce_se_schimba -}}
+  {{- $termene := $page.Params.termene -}}
+  {{- $undeAplici := $page.Params.unde_aplici -}}
+  
+  {{- if or $impactLocal $ceSeSchimba $termene $undeAplici -}}
+    <aside class="cutia-ungheni" role="complementary" aria-labelledby="cutia-heading">
+      <h3 id="cutia-heading" class="cutia-title">
+        {{- i18n "cutia_ungheni" | default "Cutia Ungheni" -}}
+      </h3>
+      
+      {{- if $impactLocal -}}
+        <div class="cutia-section">
+          <h4 class="cutia-section-title">{{- i18n "local_impact" | default "Impactul local" -}}</h4>
+          <p class="cutia-content">{{- $impactLocal | markdownify -}}</p>
+        </div>
+      {{- end -}}
+      
+      {{- if $ceSeSchimba -}}
+        <div class="cutia-section">
+          <h4 class="cutia-section-title">Ce se schimbă pentru Ungheni</h4>
+          <p class="cutia-content">{{- $ceSeSchimba | markdownify -}}</p>
+        </div>
+      {{- end -}}
+      
+      {{- if $termene -}}
+        <div class="cutia-section">
+          <h4 class="cutia-section-title">Termene importante</h4>
+          <p class="cutia-content">{{- $termene | markdownify -}}</p>
+        </div>
+      {{- end -}}
+      
+      {{- if $undeAplici -}}
+        <div class="cutia-section">
+          <h4 class="cutia-section-title">Unde aplici / Mai multe info</h4>
+          <p class="cutia-content">{{- $undeAplici | markdownify -}}</p>
+        </div>
+      {{- end -}}
+    </aside>
+
+    {{- /* Add CSS for Cutia Ungheni styling */ -}}
+    <style>
+      .cutia-ungheni {
+        background: linear-gradient(135deg, rgba(239, 71, 111, 0.05), rgba(239, 71, 111, 0.02));
+        border: 1px solid rgba(239, 71, 111, 0.2);
+        border-left: 4px solid var(--accent-2, #ef476f);
+        border-radius: var(--radius, 8px);
+        margin: 2rem 0;
+        padding: 1.5rem;
+        font-family: var(--font-serif);
+      }
+      
+      .cutia-title {
+        color: var(--accent-2, #ef476f);
+        font-family: var(--font-serif);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin: 0 0 1.25rem 0;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        font-variant-caps: small-caps;
+      }
+      
+      .cutia-section {
+        margin-bottom: 1rem;
+      }
+      
+      .cutia-section:last-child {
+        margin-bottom: 0;
+      }
+      
+      .cutia-section-title {
+        color: var(--fg);
+        font-family: var(--font-serif);
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin: 0 0 0.5rem 0;
+        opacity: 0.9;
+      }
+      
+      .cutia-content {
+        color: var(--fg);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 0;
+        opacity: 0.85;
+      }
+      
+      .cutia-content p {
+        margin: 0;
+      }
+      
+      .cutia-content p + p {
+        margin-top: 0.75rem;
+      }
+      
+      @media (max-width: 48rem) {
+        .cutia-ungheni {
+          margin: 1.5rem -1rem;
+          border-radius: 0;
+          border-left-width: 4px;
+          border-right: none;
+        }
+      }
+    </style>
+  {{- end -}}
+{{- end -}}

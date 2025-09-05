@@ -1,8 +1,21 @@
-{{/* Hero story: prefers featured=true then latest. */}}
+{{/* Hero story: prefers local category, then featured, then latest. */}}
 {{ $sec := .GetPage (printf "/%s/news" .Site.Language.Lang) }}
 {{ $pages := cond (ne $sec nil) (sort $sec.RegularPages "Date" "desc") (slice) }}
-{{ $featured := where $pages ".Params.featured" true }}
-{{ $hero := cond (gt (len $featured) 0) (index $featured 0) (cond (gt (len $pages) 0) (index $pages 0) nil) }}
+
+{{/* Priority 1: Most recent local article */}}
+{{ $localPages := where $pages "Params.categories" "intersect" (slice "local") }}
+{{ $hero := cond (gt (len $localPages) 0) (index $localPages 0) nil }}
+
+{{/* Priority 2: Featured articles if no local */}}
+{{ if not $hero }}
+  {{ $featured := where $pages ".Params.featured" true }}
+  {{ $hero = cond (gt (len $featured) 0) (index $featured 0) nil }}
+{{ end }}
+
+{{/* Priority 3: Latest article as fallback */}}
+{{ if not $hero }}
+  {{ $hero = cond (gt (len $pages) 0) (index $pages 0) nil }}
+{{ end }}
 {{ if $hero }}
   <article class="card hero">
     {{ $img := or $hero.Params.cover (cond (in $hero.Params.tags "politic") "img/placeholders/politic.svg" "img/placeholders/local.svg") }}
@@ -23,9 +36,17 @@
       {{ end }}
     {{ end }}
     <div class="hero-text">
-      <h2><a href="{{ $hero.RelPermalink }}">{{ $hero.Title }}</a></h2>
-      <p class="meta">{{ $hero.Date.Format "2006-01-02" }} · {{ delimit ($hero.Params.authors | default (slice)) ", " }}</p>
-      {{ with $hero.Summary }}<p>{{ . | plainify }}</p>{{ end }}
+      <div class="hero-meta">
+        {{ partial "pills.html" (dict "category" ($hero.Params.categories | first) "format" ($hero.Params.formats | first) "size" "large") }}
+        <time datetime="{{ $hero.Date.Format "2006-01-02T15:04:05Z07:00" }}" class="hero-date">
+          {{ $hero.Date.Format "2 January 2006" }}
+        </time>
+      </div>
+      <h1><a href="{{ $hero.RelPermalink }}">{{ $hero.Title }}</a></h1>
+      {{ with $hero.Summary }}<p class="hero-summary">{{ . | plainify }}</p>{{ end }}
+      {{ with $hero.Params.authors }}
+        <p class="hero-authors">{{ i18n "by" }} {{ delimit . ", " }}</p>
+      {{ end }}
     </div>
   </article>
 {{ end }}

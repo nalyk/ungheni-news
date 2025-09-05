@@ -1,0 +1,46 @@
+{{/* Demo layout to showcase service rail integration */}}
+<div class="demo-page">
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; max-width: 1200px; margin: 0 auto; padding: 1rem;">
+    
+    {{/* Main Content Area */}}
+    <div class="main-content">
+      <article class="card">
+        <h1>Demo Article with Service Rail</h1>
+        <p class="byline">
+          <span class="meta">{{ i18n "published" | default "Publicat" }} 2025-01-10 14:30</span>
+          · {{ i18n "by" | default "de" }} Demo Author
+          · <span class="meta">3 {{ i18n "min_read" | default "min" }}</span>
+        </p>
+        
+        <div class="content">
+          <p>Aceasta este o pagină demo care arată cum funcționează componentele Service Rail în sidebar.</p>
+          
+          <p>Service Rail-ul oferă informații utile pentru locuitorii din Ungheni:</p>
+          <ul>
+            <li><strong>Timpul de așteptare la frontieră</strong> - pentru cei care trec frecvent granița Ungheni-Iași</li>
+            <li><strong>Întreruperi de servicii</strong> - curent, apă, internet</li>
+            <li><strong>Lucrări rutiere</strong> - pentru a evita blocajele de trafic</li>
+            <li><strong>Newsletter Prut Brief</strong> - pentru a rămâne la curent cu știrile locale</li>
+          </ul>
+          
+          <p>Aceste componente sunt construite cu placeholder data și sunt gata pentru integrarea cu surse de date reale.</p>
+          
+          <p>Pe mobile, Service Rail-ul devine o bară orizontală în partea de sus a paginii pentru o experiență optimă pe ecrane mici.</p>
+        </div>
+      </article>
+    </div>
+    
+    {{/* Service Rail Sidebar */}}
+    <div class="sidebar-area">
+      {{ partial "sidebar.html" . }}
+    </div>
+    
+  </div>
+</div>
+
+{{/* Mobile demonstration note */}}
+<div class="mobile-demo-note" style="background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin: 2rem auto; max-width: 1200px;">
+  <h3>Mobile Experience</h3>
+  <p>On mobile devices (screens smaller than 64rem/1024px), the service rail components become a horizontal scrollable bar at the top of the page for quick access to key services.</p>
+  <p>Resize your browser window to see the responsive behavior.</p>
+</div>

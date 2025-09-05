@@ -1,0 +1,165 @@
+{{/* Example: How to integrate Service Rail in single page layout */}}
+{{/* 
+To integrate the Service Rail sidebar in your layouts, modify your existing templates like this:
+
+1. For single article pages (layouts/_default/single.html), replace the existing content with:
+*/}}
+
+{{ define "main" }}
+<div class="page-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+  
+  {{/* Main Content */}}
+  <div class="main-content">
+    <article class="card">
+      <h1>{{ .Title }}</h1>
+      <p class="byline">
+        <span class="meta">{{ i18n "published" | default "Publicat" }} {{ (.PublishDate | default .Date).Format "2006-01-02 15:04" }}</span>
+        {{ with .Params.authors }} · {{ i18n "by" | default "de" }}
+          {{ range $i, $a := . }}
+            {{ if $i }}, {{ end }}
+            <a href="{{ (site.GetPage (printf "/authors/%s" (urlize $a))).RelPermalink }}">{{ $a }}</a>
+          {{ end }}
+        {{ end }}
+        {{ if gt .Lastmod.Unix (.Date.Unix) }} · <span class="meta">{{ i18n "updated" | default "Actualizat" }} {{ .Lastmod.Format "2006-01-02 15:04" }}</span>{{ end }}
+        · <span class="meta">{{ .ReadingTime }} {{ i18n "min_read" | default "min" }}</span>
+      </p>
+      
+      {{/* Format badge and category */}}
+      <p class="meta">
+        {{ with .Params.formats }}
+          {{ range . }}<span class="tag">{{ i18n (print "format_" .) | default . }}</span>{{ end }}
+        {{ end }}
+        {{ with .Params.categories }}
+          · {{ range $i, $c := . }}{{ if $i }}, {{ end }}<a href="{{ (site.GetPage (printf "/categories/%s" $c)).RelPermalink }}">{{ $c }}</a>{{ end }}
+        {{ end }}
+      </p>
+      
+      {{ partial "head/jsonld.html" . }}
+      <div class="content">{{ .Content }}</div>
+      
+      {{/* Cutia Ungheni for national articles */}}
+      {{ if in .Params.categories "national" }}
+        {{ with .Params.impact }}
+          <aside class="card" style="border-left:3px solid var(--accent); padding: 1rem; margin-top:1rem">
+            <strong>{{ i18n "cutia_ungheni" | default "Cutia Ungheni" }}</strong>
+            <div style="margin-top:.5rem">{{ . | markdownify }}</div>
+          </aside>
+        {{ end }}
+      {{ end }}
+      
+      {{/* Related articles */}}
+      {{ $tags := .Params.tags }}
+      {{ if $tags }}
+        {{ $all := where .Site.RegularPages "Section" "news" }}
+        {{ $rel := first 3 (where $all "Params.tags" "intersect" $tags) }}
+        {{ if gt (len $rel) 0 }}
+        <aside class="card" style="margin-top:1.5rem">
+          <h3>{{ i18n "related" | default "Articole similare" }}</h3>
+          <ul class="list">
+          {{ range $rel }}
+            {{ if ne .Permalink $.Permalink }}
+              <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <span class="meta">· {{ .Date.Format "2006-01-02" }}</span></li>
+            {{ end }}
+          {{ end }}
+          </ul>
+        </aside>
+        {{ end }}
+      {{ end }}
+    </article>
+  </div>
+  
+  {{/* Service Rail Sidebar */}}
+  {{ partial "sidebar.html" . }}
+  
+</div>
+
+{{/* Mobile responsiveness */}}
+<style>
+@media (max-width: 64rem) {
+  .page-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
+</style>
+{{ end }}
+
+{{/*
+2. For category/list pages (layouts/_default/list.html), modify similarly:
+*/}}
+
+{{ define "main" }}
+<div class="page-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+  
+  {{/* Main Content */}}
+  <div class="main-content">
+    <section>
+      <h1>{{ .Title }}</h1>
+      <ul>
+        {{ range .Paginator.Pages }}
+          <li>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+            <small> · {{ .Date.Format "2006-01-02" }}</small>
+          </li>
+        {{ end }}
+      </ul>
+      <nav>
+        {{ template "_internal/pagination.html" . }}
+      </nav>
+    </section>
+  </div>
+  
+  {{/* Service Rail Sidebar */}}
+  {{ partial "sidebar.html" . }}
+  
+</div>
+
+{{/* Mobile responsiveness */}}
+<style>
+@media (max-width: 64rem) {
+  .page-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
+</style>
+{{ end }}
+
+{{/*
+3. To make this site-wide, you could also modify baseof.html to include the sidebar on all pages:
+*/}}
+
+<!doctype html>
+<html lang="{{ .Site.Language.Lang }}">
+  <head>
+    <!-- existing head content -->
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    {{ partial "header.html" . }}
+    {{ partial "home/breaking.html" . }}
+    <main id="content" class="container">
+      {{ if .IsHome }}
+        {{/* Homepage has its own layout */}}
+        {{ block "main" . }}{{ end }}
+      {{ else }}
+        {{/* Other pages get the sidebar layout */}}
+        <div class="page-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+          <div class="main-content">
+            {{ block "main" . }}{{ end }}
+          </div>
+          {{ partial "sidebar.html" . }}
+        </div>
+        <style>
+        @media (max-width: 64rem) {
+          .page-layout {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+          }
+        }
+        </style>
+      {{ end }}
+    </main>
+    {{ partial "footer.html" . }}
+  </body>
+</html>

@@ -44,3 +44,129 @@
   translation: "Opinie"
 - id: format_factcheck
   translation: "Fact-check"
+# Navigation and UI elements
+- id: menu
+  translation: "Meniu"
+- id: search
+  translation: "Caută"
+- id: view_all
+  translation: "Vezi toate"
+- id: no_articles_yet
+  translation: "Nu există articole încă"
+- id: archive
+  translation: "Arhivă"
+- id: all_categories
+  translation: "Toate categoriile"
+- id: all_formats
+  translation: "Toate formatele"
+- id: read_more
+  translation: "Citește mai mult"
+- id: share
+  translation: "Distribuie"
+- id: tags
+  translation: "Etichete"
+- id: authors
+  translation: "Autori"
+- id: cutia_ungheni
+  translation: "Cutia Ungheni"
+- id: local_impact
+  translation: "Impactul local"
+# Service Rail Components
+- id: border_wait_title
+  translation: "Timp de așteptare la frontieră"
+- id: last_updated
+  translation: "Actualizat"
+- id: auto
+  translation: "Auto"
+- id: pedestrian
+  translation: "Pietoni"
+- id: freight
+  translation: "Marfă"
+- id: minutes
+  translation: "min"
+- id: view_details
+  translation: "Vezi detalii complete"
+- id: border_data_source
+  translation: "Date furnizate de Poliția de Frontieră"
+- id: outages_title
+  translation: "Întreruperi programate/curente"
+- id: electricity
+  translation: "Energie electrică"
+- id: water
+  translation: "Apă"
+- id: internet
+  translation: "Internet"
+- id: planned
+  translation: "Programat"
+- id: current
+  translation: "Curent"
+- id: next_day
+  translation: "următoarea zi"
+- id: no_outages
+  translation: "Fără întreruperi"
+- id: no_planned_outages
+  translation: "Nu sunt întreruperi planificate"
+- id: report_outage
+  translation: "Raportează o întrerupere"
+- id: outages_data_source
+  translation: "Date de la furnizori locali"
+- id: roadworks_title
+  translation: "Lucrări rutiere azi"
+- id: minor_impact
+  translation: "Impact minor"
+- id: major_impact
+  translation: "Impact major"
+- id: road_closed
+  translation: "Închis"
+- id: road_repairs
+  translation: "Reparații carosabil, circulația pe o bandă"
+- id: asphalt_works
+  translation: "Lucrări de asfaltare"
+- id: all_day
+  translation: "Toată ziua"
+- id: estimated_completion
+  translation: "Finalizare estimată"
+- id: end_of_week
+  translation: "sfârșitul săptămânii"
+- id: no_other_works
+  translation: "Nu sunt alte lucrări raportate"
+- id: report_roadwork
+  translation: "Raportează lucrări"
+- id: roadworks_data_source
+  translation: "Date de la Primăria Ungheni și cetățeni"
+- id: prut_brief_title
+  translation: "Prut Brief - Newsletter local"
+- id: prut_brief_description
+  translation: "Cele mai importante știri locale, zilnic la 18:00"
+- id: subscribers
+  translation: "abonați"
+- id: email_address
+  translation: "Adresa de email"
+- id: email_placeholder
+  translation: "adresa@email.com"
+- id: subscribe_free
+  translation: "Abonează-te gratuit"
+- id: sample_newsletter
+  translation: "Vezi un exemplu de newsletter"
+- id: privacy_note
+  translation: "Nu spam, dezabonare oricând. Datele sunt protejate conform GDPR."
+- id: invalid_email
+  translation: "Vă rugăm să introduceți o adresă de email validă"
+- id: subscribing
+  translation: "Se înregistrează..."
+- id: subscription_success
+  translation: "Mulțumim! Veți primi primul newsletter astăzi la 18:00."
+- id: services_sidebar
+  translation: "Servicii și informații utile"
+- id: border_status
+  translation: "Frontieră"
+- id: outages_short
+  translation: "Întreruperi"
+- id: roadworks_short
+  translation: "Lucrări"
+- id: newsletter_short
+  translation: "Newsletter"
+- id: services_note
+  translation: "Serviciile sunt actualizate automat. Pentru probleme sau sugestii"
+- id: contact_us
+  translation: "contactați-ne"

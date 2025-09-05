@@ -1,0 +1,171 @@
+# Main navigation configuration for Triunghi.md
+# Categories ordered by priority: Local > Border/Transport > Economy/FEZ > Public Services > Education/Health > National > EU/Romania
+
+main_menu:
+  - slug: "local"
+    weight: 1
+    icon: "map-pin"
+    ro:
+      name: "Local"
+      description: "Știri din Ungheni și împrejurimi"
+    ru:
+      name: "Местные"
+      description: "Новости Унген и окрестностей"
+    
+  - slug: "frontiera-transport" 
+    weight: 2
+    icon: "truck"
+    ro:
+      name: "Frontieră & Transport"
+      description: "Vama, transport feroviar și rutier"
+    ru:
+      name: "Граница и транспорт" 
+      description: "Таможня, железнодорожный и автомобильный транспорт"
+    
+  - slug: "economie-fez"
+    weight: 3
+    icon: "trending-up"
+    ro:
+      name: "Economie & FEZ"
+      description: "Zona Economică Liberă și business local"
+    ru:
+      name: "Экономика и СЭЗ"
+      description: "Свободная экономическая зона и местный бизнес"
+    
+  - slug: "servicii-publice"
+    weight: 4
+    icon: "settings"
+    ro:
+      name: "Servicii publice"
+      description: "Utilități, administrație, servicii cetățenești"
+    ru:
+      name: "Общественные услуги"
+      description: "Коммунальные услуги, администрация, гражданские услуги"
+    
+  - slug: "educatie-sanatate"
+    weight: 5
+    icon: "heart"
+    ro:
+      name: "Educație & Sănătate"
+      description: "Școli, spitale și servicii medicale"
+    ru:
+      name: "Образование и здоровье"
+      description: "Школы, больницы и медицинские услуги"
+    
+  - slug: "national"
+    weight: 6
+    icon: "flag"
+    ro:
+      name: "Național"
+      description: "Știri naționale cu impact local"
+    ru:
+      name: "Национальные"
+      description: "Национальные новости с местным влиянием"
+    
+  - slug: "ue-romania"
+    weight: 7
+    icon: "globe"
+    ro:
+      name: "UE & România"
+      description: "Relații cu UE, România și proiecte transfrontaliere"
+    ru:
+      name: "ЕС и Румыния"
+      description: "Отношения с ЕС, Румынией и трансграничные проекты"
+
+# Secondary navigation items
+secondary_menu:
+  - slug: "despre"
+    ro:
+      name: "Despre"
+      url: "/despre/"
+    ru:
+      name: "О нас"
+      url: "/despre/"
+      
+  - slug: "contact"
+    ro:
+      name: "Contact"
+      url: "/contact/"
+    ru:
+      name: "Контакт"
+      url: "/contact/"
+      
+  - slug: "arhiva"
+    ro:
+      name: "Arhivă"
+      url: "/news/"
+    ru:
+      name: "Архив"
+      url: "/news/"
+
+# Format navigation (for article filtering)
+formats_menu:
+  - slug: "stire"
+    weight: 1
+    ro:
+      name: "Știri"
+      description: "Informații factuale și la zi"
+    ru:
+      name: "Новости"
+      description: "Фактическая и актуальная информация"
+      
+  - slug: "analiza"
+    weight: 2
+    ro:
+      name: "Analize"
+      description: "Context și interpretare în profunzime"
+    ru:
+      name: "Аналитика"
+      description: "Контекст и глубокая интерпретация"
+      
+  - slug: "explainer"
+    weight: 3
+    ro:
+      name: "Explainer"
+      description: "Explicații clare pentru subiecte complexe"
+    ru:
+      name: "Эксплейнер"
+      description: "Ясные объяснения сложных тем"
+      
+  - slug: "opinie"
+    weight: 4
+    ro:
+      name: "Opinii"
+      description: "Puncte de vedere și comentarii"
+    ru:
+      name: "Мнения"
+      description: "Точки зрения и комментарии"
+      
+  - slug: "factcheck"
+    weight: 5
+    ro:
+      name: "Fact-check"
+      description: "Verificarea informațiilor și dezinformării"
+    ru:
+      name: "Фактчек"
+      description: "Проверка информации и дезинформации"
+
+# Social media and external links
+social_links:
+  - platform: "telegram"
+    url: "https://t.me/triunghi_md"
+    icon: "message-circle"
+    
+  - platform: "facebook"
+    url: "https://facebook.com/triunghi.md"
+    icon: "facebook"
+    
+  - platform: "email"
+    url: "mailto:redactie@triunghi.md"
+    icon: "mail"
+
+# Editorial principles for "Cutia Ungheni" (mandatory local context box)
+editorial:
+  cutia_ungheni:
+    required_for: ["national", "ue-romania"] # Categories that must include local context
+    ro:
+      title: "Cutia Ungheni"
+      description: "Impactul local al acestei știri"
+    ru:
+      title: "Коробка Унген"
+      description: "Местное влияние этой новости"

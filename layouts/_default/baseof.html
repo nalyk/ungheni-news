@@ -7,7 +7,7 @@
     {{ partial "head/seo.html" . }}
     {{ partial "head/theme-colors.html" . }}
     {{ $opts := dict "targetPath" "assets/main.css" "enableSourceMap" false "minify" true }}
-    {{ $css := resources.Get "css/main.scss" | resources.ToCSS $opts | resources.Fingerprint }}
+    {{ $css := resources.Get "css/main.scss" | css.Sass $opts | resources.Fingerprint }}
     <link rel="preload" href="{{ $css.RelPermalink }}" as="style" />
     <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}" />
     <link rel="preload" href="{{ "/fonts/ibmplexsans/IBMPlexSans-Regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>

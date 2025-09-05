@@ -1,0 +1,159 @@
+{{/*
+  Pills Component - Category and Format Badges
+  
+  Purpose: Display category and format badges for articles with proper styling
+  
+  Parameters:
+  - .category (string): Category slug from article front matter
+  - .format (string): Format slug from article front matter  
+  - .size (optional string): "small", "medium" (default), or "large"
+  
+  Data sources:
+  - Categories: site.Data.categories
+  - Formats: site.Data.formats.formats
+  
+  Usage: 
+  {{ partial "pills.html" (dict "category" .Params.categories "format" .Params.formats "size" "medium") }}
+  {{ partial "pills.html" (dict "category" (.Params.categories | first) "format" (.Params.formats | first)) }}
+*/}}
+
+{{- $category := .category -}}
+{{- $format := .format -}}
+{{- $size := .size | default "medium" -}}
+{{- $categories := site.Data.categories -}}
+{{- $formats := site.Data.formats.formats -}}
+{{- $currentLang := site.Language.Lang -}}
+
+{{- /* Category pill */ -}}
+{{- if $category -}}
+  {{- range $categories -}}
+    {{- if eq .slug $category -}}
+      {{- $categoryName := cond (eq $currentLang "ru") (.ru | default .ro) .ro -}}
+      <span class="pill pill-category pill-{{ $size }}" 
+            role="img" 
+            aria-label="Categoria: {{ $categoryName }}">
+        {{- $categoryName -}}
+      </span>
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Format pill */ -}}
+{{- if $format -}}
+  {{- range $formats -}}
+    {{- if eq .slug $format -}}
+      {{- $formatName := "" -}}
+      {{- $formatColor := .color | default "gray" -}}
+      {{- if eq $currentLang "ru" -}}
+        {{- $formatName = .ru.name -}}
+      {{- else -}}
+        {{- $formatName = .ro.name -}}
+      {{- end -}}
+      <span class="pill pill-format pill-{{ $size }} pill-{{ $formatColor }}" 
+            role="img" 
+            aria-label="Format: {{ $formatName }}">
+        {{- $formatName -}}
+      </span>
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* CSS for pills styling */ -}}
+<style>
+  .pill {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    line-height: 1;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    margin-right: 0.5rem;
+    margin-bottom: 0.25rem;
+    transition: opacity 0.2s ease;
+  }
+  
+  .pill:last-child {
+    margin-right: 0;
+  }
+  
+  /* Size variants */
+  .pill-small {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+  }
+  
+  .pill-medium {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+  }
+  
+  .pill-large {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.75rem;
+  }
+  
+  /* Category pills - neutral styling */
+  .pill-category {
+    background: rgba(127, 127, 127, 0.15);
+    color: var(--muted);
+    border: 1px solid rgba(127, 127, 127, 0.2);
+  }
+  
+  /* Format pills - color-coded based on format type */
+  .pill-format {
+    color: white;
+    border: none;
+  }
+  
+  .pill-blue {
+    background: #2563eb;
+  }
+  
+  .pill-purple {
+    background: #7c3aed;
+  }
+  
+  .pill-green {
+    background: #059669;
+  }
+  
+  .pill-orange {
+    background: #ea580c;
+  }
+  
+  .pill-red {
+    background: #dc2626;
+  }
+  
+  .pill-gray {
+    background: #6b7280;
+  }
+  
+  /* Hover effects for interactive contexts */
+  a:hover .pill,
+  .pill:hover {
+    opacity: 0.8;
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .pill-category {
+      background: var(--bg-elev);
+      color: var(--fg);
+      border: 2px solid var(--muted);
+    }
+    
+    .pill-format {
+      border: 2px solid currentColor;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .pill {
+      transition: none;
+    }
+  }
+</style>

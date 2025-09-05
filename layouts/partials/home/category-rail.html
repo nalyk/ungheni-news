@@ -1,0 +1,344 @@
+{{/*
+  Category Rail Component - Enhanced rail with empty states
+  
+  Purpose: Display articles from a specific category in horizontal scrollable layout
+  
+  Parameters:
+  - .ctx (page context): Site context
+  - .title (string): Translated section title
+  - .category (string): Category slug to filter by
+  - .limit (int): Maximum number of articles to show
+  
+  Features:
+  - Empty state handling with call-to-action
+  - Horizontal scrollable layout for mobile
+  - Grid layout for desktop
+  - Accessible navigation and focus management
+*/}}
+
+{{ $ctx := .ctx }}
+{{ $title := .title }}
+{{ $category := .category }}
+{{ $limit := .limit | default 6 }}
+
+{{/* Get articles from category */}}
+{{ $sec := $ctx.GetPage (printf "/%s/news" $ctx.Site.Language.Lang) }}
+{{ $allPages := cond (ne $sec nil) (sort $sec.RegularPages "Date" "desc") (slice) }}
+{{ $pages := where $allPages "Params.categories" "intersect" (slice $category) }}
+{{ $pages = first $limit $pages }}
+
+{{/* Get category data for icons and styling */}}
+{{ $categoryData := "" }}
+{{ range $ctx.Site.Data.categories }}
+  {{ if eq .slug $category }}
+    {{ $categoryData = . }}
+  {{ end }}
+{{ end }}
+
+<section class="category-rail" aria-labelledby="rail-{{ $category }}">
+  <div class="rail-header">
+    <h2 id="rail-{{ $category }}" class="rail-title">
+      {{ $title }}
+      <span class="article-count">({{ len $pages }})</span>
+    </h2>
+    {{ if gt (len $pages) 0 }}
+      <a href="{{ $ctx.Site.BaseURL }}/{{ $ctx.Site.Language.Lang }}/categories/{{ $category }}/" 
+         class="rail-link" 
+         aria-label="Vezi toate articolele din {{ $title }}">
+        {{ i18n "view_all" | default "Vezi toate" }} →
+      </a>
+    {{ end }}
+  </div>
+
+  {{ if gt (len $pages) 0 }}
+    <div class="rail-content">
+      <div class="cards-rail">
+        {{ range $pages }}
+          {{ partial "card.html" . }}
+        {{ end }}
+      </div>
+    </div>
+  {{ else }}
+    {{/* Empty State */}}
+    <div class="rail-empty-state">
+      <div class="empty-state-content">
+        {{ if $categoryData }}
+          <div class="empty-state-icon" aria-hidden="true">
+            {{ with $categoryData.icon }}
+              {{ . | safeHTML }}
+            {{ else }}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10,9 9,9 8,9"/>
+              </svg>
+            {{ end }}
+          </div>
+        {{ end }}
+        
+        <h3 class="empty-state-title">Nu există articole în {{ $title }}</h3>
+        <p class="empty-state-message">
+          Urmărește această secțiune pentru ultimele știri din {{ $title | lower }}.
+        </p>
+        
+        <div class="empty-state-actions">
+          <a href="{{ $ctx.Site.BaseURL }}/{{ $ctx.Site.Language.Lang }}/contact/" 
+             class="cta-button" 
+             aria-label="Trimite un pont pentru {{ $title }}">
+            📧 Trimite pont
+          </a>
+          <a href="{{ $ctx.Site.BaseURL }}/{{ $ctx.Site.Language.Lang }}/categories/" 
+             class="secondary-link"
+             aria-label="Explorează alte categorii">
+            Explorează alte categorii
+          </a>
+        </div>
+      </div>
+    </div>
+  {{ end }}
+</section>
+
+{{/* Category Rail Styles */}}
+<style>
+  .category-rail {
+    margin: 2rem 0;
+    padding: 1.5rem 0;
+  }
+  
+  .rail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .rail-title {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--fg);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .article-count {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+    font-family: var(--font-sans);
+  }
+  
+  .rail-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: opacity 0.2s ease;
+  }
+  
+  .rail-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+  
+  .cards-rail {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+    
+    /* Mobile: horizontal scroll */
+    @media (max-width: 64rem) {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 300px));
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 0 0 1rem 0;
+      gap: 1rem;
+      
+      scrollbar-width: thin;
+      scrollbar-color: var(--muted) transparent;
+    }
+  }
+  
+  .cards-rail::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .cards-rail::-webkit-scrollbar-track {
+    background: rgba(127, 127, 127, 0.1);
+    border-radius: 3px;
+  }
+  
+  .cards-rail::-webkit-scrollbar-thumb {
+    background: var(--muted);
+    border-radius: 3px;
+  }
+  
+  .cards-rail .card-article {
+    scroll-snap-align: start;
+    min-width: 250px;
+  }
+  
+  /* Empty State Styles */
+  .rail-empty-state {
+    border: 2px dashed rgba(127, 127, 127, 0.2);
+    border-radius: var(--radius);
+    padding: 3rem 2rem;
+    text-align: center;
+    background: rgba(127, 127, 127, 0.02);
+  }
+  
+  .empty-state-icon {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1.5rem;
+    color: var(--muted);
+    opacity: 0.6;
+  }
+  
+  .empty-state-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .empty-state-title {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+    color: var(--fg);
+  }
+  
+  .empty-state-message {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0 0 2rem 0;
+    max-width: 32rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .empty-state-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  
+  .cta-button {
+    background: var(--accent);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .cta-button:hover {
+    background: var(--accent-hover, var(--accent));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    color: white;
+  }
+  
+  .secondary-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+  }
+  
+  .secondary-link:hover {
+    color: var(--fg);
+    background: rgba(127, 127, 127, 0.1);
+    text-decoration: underline;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 48rem) {
+    .category-rail {
+      margin: 1.5rem 0;
+      padding: 1rem 0;
+    }
+    
+    .rail-header {
+      margin-bottom: 1rem;
+    }
+    
+    .rail-title {
+      font-size: 1.25rem;
+    }
+    
+    .rail-empty-state {
+      padding: 2rem 1rem;
+    }
+    
+    .empty-state-actions {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .cta-button,
+    .secondary-link {
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+    }
+  }
+  
+  /* Print styles */
+  @media print {
+    .category-rail {
+      break-inside: avoid;
+    }
+    
+    .rail-empty-state {
+      display: none;
+    }
+    
+    .cards-rail {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .rail-empty-state {
+      border: 2px solid var(--muted);
+      background: var(--bg-elev);
+    }
+    
+    .cta-button {
+      border: 2px solid currentColor;
+    }
+  }
+  
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .cta-button,
+    .secondary-link,
+    .rail-link {
+      transition: none;
+    }
+    
+    .cta-button:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+</style>

@@ -1,0 +1,58 @@
+{{/* Border Wait Times Service Rail Component */}}
+<section class="service-rail border-wait card">
+  <h3>{{ i18n "border_wait_title" | default "Timp de așteptare la frontieră" }}</h3>
+  <div class="border-crossings">
+    <div class="crossing-header">
+      <h4>Ungheni-Iași</h4>
+      <div class="last-updated">
+        <small>{{ i18n "last_updated" | default "Actualizat" }}: {{ now.Format "15:04" }}</small>
+      </div>
+    </div>
+    
+    <div class="wait-times">
+      <div class="wait-item">
+        <div class="transport-type">
+          <span class="icon auto">🚗</span>
+          <span class="label">{{ i18n "auto" | default "Auto" }}</span>
+        </div>
+        <div class="wait-duration good">
+          <span class="time">15-20</span>
+          <span class="unit">{{ i18n "minutes" | default "min" }}</span>
+        </div>
+      </div>
+      
+      <div class="wait-item">
+        <div class="transport-type">
+          <span class="icon pedestrian">🚶</span>
+          <span class="label">{{ i18n "pedestrian" | default "Pietoni" }}</span>
+        </div>
+        <div class="wait-duration excellent">
+          <span class="time">5-10</span>
+          <span class="unit">{{ i18n "minutes" | default "min" }}</span>
+        </div>
+      </div>
+      
+      <div class="wait-item">
+        <div class="transport-type">
+          <span class="icon freight">🚛</span>
+          <span class="label">{{ i18n "freight" | default "Marfă" }}</span>
+        </div>
+        <div class="wait-duration moderate">
+          <span class="time">30-45</span>
+          <span class="unit">{{ i18n "minutes" | default "min" }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="border-actions">
+      <a href="#" class="action-link primary">
+        {{ i18n "view_details" | default "Vezi detalii complete" }}
+        <span class="external-indicator">↗</span>
+      </a>
+    </div>
+  </div>
+  
+  <div class="service-note">
+    <small>{{ i18n "border_data_source" | default "Date furnizate de Poliția de Frontieră" }}</small>
+  </div>
+</section>

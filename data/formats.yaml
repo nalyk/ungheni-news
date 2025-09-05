@@ -1,0 +1,116 @@
+# Article formats for Triunghi.md editorial system
+# Defines the 5 core news format types with descriptions and editorial guidelines
+
+formats:
+  - slug: "stire"
+    weight: 1
+    color: "blue"
+    icon: "newspaper"
+    ro:
+      name: "Știre"
+      description: "Informații factuale și la zi"
+      guidelines: "Cine, ce, când, unde, cum. Fapte verificate, surse citate."
+    ru:
+      name: "Новость"
+      description: "Фактическая и актуальная информация"
+      guidelines: "Кто, что, когда, где, как. Проверенные факты, цитируемые источники."
+    editorial:
+      length: "300-800 cuvinte"
+      sources_required: 2
+      verification_level: "standard"
+      
+  - slug: "analiza"
+    weight: 2
+    color: "purple"
+    icon: "bar-chart"
+    ro:
+      name: "Analiză"
+      description: "Context și interpretare în profunzime"
+      guidelines: "De ce se întâmplă, ce înseamnă, ce urmează. Context istoric și implicații."
+    ru:
+      name: "Аналитика"
+      description: "Контекст и глубокая интерпретация"
+      guidelines: "Почему происходит, что это означает, что дальше. Исторический контекст и последствия."
+    editorial:
+      length: "800-1500 cuvinte"
+      sources_required: 3
+      verification_level: "enhanced"
+      
+  - slug: "explainer"
+    weight: 3
+    color: "green"
+    icon: "help-circle"
+    ro:
+      name: "Explainer"
+      description: "Explicații clare pentru subiecte complexe"
+      guidelines: "Termeni simpli, structură logică, exemple concrete. Răspunde la 'Cum funcționează?'"
+    ru:
+      name: "Эксплейнер"
+      description: "Ясные объяснения сложных тем"
+      guidelines: "Простые термины, логическая структура, конкретные примеры. Отвечает на 'Как это работает?'"
+    editorial:
+      length: "600-1200 cuvinte"
+      sources_required: 2
+      verification_level: "standard"
+      visual_elements: true
+      
+  - slug: "opinie"
+    weight: 4
+    color: "orange"
+    icon: "message-square"
+    ro:
+      name: "Opinie"
+      description: "Puncte de vedere și comentarii"
+      guidelines: "Poziție clară, argumente susținute, disclaimer editorial. Separat de știri."
+    ru:
+      name: "Мнение"
+      description: "Точки зрения и комментарии"
+      guidelines: "Четкая позиция, обоснованные аргументы, редакционный дисклеймер. Отдельно от новостей."
+    editorial:
+      length: "400-1000 cuvinte"
+      sources_required: 1
+      verification_level: "minimal"
+      author_byline: true
+      disclaimer_required: true
+      
+  - slug: "factcheck"
+    weight: 5
+    color: "red"
+    icon: "check-circle"
+    ro:
+      name: "Fact-check"
+      description: "Verificarea informațiilor și dezinformării"
+      guidelines: "Metodologie transparentă, surse primare, concluzie clară (Adevărat/Fals/Parțial)."
+    ru:
+      name: "Фактчек"
+      description: "Проверка информации и дезинформации"
+      guidelines: "Прозрачная методология, первичные источники, четкий вывод (Правда/Ложь/Частично)."
+    editorial:
+      length: "500-1200 cuvinte"
+      sources_required: 3
+      verification_level: "maximum"
+      rating_required: true
+      methodology_required: true
+
+# Format combinations and editorial guidelines
+editorial_guidelines:
+  triunghi_principles:
+    - "Oameni + Documente + Date la fiecare subiect"
+    - "Local > Național > Internațional (60/30/10)"
+    - "Cutia Ungheni obligatorie pe orice piesă non-locală"
+    - "Zero bullshit, etichete clare de format"
+    
+  format_hierarchy:
+    primary: ["stire", "analiza"]      # Core news formats
+    secondary: ["explainer", "opinie"] # Context and commentary
+    special: ["factcheck"]             # Verification specialty
+    
+  length_guidelines:
+    short: "300-600 cuvinte"   # știre, opinie
+    medium: "600-1000 cuvinte" # explainer, factcheck
+    long: "1000-1500 cuvinte"  # analiză în profunzime
+    
+  visual_requirements:
+    explainer: ["diagrame", "infografice", "flowcharts"]
+    analiza: ["grafice", "tabele", "timeline"]
+    factcheck: ["rating visual", "surse vizuale", "comparații"]

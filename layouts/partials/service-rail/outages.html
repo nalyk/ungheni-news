@@ -1,0 +1,66 @@
+{{/* Outages Tracker Service Rail Component */}}
+<section class="service-rail outages card">
+  <h3>{{ i18n "outages_title" | default "Întreruperi programate/curente" }}</h3>
+  
+  <div class="outages-list">
+    <div class="outage-item">
+      <div class="outage-header">
+        <div class="service-info">
+          <span class="service-icon electricity">⚡</span>
+          <span class="service-name">{{ i18n "electricity" | default "Energie electrică" }}</span>
+        </div>
+        <div class="status-indicator moderate">
+          <span class="status-dot"></span>
+          <span class="status-text">{{ i18n "planned" | default "Programat" }}</span>
+        </div>
+      </div>
+      <div class="outage-details">
+        <div class="location">Sector 3, str. Mihai Eminescu</div>
+        <div class="schedule">14:00-16:00</div>
+      </div>
+    </div>
+    
+    <div class="outage-item">
+      <div class="outage-header">
+        <div class="service-info">
+          <span class="service-icon water">💧</span>
+          <span class="service-name">{{ i18n "water" | default "Apă" }}</span>
+        </div>
+        <div class="status-indicator active">
+          <span class="status-dot"></span>
+          <span class="status-text">{{ i18n "current" | default "Curent" }}</span>
+        </div>
+      </div>
+      <div class="outage-details">
+        <div class="location">Centrul orașului</div>
+        <div class="schedule">22:00-06:00 {{ i18n "next_day" | default "următoarea zi" }}</div>
+      </div>
+    </div>
+    
+    <div class="outage-item">
+      <div class="outage-header">
+        <div class="service-info">
+          <span class="service-icon internet">📶</span>
+          <span class="service-name">{{ i18n "internet" | default "Internet" }}</span>
+        </div>
+        <div class="status-indicator good">
+          <span class="status-dot"></span>
+          <span class="status-text">{{ i18n "no_outages" | default "Fără întreruperi" }}</span>
+        </div>
+      </div>
+      <div class="outage-details">
+        <div class="location">{{ i18n "no_planned_outages" | default "Nu sunt întreruperi planificate" }}</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="outages-actions">
+    <a href="#" class="action-link secondary">
+      {{ i18n "report_outage" | default "Raportează o întrerupere" }}
+    </a>
+  </div>
+  
+  <div class="service-note">
+    <small>{{ i18n "outages_data_source" | default "Date de la furnizori locali" }}</small>
+  </div>
+</section>

@@ -1,0 +1,53 @@
+{{/*
+  Deduplication Utility - Track Seen Article IDs
+  
+  Purpose: Maintain a set of seen article IDs across homepage sections to avoid duplicates
+  Uses Hugo's .Scratch functionality to maintain state across page rendering
+  
+  Parameters:
+  - .id (required): Article ID to check/add (typically page.RelPermalink or page.File.UniqueID)
+  
+  Returns:
+  - true: Article ID already seen (duplicate)
+  - false: Article ID not seen yet (first occurrence, now added to seen set)
+  
+  Usage:
+  {{ $isDupe := partial "dedupe.html" (dict "id" .RelPermalink) }}
+  {{ if not $isDupe }}
+    <!-- Render the article -->
+    {{ partial "card.html" . }}
+  {{ end }}
+  
+  Advanced usage with custom ID:
+  {{ $customId := printf "%s-%s" .File.UniqueID .Params.category }}
+  {{ $isDupe := partial "dedupe.html" (dict "id" $customId) }}
+  
+  Reset seen IDs (useful for testing):
+  {{ .Scratch.Delete "seenIDs" }}
+*/}}
+
+{{- $articleId := .id -}}
+
+{{- if not $articleId -}}
+  {{- errorf "dedupe.html partial requires 'id' parameter" -}}
+{{- end -}}
+
+{{- /* Initialize seenIDs set if it doesn't exist */ -}}
+{{- if not (.Scratch.Get "seenIDs") -}}
+  {{- .Scratch.Set "seenIDs" slice -}}
+{{- end -}}
+
+{{- /* Get current seen IDs */ -}}
+{{- $seenIDs := .Scratch.Get "seenIDs" -}}
+
+{{- /* Check if this ID has been seen before */ -}}
+{{- $isDuplicate := in $seenIDs $articleId -}}
+
+{{- /* If not seen, add to the set */ -}}
+{{- if not $isDuplicate -}}
+  {{- $newSeenIDs := $seenIDs | append $articleId -}}
+  {{- .Scratch.Set "seenIDs" $newSeenIDs -}}
+{{- end -}}
+
+{{- /* Return the duplicate status */ -}}
+{{- return $isDuplicate -}}
