@@ -5,7 +5,7 @@ date: 2025-09-05T11:00:00+03:00
 publishDate: 2025-09-05T11:00:00+03:00
 draft: false
 authors: ["Redacția"]
-tags: ["local"]
+tags: ["local", "sports"]
 cover: "/img/placeholders/local.svg"
 summary: Un nou parc de joacă a fost deschis pentru copii în Dănuțeni, cu echipamente moderne și zone verzi.
 ---

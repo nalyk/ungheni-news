@@ -1,0 +1,15 @@
+- key: latest_news
+  tag: ""
+  limit: 8
+- key: local
+  tag: "local"
+  limit: 6
+- key: politics
+  tag: "politic"
+  limit: 6
+- key: education
+  tag: "education"
+  limit: 6
+- key: sports
+  tag: "sports"
+  limit: 6

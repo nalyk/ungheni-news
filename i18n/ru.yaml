@@ -6,3 +6,7 @@
   translation: "Политика"
 - id: breaking
   translation: "Срочно"
+- id: education
+  translation: "Образование"
+- id: sports
+  translation: "Спорт"

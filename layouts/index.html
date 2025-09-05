@@ -4,9 +4,14 @@
       {{ partial "home/hero.html" . }}
     </section>
     <section class="rails">
-      {{ partial "home/rail.html" (dict "ctx" . "title" (i18n "latest_news") "limit" 8) }}
-      {{ partial "home/rail.html" (dict "ctx" . "title" (i18n "local") "tag" "local" "limit" 6) }}
-      {{ partial "home/rail.html" (dict "ctx" . "title" (i18n "politics") "tag" "politic" "limit" 6) }}
+      {{ range $.Site.Data.rails }}
+        {{ $title := i18n .key }}
+        {{ if .tag }}
+          {{ partial "home/rail.html" (dict "ctx" $ "title" $title "tag" .tag "limit" (.limit | default 6)) }}
+        {{ else }}
+          {{ partial "home/rail.html" (dict "ctx" $ "title" $title "limit" (.limit | default 8)) }}
+        {{ end }}
+      {{ end }}
     </section>
   </div>
 {{ end }}
