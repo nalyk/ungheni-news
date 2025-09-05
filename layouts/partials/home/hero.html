@@ -16,7 +16,7 @@
           <img src="{{ $lg.RelPermalink }}" srcset="{{ $sm.RelPermalink }} 800w, {{ $md.RelPermalink }} 1200w, {{ $lg.RelPermalink }} 1600w" sizes="(max-width: 50rem) 100vw, 50vw" width="1600" height="900" alt="" loading="eager" fetchpriority="high" />
         </a>
       {{ else }}
-        {{ $static := . | relURL }}
+        {{ $static := . | absURL }}
         <a href="{{ $hero.RelPermalink }}" class="hero-media">
           <img src="{{ $static }}" width="1600" height="900" alt="" loading="eager" fetchpriority="high" />
         </a>
