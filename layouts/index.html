@@ -2,7 +2,10 @@
   {{ partial "search.html" . }}
   <section>
     <h2>{{ i18n "latest_news" | default "Latest News" }}</h2>
-    {{ $news := where .Site.RegularPages "Section" "news" }}
+    {{ $all := .Site.RegularPages }}
+    <p><small>Total pages: {{ len $all }}</small></p>
+    {{ $news := where $all "Section" "news" }}
+    <p><small>News pages: {{ len $news }}</small></p>
     {{ $sorted := sort $news "Date" "desc" }}
     {{ $p := .Paginate $sorted }}
     <ul>
@@ -18,4 +21,3 @@
     </nav>
   </section>
 {{ end }}
-
