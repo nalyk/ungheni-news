@@ -4,7 +4,7 @@
     <h2>{{ i18n "latest_news" | default "Latest News" }}</h2>
     {{ $all := .Site.RegularPages }}
     <p><small>Total pages: {{ len $all }}</small></p>
-    {{ $news := where $all "Section" "news" }}
+    {{ $news := where $all "Type" "news" }}
     <p><small>News pages: {{ len $news }}</small></p>
     {{ $sorted := sort $news "Date" "desc" }}
     {{ $p := .Paginate $sorted }}
