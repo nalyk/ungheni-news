@@ -6,6 +6,8 @@ publishDate: 2025-09-05T12:00:00+03:00
 draft: false
 authors: ["Редакция"]
 tags: ["politic", "education"]
+categories: ["economie-fez", "national"]
+formats: ["analiza"]
 summary: В приоритетах — инфраструктура и образование; документ принят на публичном заседании.
 ---
 

@@ -26,3 +26,5 @@ removePathAccents = true
 [taxonomies]
   tag = "tags"
   author = "authors"
+  category = "categories"
+  format = "formats"

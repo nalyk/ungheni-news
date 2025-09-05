@@ -20,3 +20,27 @@
   translation: "min"
 - id: related
   translation: "Articole similare"
+- id: category_local
+  translation: "Local"
+- id: category_frontiera_transport
+  translation: "Frontieră & Transport"
+- id: category_economie_fez
+  translation: "Economie & FEZ"
+- id: category_servicii_publice
+  translation: "Servicii publice"
+- id: category_educatie_sanatate
+  translation: "Educație & Sănătate"
+- id: category_national
+  translation: "Național"
+- id: category_ue_romania
+  translation: "UE & România"
+- id: format_stire
+  translation: "Știre"
+- id: format_analiza
+  translation: "Analiză"
+- id: format_explainer
+  translation: "Explainer"
+- id: format_opinie
+  translation: "Opinie"
+- id: format_factcheck
+  translation: "Fact-check"

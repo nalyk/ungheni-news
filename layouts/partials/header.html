@@ -2,8 +2,11 @@
   <div class="container wrap">
     <div class="brand"><a href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a></div>
     <nav aria-label="Main">
-      {{ $news := .GetPage (printf "/%s/news" .Site.Language.Lang) }}
-      <a href="{{ cond (ne $news nil) $news.RelPermalink "/news/" }}" {{ if eq .Section "news" }}aria-current="page"{{ end }}>Știri</a>
+      {{ $cats := site.Data.categories }}
+      {{ range $i, $c := $cats }}
+        {{ $title := cond (eq $.Site.Language.Lang "ru") ($c.ru | default $c.ro) $c.ro }}
+        <a href="{{ (site.GetPage (printf "/categories/%s" $c.slug)).RelPermalink }}">{{ $title }}</a>
+      {{ end }}
       <a href="{{ (site.GetPage "taxonomyTerm" "authors").RelPermalink }}" {{ if eq .Kind "term" }}aria-current="page"{{ end }}>Autori</a>
       <span class="lang-switch" aria-label="Language">
         {{ range $.Sites }}

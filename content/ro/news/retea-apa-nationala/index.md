@@ -6,6 +6,8 @@ publishDate: 2025-09-05T11:30:00+03:00
 draft: false
 authors: ["Redacția"]
 tags: ["local", "breaking"]
+categories: ["servicii-publice"]
+formats: ["stire"]
 summary: Furnizorul de apă anunță intervenții programate pe strada Națională; pot apărea întreruperi temporare.
 ---
 

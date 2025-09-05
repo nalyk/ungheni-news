@@ -8,6 +8,8 @@
         {{ $title := i18n .key }}
         {{ if .tag }}
           {{ partial "home/rail.html" (dict "ctx" $ "title" $title "tag" .tag "limit" (.limit | default 6)) }}
+        {{ else if .category }}
+          {{ partial "home/rail.html" (dict "ctx" $ "title" $title "category" .category "limit" (.limit | default 6)) }}
         {{ else }}
           {{ partial "home/rail.html" (dict "ctx" $ "title" $title "limit" (.limit | default 8)) }}
         {{ end }}

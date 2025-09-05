@@ -1,15 +1,24 @@
 - key: latest_news
   tag: ""
   limit: 8
-- key: local
-  tag: "local"
+- key: category_local
+  category: "local"
   limit: 6
-- key: politics
-  tag: "politic"
+- key: category_frontiera_transport
+  category: "frontiera-transport"
   limit: 6
-- key: education
-  tag: "education"
+- key: category_economie_fez
+  category: "economie-fez"
   limit: 6
-- key: sports
-  tag: "sports"
+- key: category_servicii_publice
+  category: "servicii-publice"
+  limit: 6
+- key: category_educatie_sanatate
+  category: "educatie-sanatate"
+  limit: 6
+- key: category_national
+  category: "national"
+  limit: 6
+- key: category_ue_romania
+  category: "ue-romania"
   limit: 6

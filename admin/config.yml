@@ -32,6 +32,9 @@ collections:
     fields:
       - { name: title, label: Title }
       - { name: summary, label: Summary, widget: text, required: false }
+      - { name: categories, label: Categoria, widget: select, multiple: true, options: ["local","frontiera-transport","economie-fez","servicii-publice","educatie-sanatate","national","ue-romania"] }
+      - { name: formats, label: Format, widget: select, multiple: true, options: ["stire","analiza","explainer","opinie","factcheck"], required: false }
+      - { name: impact, label: "Ce înseamnă pentru Ungheni (Național)", widget: text, required: false }
       - { name: slug, label: Slug, required: false, hint: "Explicit slug recommended (latin)" }
       - { name: date, label: Date, widget: datetime }
       - { name: publishDate, label: Publish At, widget: datetime, required: false }
@@ -53,6 +56,9 @@ collections:
     fields:
       - { name: title, label: Title }
       - { name: summary, label: Summary, widget: text, required: false }
+      - { name: categories, label: Категория, widget: select, multiple: true, options: ["local","frontiera-transport","economie-fez","servicii-publice","educatie-sanatate","national","ue-romania"] }
+      - { name: formats, label: Формат, widget: select, multiple: true, options: ["stire","analiza","explainer","opinie","factcheck"], required: false }
+      - { name: impact, label: "Что это значит для Унгень (Нац.)", widget: text, required: false }
       - { name: slug, label: Slug, required: false, hint: "Explicit slug recommended (latin)" }
       - { name: date, label: Date, widget: datetime }
       - { name: publishDate, label: Publish At, widget: datetime, required: false }

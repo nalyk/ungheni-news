@@ -6,6 +6,8 @@ publishDate: 2025-09-05T11:00:00+03:00
 draft: false
 authors: ["Редакция"]
 tags: ["local", "sports"]
+categories: ["local"]
+formats: ["stire"]
 summary: Для детей открыт новый парк с современными игровыми зонами и зелёными насаждениями.
 ---
 

@@ -2,11 +2,14 @@
 {{ $ctx := .ctx }}
 {{ $title := .title }}
 {{ $tag := .tag }}
+{{ $category := .category }}
 {{ $limit := .limit | default 6 }}
 {{ $sec := $ctx.GetPage (printf "/%s/news" $ctx.Site.Language.Lang) }}
 {{ $pages := cond (ne $sec nil) (sort $sec.RegularPages "Date" "desc") (slice) }}
 {{ if $tag }}
   {{ $pages = where $pages "Params.tags" "intersect" (slice $tag) }}
+{{ else if $category }}
+  {{ $pages = where $pages "Params.categories" "intersect" (slice $category) }}
 {{ end }}
 {{ $pages = first $limit $pages }}
 {{ if gt (len $pages) 0 }}

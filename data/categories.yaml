@@ -1,0 +1,44 @@
+- slug: local
+  ro: "Local"
+  ru: "Местные"
+  subsections:
+    - ro: "Administrație"
+    - ro: "Infrastructură"
+    - ro: "Comunitate & Evenimente"
+    - ro: "Siguranță"
+    - ro: "Cultură & Sport"
+- slug: frontiera-transport
+  ro: "Frontieră & Transport"
+  ru: "Граница и транспорт"
+  subsections:
+    - ro: "Trafic Vamal"
+    - ro: "Căi Ferate"
+    - ro: "Drumuri & rute"
+- slug: economie-fez
+  ro: "Economie & FEZ"
+  ru: "Экономика и СЭЗ"
+  subsections:
+    - ro: "FEZ Ungheni-Business"
+    - ro: "IMM-uri"
+    - ro: "Locuri de muncă"
+- slug: servicii-publice
+  ro: "Servicii publice"
+  ru: "Общественные услуги"
+  subsections:
+    - ro: "Întreruperi (apă/energie)"
+    - ro: "Salubritate"
+    - ro: "Programări"
+    - ro: "Hărți utile"
+- slug: educatie-sanatate
+  ro: "Educație & Sănătate"
+  ru: "Образование и здоровье"
+- slug: national
+  ro: "Național"
+  ru: "Национальные"
+- slug: ue-romania
+  ro: "UE & România"
+  ru: "ЕС и Румыния"
+  subsections:
+    - ro: "Proiecte RO-MD"
+    - ro: "Granturi UE"
+    - ro: "Mobilitate muncă"

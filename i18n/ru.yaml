@@ -20,3 +20,27 @@
   translation: "мин"
 - id: related
   translation: "Похожие материалы"
+- id: category_local
+  translation: "Местные"
+- id: category_frontiera_transport
+  translation: "Граница и транспорт"
+- id: category_economie_fez
+  translation: "Экономика и СЭЗ"
+- id: category_servicii_publice
+  translation: "Общественные услуги"
+- id: category_educatie_sanatate
+  translation: "Образование и здоровье"
+- id: category_national
+  translation: "Национальные"
+- id: category_ue_romania
+  translation: "ЕС и Румыния"
+- id: format_stire
+  translation: "Новость"
+- id: format_analiza
+  translation: "Аналитика"
+- id: format_explainer
+  translation: "Эксплейнер"
+- id: format_opinie
+  translation: "Мнение"
+- id: format_factcheck
+  translation: "Фактчек"
