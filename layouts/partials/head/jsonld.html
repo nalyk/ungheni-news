@@ -2,16 +2,20 @@
 {{- with .Params.authors -}}
   {{- range . -}}{{ $authorList = $authorList | append (dict "@type" "Person" "name" .) -}}{{- end -}}
 {{- end -}}
+{{ $site := .Site }}
+{{ $publisher := (index $site.Data "site").publisher | default (dict "name" $site.Title "logo" "img/placeholders/local.svg") }}
+{{ $img := (or .Params.cover "img/placeholders/local.svg") | relURL | absURL }}
 <script type="application/ld+json">
 {{ dict 
   "@context" "https://schema.org" 
-  "@type" "Article" 
+  "@type" "NewsArticle" 
   "headline" .Title 
-  "datePublished" (.PublishDate | default .Date | time.Format "2006-01-02T15:04:05Z07:00") 
-  "dateModified" (.Lastmod | time.Format "2006-01-02T15:04:05Z07:00") 
+  "datePublished" ((.PublishDate | default .Date).UTC | time.Format "2006-01-02T15:04:05Z07:00") 
+  "dateModified" (.Lastmod.UTC | time.Format "2006-01-02T15:04:05Z07:00") 
   "inLanguage" .Site.Language.Lang 
   "author" $authorList 
+  "image" (slice $img) 
+  "publisher" (dict "@type" "Organization" "name" ($publisher.name | default $site.Title) "logo" (dict "@type" "ImageObject" "url" ((($publisher.logo | default "img/placeholders/local.svg") | relURL) | absURL)))
   "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink) 
  | jsonify }}
 </script>
-

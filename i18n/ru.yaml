@@ -10,3 +10,13 @@
   translation: "Образование"
 - id: sports
   translation: "Спорт"
+- id: published
+  translation: "Опубликовано"
+- id: by
+  translation: "автор"
+- id: updated
+  translation: "Обновлено"
+- id: min_read
+  translation: "мин"
+- id: related
+  translation: "Похожие материалы"

@@ -10,3 +10,13 @@
   translation: "Educație"
 - id: sports
   translation: "Sport"
+- id: published
+  translation: "Publicat"
+- id: by
+  translation: "de"
+- id: updated
+  translation: "Actualizat"
+- id: min_read
+  translation: "min"
+- id: related
+  translation: "Articole similare"

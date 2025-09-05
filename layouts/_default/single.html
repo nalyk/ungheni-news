@@ -2,15 +2,35 @@
 <article class="card">
   <h1>{{ .Title }}</h1>
   <p class="byline">
-    <span class="meta">{{ .Date.Format "2006-01-02 15:04" }}</span>
-    {{ with .Params.authors }} · 
+    <span class="meta">{{ i18n "published" | default "Publicat" }} {{ (.PublishDate | default .Date).Format "2006-01-02 15:04" }}</span>
+    {{ with .Params.authors }} · {{ i18n "by" | default "de" }}
       {{ range $i, $a := . }}
         {{ if $i }}, {{ end }}
         <a href="{{ (site.GetPage (printf "/authors/%s" (urlize $a))).RelPermalink }}">{{ $a }}</a>
       {{ end }}
     {{ end }}
+    {{ if gt .Lastmod.Unix (.Date.Unix) }} · <span class="meta">{{ i18n "updated" | default "Actualizat" }} {{ .Lastmod.Format "2006-01-02 15:04" }}</span>{{ end }}
+    · <span class="meta">{{ .ReadingTime }} {{ i18n "min_read" | default "min" }}</span>
   </p>
   {{ partial "head/jsonld.html" . }}
   <div class="content">{{ .Content }}</div>
+  {{/* Related by tags */}}
+  {{ $tags := .Params.tags }}
+  {{ if $tags }}
+    {{ $all := where .Site.RegularPages "Section" "news" }}
+    {{ $rel := first 3 (where $all "Params.tags" "intersect" $tags) }}
+    {{ if gt (len $rel) 0 }}
+    <aside class="card" style="margin-top:1.5rem">
+      <h3>{{ i18n "related" | default "Articole similare" }}</h3>
+      <ul class="list">
+      {{ range $rel }}
+        {{ if ne .Permalink $.Permalink }}
+          <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <span class="meta">· {{ .Date.Format "2006-01-02" }}</span></li>
+        {{ end }}
+      {{ end }}
+      </ul>
+    </aside>
+    {{ end }}
+  {{ end }}
 </article>
 {{ end }}
