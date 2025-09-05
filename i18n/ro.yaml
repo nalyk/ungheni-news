@@ -1,0 +1,8 @@
+- id: latest_news
+  translation: "Ultimele știri"
+- id: local
+  translation: "Local"
+- id: politics
+  translation: "Politică"
+- id: breaking
+  translation: "Ultima oră"

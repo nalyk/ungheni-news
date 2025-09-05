@@ -4,9 +4,9 @@
       {{ partial "home/hero.html" . }}
     </section>
     <section class="rails">
-      {{ partial "home/rail.html" (dict "ctx" . "title" (i18n "latest_news" | default "Latest News") "limit" 8) }}
-      {{ partial "home/rail.html" (dict "ctx" . "title" "Local" "tag" "local" "limit" 6) }}
-      {{ partial "home/rail.html" (dict "ctx" . "title" "Politică" "tag" "politic" "limit" 6) }}
+      {{ partial "home/rail.html" (dict "ctx" . "title" (i18n "latest_news") "limit" 8) }}
+      {{ partial "home/rail.html" (dict "ctx" . "title" (i18n "local") "tag" "local" "limit" 6) }}
+      {{ partial "home/rail.html" (dict "ctx" . "title" (i18n "politics") "tag" "politic" "limit" 6) }}
     </section>
   </div>
 {{ end }}

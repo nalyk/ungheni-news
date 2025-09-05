@@ -1,0 +1,28 @@
+{{/* Breaking bar: items tagged 'breaking' in last 12 hours for current language */}}
+{{ $sec := .GetPage (printf "/%s/news" .Site.Language.Lang) }}
+{{ $pages := cond (ne $sec nil) (sort $sec.RegularPages "Date" "desc") (slice) }}
+{{ $now := now.Unix }}
+{{ $threshold := sub $now 43200 }}
+{{ $breaking := where $pages "Params.tags" "intersect" (slice "breaking") }}
+{{ $recent := where $breaking ".Date.Unix" "ge" $threshold }}
+{{ if gt (len $recent) 0 }}
+<div class="breaking">
+  <div class="container">
+    <strong class="label">Breaking</strong>
+    <div class="ticker">
+      {{ range first 10 $recent }}
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{ end }}
+    </div>
+  </div>
+  <style>
+    .breaking{background:var(--accent-2);color:#0b0c0e}
+    .breaking .container{display:flex;gap:.75rem;align-items:center;overflow:hidden}
+    .breaking .label{padding:.25rem .5rem;background:#0b0c0e;color:#fff;border-radius:4px;margin:.35rem 0}
+    .breaking .ticker{display:flex;gap:1.5rem;white-space:nowrap;animation:slide 30s linear infinite}
+    .breaking .ticker a{color:#0b0c0e;font-weight:600}
+    @keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  </style>
+</div>
+{{ end }}
+

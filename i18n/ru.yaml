@@ -1,0 +1,8 @@
+- id: latest_news
+  translation: "Последние новости"
+- id: local
+  translation: "Местные"
+- id: politics
+  translation: "Политика"
+- id: breaking
+  translation: "Срочно"
