@@ -29,6 +29,8 @@ jobs:
         with:
           hugo-version: '0.127.0'
           extended: true
+      - name: Hugo get modules (themes)
+        run: hugo mod get github.com/CaiChenghan/hugo-theme-stack
       - name: Hugo build
         run: hugo --gc --minify
       - name: Build Pagefind index
@@ -46,4 +48,3 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-
