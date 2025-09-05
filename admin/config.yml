@@ -31,11 +31,14 @@ collections:
     format: "frontmatter"
     fields:
       - { name: title, label: Title }
+      - { name: summary, label: Summary, widget: text, required: false }
       - { name: slug, label: Slug, required: false, hint: "Explicit slug recommended (latin)" }
       - { name: date, label: Date, widget: datetime }
       - { name: publishDate, label: Publish At, widget: datetime, required: false }
       - { name: expiryDate, label: Expire At, widget: datetime, required: false }
       - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: featured, label: Featured on homepage, widget: boolean, default: false }
+      - { name: cover, label: Cover image (path or URL), widget: image, required: false }
       - { name: authors, label: Authors, widget: list, required: false }
       - { name: tags, label: Tags, widget: list, required: false }
       - { name: body, label: Body, widget: markdown }
@@ -49,11 +52,14 @@ collections:
     format: "frontmatter"
     fields:
       - { name: title, label: Title }
+      - { name: summary, label: Summary, widget: text, required: false }
       - { name: slug, label: Slug, required: false, hint: "Explicit slug recommended (latin)" }
       - { name: date, label: Date, widget: datetime }
       - { name: publishDate, label: Publish At, widget: datetime, required: false }
       - { name: expiryDate, label: Expire At, widget: datetime, required: false }
       - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: featured, label: Featured on homepage, widget: boolean, default: false }
+      - { name: cover, label: Cover image (path or URL), widget: image, required: false }
       - { name: authors, label: Authors, widget: list, required: false }
       - { name: tags, label: Tags, widget: list, required: false }
       - { name: body, label: Body, widget: markdown }

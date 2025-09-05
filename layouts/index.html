@@ -1,18 +1,12 @@
 {{ define "main" }}
   <div class="home grid" style="container-type:inline-size;">
-    <section class="lead card">
-      {{ partial "search.html" . }}
-      <h2>{{ i18n "latest_news" | default "Latest News" }}</h2>
-      {{ $sec := .GetPage (printf "/%s/news" .Site.Language.Lang) }}
-      {{ $list := cond (ne $sec nil) (first 12 (sort $sec.RegularPages "Date" "desc")) (slice) }}
-      <ul class="list">
-        {{ range $list }}
-          <li>
-            <span class="meta">{{ .Date.Format "2006-01-02" }}</span>
-            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-          </li>
-        {{ end }}
-      </ul>
+    <section class="lead">
+      {{ partial "home/hero.html" . }}
+    </section>
+    <section class="rails">
+      {{ partial "home/rail.html" (dict "ctx" . "title" (i18n "latest_news" | default "Latest News") "limit" 8) }}
+      {{ partial "home/rail.html" (dict "ctx" . "title" "Local" "tag" "local" "limit" 6) }}
+      {{ partial "home/rail.html" (dict "ctx" . "title" "Politică" "tag" "politic" "limit" 6) }}
     </section>
   </div>
 {{ end }}

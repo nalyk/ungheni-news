@@ -1,0 +1,25 @@
+{{/* Hero story: prefers featured=true then latest. */}}
+{{ $sec := .GetPage (printf "/%s/news" .Site.Language.Lang) }}
+{{ $pages := cond (ne $sec nil) (sort $sec.RegularPages "Date" "desc") (slice) }}
+{{ $featured := where $pages ".Params.featured" true }}
+{{ $hero := cond (gt (len $featured) 0) (index $featured 0) (cond (gt (len $pages) 0) (index $pages 0) nil) }}
+{{ if $hero }}
+  <article class="card hero">
+    {{ $img := $hero.Params.cover }}
+    {{ with $img }}
+      {{ $res := (resources.Get .) | default ($hero.Resources.GetMatch .) }}
+      {{ with $res }}
+        {{ $thumb := .Fit "1600x900 webp" | resources.Fingerprint }}
+        <a href="{{ $hero.RelPermalink }}" class="hero-media">
+          <img src="{{ $thumb.RelPermalink }}" width="1600" height="900" alt="" loading="eager" fetchpriority="high" />
+        </a>
+      {{ end }}
+    {{ end }}
+    <div class="hero-text">
+      <h2><a href="{{ $hero.RelPermalink }}">{{ $hero.Title }}</a></h2>
+      <p class="meta">{{ $hero.Date.Format "2006-01-02" }} · {{ delimit ($hero.Params.authors | default (slice)) ", " }}</p>
+      {{ with $hero.Summary }}<p>{{ . | plainify }}</p>{{ end }}
+    </div>
+  </article>
+{{ end }}
+

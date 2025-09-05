@@ -1,0 +1,25 @@
+{{/* Rail: render N recent posts from a tag (optional), else generic recent. */}}
+{{ $ctx := .ctx }}
+{{ $title := .title }}
+{{ $tag := .tag }}
+{{ $limit := .limit | default 6 }}
+{{ $sec := $ctx.GetPage (printf "/%s/news" $ctx.Site.Language.Lang) }}
+{{ $pages := cond (ne $sec nil) (sort $sec.RegularPages "Date" "desc") (slice) }}
+{{ if $tag }}
+  {{ $pages = where $pages "Params.tags" "intersect" (slice $tag) }}
+{{ end }}
+{{ $pages = first $limit $pages }}
+{{ if gt (len $pages) 0 }}
+<section class="rail card">
+  <h3>{{ $title }}</h3>
+  <ul class="list">
+  {{ range $pages }}
+    <li>
+      <span class="meta">{{ .Date.Format "01-02" }}</span>
+      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    </li>
+  {{ end }}
+  </ul>
+</section>
+{{ end }}
+
