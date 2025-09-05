@@ -1,4 +1,4 @@
-baseURL = "/"
+baseURL = "https://nalyk.github.io/ungheni-news/"
 title = "Newsroom"
 timeZone = "Europe/Chisinau"
 defaultContentLanguage = "ro"
