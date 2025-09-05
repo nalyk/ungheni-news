@@ -20,6 +20,9 @@ removePathAccents = true
 [outputs]
   home = ["HTML", "RSS", "JSON"]
 
+[params]
+  theme_palette = "modern"
+
 [taxonomies]
   tag = "tags"
   author = "authors"

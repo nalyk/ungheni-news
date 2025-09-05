@@ -1,0 +1,30 @@
+{{/* Theme color system driven by data/colors.yaml and params.theme_palette */}}
+{{ $name := .Site.Params.theme_palette | default "modern" }}
+{{ $data := .Site.Data.colors }}
+{{ $light := index $data $name | default (dict) }}
+{{ $dark := index $data (print $name "-dark") | default (dict) }}
+<style>
+:root{
+  --bg: {{ or ($light.bg) "#ffffff" }};
+  --bg-elev: {{ or ($light.surface) "#f8fafc" }};
+  --fg: {{ or ($light.fg) "#0b0f19" }};
+  --muted: {{ or ($light.muted) "#6b7280" }};
+  --border: {{ or ($light.border) "#e2e8f0" }};
+  --accent: {{ or ($light.accent) "#2563eb" }};
+  --accent-2: {{ or ($light.accent2) "#e11d48" }};
+  --on-accent: {{ or ($light.onAccent) "#ffffff" }};
+  --on-accent-2: {{ or ($light.onAccent2) "#0b0f19" }};
+}
+[data-theme="dark"]{
+  --bg: {{ or ($dark.bg) "#0b0f19" }};
+  --bg-elev: {{ or ($dark.surface) "#111827" }};
+  --fg: {{ or ($dark.fg) "#e5e7eb" }};
+  --muted: {{ or ($dark.muted) "#94a3b8" }};
+  --border: {{ or ($dark.border) "#1f2937" }};
+  --accent: {{ or ($dark.accent) "#60a5fa" }};
+  --accent-2: {{ or ($dark.accent2) "#fb7185" }};
+  --on-accent: {{ or ($dark.onAccent) "#0b0f19" }};
+  --on-accent-2: {{ or ($dark.onAccent2) "#0b0f19" }};
+}
+</style>
+

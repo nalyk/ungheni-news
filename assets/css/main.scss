@@ -23,14 +23,14 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 .container { max-width: var(--maxw); margin: 0 auto; padding: 0 1rem; }
-header.site { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid rgba(127,127,127,.15); }
+header.site { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--border); }
 header .wrap { display: flex; gap: 1rem; align-items: center; justify-content: space-between; padding: .75rem 0; }
 .brand { font-weight: 700; letter-spacing: .2px; }
 nav a { color: var(--fg); opacity: .9; margin-left: 1rem; }
 nav a[aria-current="page"] { color: var(--accent); }
 
 main { padding-block: 1.5rem 3rem; }
-footer.site { border-top: 1px solid rgba(127,127,127,.15); padding: 2rem 0; color: var(--muted); }
+footer.site { border-top: 1px solid var(--border); padding: 2rem 0; color: var(--muted); }
 
 .grid { display: grid; gap: 1rem; grid-template-columns: repeat(12, 1fr); }
 .card { background: var(--bg-elev); border-radius: var(--radius); padding: 1rem; }
