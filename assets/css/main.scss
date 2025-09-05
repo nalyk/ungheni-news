@@ -1,4 +1,79 @@
 /* Ungheni News Theme - Modern, fast, accessible */
+/* Self-hosted fonts: IBM Plex Sans & Serif (Latin Ext + Cyrillic) */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/ungheni-news/fonts/ibmplexsans/IBMPlexSans-Regular.woff2') format('woff2');
+  unicode-range: U+000-024F, U+0259, U+1E00-1EFF, U+0400-052F, U+2DE0-2DFF, U+A640-A69F; /* Latin ext + Cyrillic */
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/ungheni-news/fonts/ibmplexsans/IBMPlexSans-Italic.woff2') format('woff2');
+  unicode-range: U+000-024F, U+0259, U+1E00-1EFF, U+0400-052F, U+2DE0-2DFF, U+A640-A69F;
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/ungheni-news/fonts/ibmplexsans/IBMPlexSans-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/ungheni-news/fonts/ibmplexsans/IBMPlexSans-MediumItalic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/ungheni-news/fonts/ibmplexsans/IBMPlexSans-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/ungheni-news/fonts/ibmplexsans/IBMPlexSans-BoldItalic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/ungheni-news/fonts/ibmplexserif/IBMPlexSerif-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/ungheni-news/fonts/ibmplexserif/IBMPlexSerif-Italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/ungheni-news/fonts/ibmplexserif/IBMPlexSerif-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Serif';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/ungheni-news/fonts/ibmplexserif/IBMPlexSerif-BoldItalic.woff2') format('woff2');
+}
+
+:root { --font-sans: 'IBM Plex Sans', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif; --font-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif; }
 :root {
   --bg: #0b0c0e;
   --bg-elev: #13151a;
@@ -16,7 +91,7 @@
 html, body { height: 100%; }
 body {
   margin: 0; background: var(--bg); color: var(--fg);
-  font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  font: 16px/1.65 var(--font-sans);
   text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
 }
 a { color: var(--accent); text-decoration: none; }
@@ -52,7 +127,7 @@ footer.site { border-top: 1px solid var(--border); padding: 2rem 0; color: var(-
   .home .lead { grid-column: 1 / span 8; }
 }
 
-article h1 { font-size: clamp(1.75rem, 2.5vw, 2.5rem); margin: .25rem 0 .5rem; }
+article h1 { font-family: var(--font-serif); font-weight: 700; font-size: clamp(1.75rem, 2.5vw, 2.5rem); margin: .25rem 0 .5rem; }
 article .byline { color: var(--muted); font-size: .95rem; }
 article .content img { max-width: 100%; height: auto; border-radius: var(--radius); }
 article .content figure { margin: 1rem 0; }
