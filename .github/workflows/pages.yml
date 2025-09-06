@@ -32,7 +32,7 @@ jobs:
       - name: Hugo build
         run: hugo --gc --minify
       - name: Build Pagefind index
-        run: npx -y pagefind --source public
+        run: npx -y pagefind --site public --output-subdir pagefind --root-selector "main" --exclude-selectors "nav,header,footer,.sidebar"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
