@@ -28,6 +28,8 @@ The architecture combines static site generation with headless CMS editorial wor
 - `make check` - Build with warnings exposed for debugging
 - `make validate` - Validate content rules (draft/publishDate conflicts)
 
+**IMPORTANT**: Hugo is installed locally at `/home/nalyk/bin/hugo`. Always use this path when calling Hugo directly, or use the `HUGO=/home/nalyk/bin/hugo` prefix with make commands to ensure compatibility.
+
 ### Deployment
 - Push to `main` branch triggers automatic Cloudflare Pages deployment
 - Cloudflare Worker runs scheduled builds every 5 minutes

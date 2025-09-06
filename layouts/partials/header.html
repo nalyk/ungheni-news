@@ -3,8 +3,8 @@
     <!-- Brand -->
     <div class="brand">
       <a href="{{ .Site.Home.RelPermalink }}" class="brand-link">
-        <span class="brand-text">{{ .Site.Title }}</span>
-        <span class="brand-tagline">{{ .Site.Params.tagline }}</span>
+        <img src="/ungheni-news/img/logo-symbol.svg" alt="Triunghi symbol" class="brand-symbol" width="48" height="48">
+        <span class="brand-text">triunghi.md</span>
       </a>
     </div>
     
@@ -13,7 +13,13 @@
       {{ $cats := site.Data.categories }}
       {{ range first 3 $cats }}
         {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-        <a href="{{ (site.GetPage (printf "/categories/%s" .slug)).RelPermalink }}" class="nav-link primary">
+        <a href="{{ (site.GetPage (printf "/categories/%s" .slug)).RelPermalink }}" class="nav-link primary" {{ if eq .priority "high" }}data-priority="local"{{ end }}>
+          {{ if eq .slug "local" }}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="nav-icon">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          {{ end }}
           {{ $title }}
         </a>
       {{ end }}
@@ -39,20 +45,26 @@
     
     <!-- Header Actions -->
     <div class="header-actions">
-      <!-- Integrated Search -->
+      <!-- Enhanced Search with Autocomplete -->
       <div class="search-container">
         <button class="search-toggle" id="search-toggle" aria-label="{{ i18n "search" }}" aria-expanded="false">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
+          <span class="search-hint">{{ i18n "search_hint" | default "Căutare" }}</span>
         </button>
         <form class="search-form" id="header-search" role="search">
-          <input type="search" class="search-input" placeholder="{{ i18n "search_placeholder" }}" aria-label="{{ i18n "search_placeholder" }}">
-          <button type="submit" class="search-submit" aria-label="{{ i18n "search" }}">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
+          <div class="search-input-wrapper">
+            <input type="search" class="search-input" placeholder="{{ i18n "search_placeholder" }}" aria-label="{{ i18n "search_placeholder" }}" autocomplete="off">
+            <button type="submit" class="search-submit" aria-label="{{ i18n "search" }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="search-suggestions" id="search-suggestions">
+            <!-- Suggestions will be populated here -->
+          </div>
         </form>
       </div>
       
@@ -100,8 +112,17 @@
         <nav class="mobile-nav-menu" aria-label="Navigare mobilă">
           {{ range $cats }}
             {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-            <a href="{{ (site.GetPage (printf "/categories/%s" .slug)).RelPermalink }}" class="mobile-nav-link">
-              {{ $title }}
+            <a href="{{ (site.GetPage (printf "/categories/%s" .slug)).RelPermalink }}" class="mobile-nav-link" {{ if eq .priority "high" }}data-priority="local"{{ end }}>
+              {{ if eq .slug "local" }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="nav-icon">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2" fill="none"/>
+                  <circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+              {{ end }}
+              <span class="nav-text">{{ $title }}</span>
+              {{ if eq .priority "high" }}
+                <span class="priority-badge">Prioritar</span>
+              {{ end }}
             </a>
           {{ end }}
         </nav>
@@ -138,6 +159,9 @@
     const navDropdownTrigger = document.querySelector('.nav-dropdown-trigger');
     const secondaryNav = document.querySelector('.secondary-nav');
     
+    // Exit early if header doesn't exist
+    if (!header) return;
+    
     let lastScrollY = window.scrollY;
     let ticking = false;
 
@@ -171,20 +195,171 @@
       }
     }
 
+    // Initialize header state on DOM ready
+    updateHeader();
+
+    // Set up scroll listener
     window.addEventListener('scroll', requestTick, { passive: true });
     
-    // Search functionality
+    // Also listen for resize events to recalculate on orientation change
+    window.addEventListener('resize', function() {
+      // Reset lastScrollY to current position to avoid unwanted hiding
+      lastScrollY = window.scrollY;
+      requestTick();
+    }, { passive: true });
+    
+    // Enhanced Search functionality with autocomplete
     if (searchToggle && searchForm) {
+      const searchInput = searchForm.querySelector('.search-input');
+      const suggestionsContainer = document.getElementById('search-suggestions');
+      let searchTimeout;
+      let suggestions = [];
+      
+      // Load popular search terms and recent content for suggestions
+      const popularSearches = [
+        'Primăria Ungheni', 'FEZ', 'Transport public', 'Frontieră', 'Evenimente locale', 
+        'Drumuri', 'Administrație', 'Întreruperi', 'Căi ferate', 'Salubritate'
+      ];
+      
       searchToggle.addEventListener('click', function() {
         const isExpanded = searchToggle.getAttribute('aria-expanded') === 'true';
         
         if (isExpanded) {
           searchForm.classList.remove('active');
           searchToggle.setAttribute('aria-expanded', 'false');
+          closeSuggestions();
         } else {
           searchForm.classList.add('active');
           searchToggle.setAttribute('aria-expanded', 'true');
-          setTimeout(() => searchForm.querySelector('.search-input').focus(), 100);
+          setTimeout(() => {
+            searchInput.focus();
+            showPopularSuggestions();
+          }, 100);
+        }
+      });
+      
+      // Autocomplete functionality
+      if (searchInput && suggestionsContainer) {
+        searchInput.addEventListener('input', function(e) {
+          const query = e.target.value.trim();
+          clearTimeout(searchTimeout);
+          
+          if (query.length === 0) {
+            showPopularSuggestions();
+            return;
+          }
+          
+          if (query.length < 2) {
+            closeSuggestions();
+            return;
+          }
+          
+          searchTimeout = setTimeout(() => {
+            fetchSuggestions(query);
+          }, 150);
+        });
+        
+        searchInput.addEventListener('focus', function() {
+          if (this.value.trim().length === 0) {
+            showPopularSuggestions();
+          } else if (suggestions.length > 0) {
+            suggestionsContainer.style.display = 'block';
+          }
+        });
+        
+        searchInput.addEventListener('keydown', function(e) {
+          const suggestionItems = suggestionsContainer.querySelectorAll('.suggestion-item');
+          const currentActive = suggestionsContainer.querySelector('.suggestion-item.active');
+          let activeIndex = Array.from(suggestionItems).indexOf(currentActive);
+          
+          switch(e.key) {
+            case 'ArrowDown':
+              e.preventDefault();
+              activeIndex = activeIndex < suggestionItems.length - 1 ? activeIndex + 1 : 0;
+              updateActiveSuggestion(suggestionItems, activeIndex);
+              break;
+            case 'ArrowUp':
+              e.preventDefault();
+              activeIndex = activeIndex > 0 ? activeIndex - 1 : suggestionItems.length - 1;
+              updateActiveSuggestion(suggestionItems, activeIndex);
+              break;
+            case 'Enter':
+              if (currentActive) {
+                e.preventDefault();
+                selectSuggestion(currentActive.textContent);
+              }
+              break;
+            case 'Escape':
+              closeSuggestions();
+              this.blur();
+              break;
+          }
+        });
+      }
+      
+      function showPopularSuggestions() {
+        if (!suggestionsContainer) return;
+        
+        const suggestionHtml = `
+          <div class="suggestions-header">{{ i18n "popular_searches" | default "Căutări populare" }}</div>
+          ${popularSearches.map(term => 
+            `<div class="suggestion-item popular" onclick="selectSuggestion('${term}')">${term}</div>`
+          ).join('')}
+        `;
+        
+        suggestionsContainer.innerHTML = suggestionHtml;
+        suggestionsContainer.style.display = 'block';
+      }
+      
+      function fetchSuggestions(query) {
+        // In a full implementation, this would call Pagefind or an API
+        const filteredSuggestions = popularSearches.filter(term => 
+          term.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        if (filteredSuggestions.length === 0) {
+          closeSuggestions();
+          return;
+        }
+        
+        const suggestionHtml = filteredSuggestions.map(term => 
+          `<div class="suggestion-item" onclick="selectSuggestion('${term}')">${highlightMatch(term, query)}</div>`
+        ).join('');
+        
+        suggestionsContainer.innerHTML = suggestionHtml;
+        suggestionsContainer.style.display = 'block';
+      }
+      
+      function highlightMatch(text, query) {
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<strong>$1</strong>');
+      }
+      
+      function updateActiveSuggestion(items, activeIndex) {
+        items.forEach(item => item.classList.remove('active'));
+        if (items[activeIndex]) {
+          items[activeIndex].classList.add('active');
+        }
+      }
+      
+      function selectSuggestion(suggestion) {
+        searchInput.value = suggestion;
+        closeSuggestions();
+        // Trigger search
+        const searchUrl = '{{ "/search/" | relLangURL }}?q=' + encodeURIComponent(suggestion);
+        window.location.href = searchUrl;
+      }
+      
+      function closeSuggestions() {
+        if (suggestionsContainer) {
+          suggestionsContainer.style.display = 'none';
+        }
+      }
+      
+      // Close suggestions when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!searchForm.contains(e.target)) {
+          closeSuggestions();
         }
       });
     }
@@ -251,6 +426,11 @@
         if (!searchForm.contains(e.target) && !searchToggle.contains(e.target)) {
           searchForm.classList.remove('active');
           searchToggle.setAttribute('aria-expanded', 'false');
+          // Close suggestions
+          const suggestionsContainer = document.getElementById('search-suggestions');
+          if (suggestionsContainer) {
+            suggestionsContainer.style.display = 'none';
+          }
         }
       }
       

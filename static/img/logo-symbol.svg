@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <!-- Background for visibility -->
+  <rect width="48" height="48" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  
+  <!-- Simple triangle -->
+  <path d="M24 12 L36 32 L12 32 Z" 
+        fill="#2563eb" 
+        stroke="#1d4ed8" 
+        stroke-width="1"/>
+  
+  <!-- Center dot -->
+  <circle cx="24" cy="24" r="2" fill="#1d4ed8"/>
+</svg>
