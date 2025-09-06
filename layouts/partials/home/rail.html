@@ -24,9 +24,9 @@
         {{ if and $res (ne $res.MediaType.SubType "svg") }}
           {{ $lg := $res.Fill "600x400 webp" | resources.Fingerprint }}
           {{ $sm := $res.Fill "360x240 webp" | resources.Fingerprint }}
-          <img src="{{ $sm.RelPermalink }}" srcset="{{ $sm.RelPermalink }} 360w, {{ $lg.RelPermalink }} 600w" sizes="(max-width: 48rem) 33vw, 180px" width="300" height="200" alt="" loading="lazy" />
+          <img src="{{ $sm.RelPermalink }}" srcset="{{ $sm.RelPermalink }} 360w, {{ $lg.RelPermalink }} 600w" sizes="(max-width: 48rem) 33vw, 180px" width="300" height="200" alt="{{ .Title }}" loading="lazy" decoding="async" />
         {{ else }}
-          <img src="{{ $img | relURL }}" width="300" height="200" alt="" loading="lazy" />
+          <img src="{{ $img | relURL }}" width="300" height="200" alt="{{ .Title }}" loading="lazy" decoding="async" />
         {{ end }}
       </a>
       <div class="item">

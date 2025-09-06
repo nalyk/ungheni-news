@@ -9,7 +9,7 @@ build:
 	HUGO_ENV=production $(HUGO) --gc --minify
 
 pagefind:
-	npx -y pagefind --source public || echo "Pagefind not installed; skipping"
+	npx -y pagefind --site public --output-subdir pagefind --root-selector "main" --exclude-selectors "nav,header,footer,.sidebar" || echo "Pagefind not installed; skipping"
 
 check:
 	$(HUGO) --printI18nWarnings --panicOnWarning || exit 1

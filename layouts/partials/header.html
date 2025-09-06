@@ -1,12 +1,57 @@
 <header class="site">
   <div class="container wrap">
     <div class="brand"><a href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a></div>
+    
+    <!-- Search Toggle (Mobile Only) -->
+    <button class="search-toggle" id="search-toggle" aria-label="{{ i18n "search" }}" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- Mobile Search Form (Hidden by default) -->
+    <form class="header-search mobile-search" role="search" aria-label="{{ i18n "search" }}" id="mobile-search">
+      <div class="search-input-group">
+        <input 
+          type="search" 
+          id="mobile-search-input"
+          class="search-input"
+          placeholder="{{ i18n "search_placeholder" }}"
+          aria-label="{{ i18n "search_placeholder" }}"
+        >
+        <button type="submit" class="search-submit-button" aria-label="{{ i18n "search" }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </form>
+
     <nav aria-label="Main" class="main-nav">
       {{ $cats := site.Data.categories }}
       {{ range $i, $c := $cats }}
         {{ $title := cond (eq $.Site.Language.Lang "ru") ($c.ru | default $c.ro) $c.ro }}
         <a href="{{ (site.GetPage (printf "/categories/%s" $c.slug)).RelPermalink }}">{{ $title }}</a>
       {{ end }}
+      
+      <!-- Desktop Search Form -->
+      <form class="header-search desktop-search" role="search" aria-label="{{ i18n "search" }}">
+        <div class="search-input-group">
+          <input 
+            type="search" 
+            id="desktop-search-input"
+            class="search-input"
+            placeholder="{{ i18n "search_placeholder" }}"
+            aria-label="{{ i18n "search_placeholder" }}"
+          >
+          <button type="submit" class="search-submit-button" aria-label="{{ i18n "search" }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+
       <details class="lang-picker">
         <summary>{{ .Site.Language.Lang | upper }}</summary>
         <div class="menu">
@@ -20,3 +65,67 @@
     </nav>
   </div>
 </header>
+
+<!-- Search functionality for header -->
+<script>
+(function() {
+  'use strict';
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchToggle = document.getElementById('search-toggle');
+    const mobileSearch = document.getElementById('mobile-search');
+    const mobileSearchInput = document.getElementById('mobile-search-input');
+    const desktopSearchInput = document.getElementById('desktop-search-input');
+
+    // Mobile search toggle
+    if (searchToggle && mobileSearch) {
+      searchToggle.addEventListener('click', function() {
+        const isExpanded = searchToggle.getAttribute('aria-expanded') === 'true';
+        
+        if (isExpanded) {
+          mobileSearch.classList.remove('active');
+          searchToggle.setAttribute('aria-expanded', 'false');
+        } else {
+          mobileSearch.classList.add('active');
+          searchToggle.setAttribute('aria-expanded', 'true');
+          setTimeout(() => mobileSearchInput.focus(), 100);
+        }
+      });
+
+      // Close mobile search on escape
+      mobileSearchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          mobileSearch.classList.remove('active');
+          searchToggle.setAttribute('aria-expanded', 'false');
+          searchToggle.focus();
+        }
+      });
+    }
+
+    // Handle search form submissions
+    const searchForms = document.querySelectorAll('.header-search');
+    searchForms.forEach(form => {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const input = form.querySelector('.search-input');
+        const query = input.value.trim();
+        
+        if (query) {
+          const searchUrl = '{{ (.Site.GetPage "/search").RelPermalink }}?q=' + encodeURIComponent(query);
+          window.location.href = searchUrl;
+        }
+      });
+    });
+
+    // Close mobile search when clicking outside
+    document.addEventListener('click', function(e) {
+      if (mobileSearch && mobileSearch.classList.contains('active')) {
+        if (!mobileSearch.contains(e.target) && !searchToggle.contains(e.target)) {
+          mobileSearch.classList.remove('active');
+          searchToggle.setAttribute('aria-expanded', 'false');
+        }
+      }
+    });
+  });
+})();
+</script>

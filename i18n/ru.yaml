@@ -26,7 +26,11 @@
   translation: "Граница и транспорт"
 - id: category_economie_fez
   translation: "Экономика и СЭЗ"
+- id: category_economie-fez
+  translation: "Экономика и СЭЗ"
 - id: category_servicii_publice
+  translation: "Общественные услуги"
+- id: category_servicii-publice
   translation: "Общественные услуги"
 - id: category_educatie_sanatate
   translation: "Образование и здоровье"
@@ -45,12 +49,16 @@
 - id: format_factcheck
   translation: "Фактчек"
 # Navigation and UI elements
+- id: home
+  translation: "Домой"
 - id: menu
   translation: "Меню"
 - id: search
   translation: "Поиск"
 - id: archive
   translation: "Архив"
+- id: no_articles_yet
+  translation: "Пока нет статей"
 - id: all_categories
   translation: "Все категории"
 - id: all_formats
@@ -166,3 +174,28 @@
   translation: "Услуги обновляются автоматически. По вопросам или предложениям"
 - id: contact_us
   translation: "связывайтесь с нами"
+# Search functionality
+- id: search_placeholder
+  translation: "Поиск материалов..."
+- id: search_results_for
+  translation: "Результаты для"
+- id: search_no_results
+  translation: "Не найдено результатов для"
+- id: search_no_results_help
+  translation: "Попробуйте использовать более общие ключевые слова или проверьте правописание."
+- id: search_loading
+  translation: "Поиск..."
+- id: search_results_count
+  translation: "результатов"
+- id: search_filters
+  translation: "Фильтрация результатов"
+- id: search_all_categories
+  translation: "Все категории"
+- id: search_all_formats
+  translation: "Все форматы"
+- id: search_clear_filters
+  translation: "Очистить фильтры"
+- id: search_showing_results
+  translation: "Показано"
+- id: search_of_total
+  translation: "из"

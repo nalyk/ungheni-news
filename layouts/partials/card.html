@@ -25,8 +25,8 @@
 {{- $summary := $page.Params.summary | default $page.Summary -}}
 {{- $date := $page.Date -}}
 {{- $permalink := $page.RelPermalink -}}
-{{- $category := $page.Params.categories | first -}}
-{{- $format := $page.Params.formats | first -}}
+{{- $category := index ($page.Params.categories | default slice) 0 -}}
+{{- $format := index ($page.Params.formats | default slice) 0 -}}
 
 {{- /* Check for featured image */ -}}
 {{- $image := "" -}}
@@ -45,11 +45,32 @@
   <a href="{{ $permalink }}" class="card-link" aria-label="Citește articolul: {{ $title }}">
     {{- if $image -}}
       <div class="card-media">
-        <img src="{{ $image }}" 
-             alt="{{ $imageAlt }}" 
-             loading="lazy"
-             itemprop="image"
-             class="card-image">
+        {{- /* Try to get page resource for responsive images */ -}}
+        {{- $res := $page.Resources.GetMatch "featured*" -}}
+        {{- if and $res (ne $res.MediaType.SubType "svg") -}}
+          {{- $lg := $res.Fit "800x450 webp" | resources.Fingerprint -}}
+          {{- $md := $res.Fit "600x338 webp" | resources.Fingerprint -}}
+          {{- $sm := $res.Fit "400x225 webp" | resources.Fingerprint -}}
+          <img src="{{ $lg.RelPermalink }}" 
+               srcset="{{ $sm.RelPermalink }} 400w, {{ $md.RelPermalink }} 600w, {{ $lg.RelPermalink }} 800w" 
+               sizes="(max-width: 30rem) 100vw, (max-width: 50rem) 50vw, 25rem" 
+               alt="{{ $imageAlt }}" 
+               loading="lazy"
+               itemprop="image"
+               class="card-image"
+               width="800"
+               height="450"
+               decoding="async">
+        {{- else -}}
+          <img src="{{ $image }}" 
+               alt="{{ $imageAlt }}" 
+               loading="lazy"
+               itemprop="image"
+               class="card-image"
+               width="400"
+               height="225"
+               decoding="async">
+        {{- end -}}
       </div>
     {{- else -}}
       <div class="card-media card-media-placeholder" aria-hidden="true">

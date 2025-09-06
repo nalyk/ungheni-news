@@ -1,0 +1,50 @@
+# Pagefind Configuration for Triunghi.md
+# Optimized for multilingual news site with categories and formats
+
+# Source directory
+source: "public"
+
+# Bundle directory (where Pagefind files are written)
+bundle_dir: "pagefind"
+
+# Root selector - content to index
+root_selector: "main, .main-content, .content"
+
+# Exclude selectors - content NOT to index
+exclude_selectors:
+  - "nav"
+  - "header.site"
+  - "footer.site"
+  - ".sidebar"
+  - ".meta"
+  - ".services-rails"
+  - ".newsletter-signup"
+  - ".search-container"
+  - ".related-articles nav"
+  - ".author-bio nav"
+  - "script"
+  - "style"
+  - ".no-index"
+
+# Force language detection
+force_language: auto
+
+# Excerpt length for search results
+excerpt_length: 160
+
+# Custom meta tags to index for filtering
+custom_meta_tags:
+  - "categories"
+  - "formats"
+  - "authors"
+  - "date"
+  - "publishDate"
+
+# Glob patterns for files to index
+glob: "**/*.html"
+
+# Keep index URL structure clean
+keep_index_url: false
+
+# Log level
+verbose: true

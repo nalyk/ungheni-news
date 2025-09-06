@@ -10,9 +10,9 @@
 {{ define "main" }}
 {{- $page := . -}}
 {{- $categories := $page.Params.categories | default slice -}}
-{{- $category := $categories | first -}}
+{{- $category := index $categories 0 -}}
 {{- $formats := $page.Params.formats | default slice -}}
-{{- $format := $formats | first -}}
+{{- $format := index $formats 0 -}}
 {{- $authors := $page.Params.authors | default slice -}}
 {{- $tags := $page.Params.tags | default slice -}}
 
@@ -27,6 +27,22 @@
     {{- $featuredImage = . -}}
     {{- $featuredImageAlt = $page.Params.image_alt | default $page.Title -}}
   {{- end -}}
+{{- end -}}
+
+<!-- Pagefind meta tags for search indexing -->
+<div data-pagefind-meta="title:{{ .Title }}"></div>
+<div data-pagefind-meta="date:{{ (.PublishDate | default .Date).Format "2006-01-02" }}"></div>
+{{- with $categories -}}
+<div data-pagefind-meta="categories:{{ delimit . ", " }}"></div>
+{{- end -}}
+{{- with $formats -}}
+<div data-pagefind-meta="formats:{{ delimit . ", " }}"></div>
+{{- end -}}
+{{- with $authors -}}
+<div data-pagefind-meta="authors:{{ delimit . ", " }}"></div>
+{{- end -}}
+{{- with $tags -}}
+<div data-pagefind-meta="tags:{{ delimit . ", " }}"></div>
 {{- end -}}
 
 <div class="article-layout">
@@ -157,6 +173,11 @@
         <img src="{{ $featuredImage }}" 
              alt="{{ $featuredImageAlt }}" 
              class="featured-image"
+             width="800"
+             height="450"
+             loading="eager"
+             fetchpriority="high"
+             decoding="async"
              itemprop="image">
         {{- with $page.Params.image_caption -}}
           <figcaption class="featured-image-caption">{{- . | markdownify -}}</figcaption>
@@ -286,32 +307,63 @@
   {{- end -}}
 </footer>
 
-{{/* JavaScript for share functionality */}}
+{{/* Optimized JavaScript for share functionality - loads only when needed */}}
 <script>
-  function copyToClipboard(text) {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(function() {
-        // Show success feedback
-        const button = event.target.closest('.share-copy');
-        const originalContent = button.innerHTML;
-        button.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
-        button.setAttribute('aria-label', 'Copiat!');
-        
-        setTimeout(() => {
-          button.innerHTML = originalContent;
-          button.setAttribute('aria-label', 'Copiază link-ul');
-        }, 2000);
-      });
-    } else {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
+  // Lazy load clipboard functionality only when share button is clicked
+  let clipboardFunctionReady = false;
+  
+  function initClipboard() {
+    if (clipboardFunctionReady) return;
+    clipboardFunctionReady = true;
+    
+    window.copyToClipboard = function(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text).then(function() {
+          showCopyFeedback(event.target.closest('.share-copy'));
+        }).catch(function() {
+          fallbackCopy(text, event.target.closest('.share-copy'));
+        });
+      } else {
+        fallbackCopy(text, event.target.closest('.share-copy'));
+      }
+    };
+    
+    function showCopyFeedback(button) {
+      const originalContent = button.innerHTML;
+      const originalLabel = button.getAttribute('aria-label');
+      button.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+      button.setAttribute('aria-label', 'Copiat!');
+      
+      setTimeout(() => {
+        button.innerHTML = originalContent;
+        button.setAttribute('aria-label', originalLabel);
+      }, 2000);
+    }
+    
+    function fallbackCopy(text, button) {
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showCopyFeedback(button);
+      } catch (err) {
+        console.warn('Copy to clipboard failed:', err);
+      }
     }
   }
+  
+  // Initialize clipboard functionality when copy button is first clicked
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.share-copy')) {
+      initClipboard();
+    }
+  }, { once: true });
 </script>
 
 {{/* CSS Styles */}}

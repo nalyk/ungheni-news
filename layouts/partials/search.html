@@ -1,16 +1,55 @@
 <section id="site-search">
-  <div id="search" class="search"></div>
-  <link href="https://cdn.jsdelivr.net/npm/pagefind@latest/pagefind-ui.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/pagefind@latest/pagefind-ui.js" type="text/javascript"></script>
+  <div id="search" class="search" data-search-initialized="false"></div>
   <script>
-    window.addEventListener('DOMContentLoaded', function () {
-      new PagefindUI({
-        element: "#search",
-        showSubResults: true,
-        pageSize: 8,
-        excerptLength: 22,
-        translations: { placeholder: "Search articles…" },
-      });
+    function initializeSearch() {
+      const searchContainer = document.getElementById('search');
+      if (searchContainer && searchContainer.dataset.searchInitialized === 'false') {
+        // Mark as initializing to prevent double-loading
+        searchContainer.dataset.searchInitialized = 'true';
+        
+        // Load CSS first
+        const cssLink = document.createElement('link');
+        cssLink.href = 'https://cdn.jsdelivr.net/npm/pagefind@latest/pagefind-ui.css';
+        cssLink.rel = 'stylesheet';
+        document.head.appendChild(cssLink);
+        
+        // Load JavaScript second
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/pagefind@latest/pagefind-ui.js';
+        script.onload = function() {
+          new PagefindUI({
+            element: "#search",
+            showSubResults: true,
+            pageSize: 8,
+            excerptLength: 22,
+            translations: { placeholder: "Search articles…" },
+          });
+        };
+        document.head.appendChild(script);
+      }
+    }
+    
+    // Initialize search on first interaction or when search becomes visible
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchContainer = document.getElementById('search');
+      if (searchContainer) {
+        // Initialize on first focus/click on search area
+        searchContainer.addEventListener('click', initializeSearch, { once: true });
+        searchContainer.addEventListener('focus', initializeSearch, { once: true });
+        
+        // Also initialize if search becomes visible via intersection observer
+        if ('IntersectionObserver' in window) {
+          const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                initializeSearch();
+                observer.disconnect();
+              }
+            });
+          }, { threshold: 0.1 });
+          observer.observe(searchContainer);
+        }
+      }
     });
   </script>
 </section>

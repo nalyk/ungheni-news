@@ -26,7 +26,11 @@
   translation: "Frontieră & Transport"
 - id: category_economie_fez
   translation: "Economie & FEZ"
+- id: category_economie-fez
+  translation: "Economie & FEZ"
 - id: category_servicii_publice
+  translation: "Servicii publice"
+- id: category_servicii-publice
   translation: "Servicii publice"
 - id: category_educatie_sanatate
   translation: "Educație & Sănătate"
@@ -45,6 +49,8 @@
 - id: format_factcheck
   translation: "Fact-check"
 # Navigation and UI elements
+- id: home
+  translation: "Acasă"
 - id: menu
   translation: "Meniu"
 - id: search
@@ -170,3 +176,28 @@
   translation: "Serviciile sunt actualizate automat. Pentru probleme sau sugestii"
 - id: contact_us
   translation: "contactați-ne"
+# Search functionality
+- id: search_placeholder
+  translation: "Căutați articole..."
+- id: search_results_for
+  translation: "Rezultate pentru"
+- id: search_no_results
+  translation: "Nu am găsit rezultate pentru"
+- id: search_no_results_help
+  translation: "Încercați să folosiți cuvinte-cheie mai generale sau verificați ortografia."
+- id: search_loading
+  translation: "Se caută..."
+- id: search_results_count
+  translation: "rezultate"
+- id: search_filters
+  translation: "Filtrare rezultate"
+- id: search_all_categories
+  translation: "Toate categoriile"
+- id: search_all_formats
+  translation: "Toate formatele"
+- id: search_clear_filters
+  translation: "Șterge filtrele"
+- id: search_showing_results
+  translation: "Se afișează"
+- id: search_of_total
+  translation: "din"

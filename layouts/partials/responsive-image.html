@@ -1,0 +1,100 @@
+{{/*
+  Responsive Image Component
+  
+  Purpose: Generate optimized, responsive images with proper loading strategies
+  
+  Parameters:
+  - page: Page context for resource lookup
+  - src: Image source (required)
+  - alt: Alt text (required)
+  - class: Additional CSS classes
+  - loading: Loading strategy ("lazy", "eager") - defaults to "lazy"
+  - sizes: Responsive sizes attribute
+  - width: Image width for aspect ratio
+  - height: Image height for aspect ratio
+  - priority: "high" for above-the-fold images
+  
+  Features:
+  - Automatic WebP generation with fallbacks
+  - Multiple size variants for responsive design
+  - Proper loading attributes for performance
+  - Layout shift prevention with aspect ratio
+  - Resource optimization with Hugo image processing
+*/}}
+
+{{- $page := .page -}}
+{{- $src := .src -}}
+{{- $alt := .alt | default "" -}}
+{{- $class := .class | default "" -}}
+{{- $loading := .loading | default "lazy" -}}
+{{- $sizes := .sizes | default "(max-width: 50rem) 100vw, 50rem" -}}
+{{- $width := .width | default 800 -}}
+{{- $height := .height | default 450 -}}
+{{- $priority := .priority | default "auto" -}}
+
+{{- /* Default responsive breakpoints */ -}}
+{{- $breakpoints := slice 400 600 800 1200 1600 -}}
+
+{{- /* Try to get the image resource */ -}}
+{{- $image := "" -}}
+{{- if $page -}}
+  {{- $image = $page.Resources.GetMatch $src -}}
+{{- end -}}
+{{- if not $image -}}
+  {{- $image = resources.Get $src -}}
+{{- end -}}
+
+{{- if $image -}}
+  {{- /* Generate responsive variants if not SVG */ -}}
+  {{- if ne $image.MediaType.SubType "svg" -}}
+    {{- $variants := slice -}}
+    {{- range $breakpoints -}}
+      {{- $w := . -}}
+      {{- $h := math.Round (div (mul $height $w) $width) -}}
+      {{- $resized := $image.Fit (printf "%dx%d webp" $w $h) | resources.Fingerprint -}}
+      {{- $variants = $variants | append (dict "width" $w "height" $h "src" $resized.RelPermalink) -}}
+    {{- end -}}
+    
+    {{- /* Build srcset */ -}}
+    {{- $srcset := slice -}}
+    {{- range $variants -}}
+      {{- $srcset = $srcset | append (printf "%s %dw" .src .width) -}}
+    {{- end -}}
+    
+    {{- /* Get the largest variant for src */ -}}
+    {{- $largest := index $variants (sub (len $variants) 1) -}}
+    
+    <img src="{{ $largest.src }}"
+         srcset="{{ delimit $srcset ", " }}"
+         sizes="{{ $sizes }}"
+         width="{{ $width }}"
+         height="{{ $height }}"
+         alt="{{ $alt }}"
+         class="{{ $class }}"
+         loading="{{ $loading }}"
+         decoding="async"
+         {{- if eq $priority "high" }} fetchpriority="high" importance="high"{{ end }} />
+         
+  {{- else -}}
+    {{- /* SVG - no processing needed */ -}}
+    <img src="{{ $image.RelPermalink }}"
+         width="{{ $width }}"
+         height="{{ $height }}"
+         alt="{{ $alt }}"
+         class="{{ $class }}"
+         loading="{{ $loading }}"
+         {{- if eq $priority "high" }} fetchpriority="high" importance="high"{{ end }} />
+  {{- end -}}
+{{- else -}}
+  {{- /* Fallback for missing images */ -}}
+  <div class="image-placeholder {{ $class }}"
+       style="aspect-ratio: {{ $width }}/{{ $height }}; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666;"
+       role="img"
+       aria-label="{{ $alt }}">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+      <circle cx="8.5" cy="8.5" r="1.5"/>
+      <polyline points="21,15 16,10 5,21"/>
+    </svg>
+  </div>
+{{- end -}}

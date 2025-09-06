@@ -1,0 +1,416 @@
+{{ define "main" }}
+<div class="container-content">
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    <p class="page-description">{{ .Content }}</p>
+  </header>
+
+  <div class="search-container">
+    <!-- Search Input -->
+    <div class="search-input-container">
+      <form class="search-form" role="search" aria-label="{{ i18n "search" }}">
+        <div class="input-group">
+          <input 
+            type="search" 
+            id="pagefind-search" 
+            class="search-input"
+            placeholder="{{ i18n "search_placeholder" }}"
+            aria-label="{{ i18n "search_placeholder" }}"
+            autocomplete="off"
+          >
+          <button type="submit" class="search-button" aria-label="{{ i18n "search" }}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Search Filters -->
+    <div class="search-filters" id="search-filters" style="display: none;">
+      <h3>{{ i18n "search_filters" }}</h3>
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label for="category-filter">{{ i18n "all_categories" }}</label>
+          <select id="category-filter" class="filter-select">
+            <option value="">{{ i18n "search_all_categories" }}</option>
+            {{ $cats := site.Data.categories }}
+            {{ range $cats }}
+              {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
+              <option value="{{ .slug }}">{{ $title }}</option>
+            {{ end }}
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="format-filter">{{ i18n "all_formats" }}</label>
+          <select id="format-filter" class="filter-select">
+            <option value="">{{ i18n "search_all_formats" }}</option>
+            <option value="stire">{{ i18n "format_stire" }}</option>
+            <option value="analiza">{{ i18n "format_analiza" }}</option>
+            <option value="explainer">{{ i18n "format_explainer" }}</option>
+            <option value="opinie">{{ i18n "format_opinie" }}</option>
+            <option value="factcheck">{{ i18n "format_factcheck" }}</option>
+          </select>
+        </div>
+
+        <button type="button" id="clear-filters" class="clear-filters-button">
+          {{ i18n "search_clear_filters" }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Status -->
+    <div class="search-status" id="search-status" style="display: none;">
+      <div class="search-info">
+        <span id="search-results-info"></span>
+      </div>
+    </div>
+
+    <!-- Search Results -->
+    <div class="search-results" id="pagefind-results">
+      <!-- Loading State -->
+      <div class="search-loading" id="search-loading" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>{{ i18n "search_loading" }}</p>
+      </div>
+
+      <!-- No Results State -->
+      <div class="search-no-results" id="search-no-results" style="display: none;">
+        <h3 id="no-results-title"></h3>
+        <p>{{ i18n "search_no_results_help" }}</p>
+      </div>
+
+      <!-- Results will be inserted here by Pagefind -->
+      <div id="search-results-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Pagefind Scripts - Only loaded on search pages -->
+<script>
+// Pagefind configuration and initialization
+(function() {
+  'use strict';
+
+  let pagefind;
+  let searchInput;
+  let resultsContainer;
+  let statusContainer;
+  let filtersContainer;
+  let loadingIndicator;
+  let noResultsContainer;
+  let categoryFilter;
+  let formatFilter;
+  let clearFiltersButton;
+  
+  let searchTimeout;
+  let currentQuery = '';
+  let currentFilters = {
+    category: '',
+    format: ''
+  };
+
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', initializeSearch);
+
+  async function initializeSearch() {
+    // Initialize DOM elements
+    searchInput = document.getElementById('pagefind-search');
+    resultsContainer = document.getElementById('search-results-list');
+    statusContainer = document.getElementById('search-status');
+    filtersContainer = document.getElementById('search-filters');
+    loadingIndicator = document.getElementById('search-loading');
+    noResultsContainer = document.getElementById('search-no-results');
+    categoryFilter = document.getElementById('category-filter');
+    formatFilter = document.getElementById('format-filter');
+    clearFiltersButton = document.getElementById('clear-filters');
+
+    if (!searchInput || !resultsContainer) {
+      console.error('Search elements not found');
+      return;
+    }
+
+    // Load Pagefind
+    try {
+      pagefind = await import('/pagefind/pagefind.js');
+      await pagefind.init();
+      console.log('Pagefind initialized successfully');
+    } catch (error) {
+      console.error('Failed to load Pagefind:', error);
+      return;
+    }
+
+    // Set up event listeners
+    setupEventListeners();
+
+    // Check for URL search params
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q');
+    if (query) {
+      searchInput.value = query;
+      performSearch(query);
+    }
+  }
+
+  function setupEventListeners() {
+    // Search input with debouncing
+    searchInput.addEventListener('input', function(e) {
+      const query = e.target.value.trim();
+      clearTimeout(searchTimeout);
+      
+      if (query.length === 0) {
+        clearResults();
+        hideFilters();
+        return;
+      }
+      
+      searchTimeout = setTimeout(() => {
+        performSearch(query);
+      }, 300);
+    });
+
+    // Form submission
+    document.querySelector('.search-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const query = searchInput.value.trim();
+      if (query) {
+        performSearch(query);
+      }
+    });
+
+    // Filter changes
+    if (categoryFilter) {
+      categoryFilter.addEventListener('change', function() {
+        currentFilters.category = this.value;
+        if (currentQuery) {
+          performSearch(currentQuery);
+        }
+      });
+    }
+
+    if (formatFilter) {
+      formatFilter.addEventListener('change', function() {
+        currentFilters.format = this.value;
+        if (currentQuery) {
+          performSearch(currentQuery);
+        }
+      });
+    }
+
+    // Clear filters
+    if (clearFiltersButton) {
+      clearFiltersButton.addEventListener('click', function() {
+        categoryFilter.value = '';
+        formatFilter.value = '';
+        currentFilters = { category: '', format: '' };
+        if (currentQuery) {
+          performSearch(currentQuery);
+        }
+      });
+    }
+
+    // Keyboard navigation
+    searchInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        this.blur();
+      }
+    });
+  }
+
+  async function performSearch(query) {
+    if (!pagefind) {
+      console.error('Pagefind not initialized');
+      return;
+    }
+
+    currentQuery = query;
+    showLoading();
+    hideNoResults();
+    
+    try {
+      // Build search options with filters
+      const searchOptions = {};
+      
+      if (currentFilters.category) {
+        searchOptions.filters = {
+          ...searchOptions.filters,
+          categories: currentFilters.category
+        };
+      }
+      
+      if (currentFilters.format) {
+        searchOptions.filters = {
+          ...searchOptions.filters,
+          formats: currentFilters.format
+        };
+      }
+
+      const search = await pagefind.search(query, searchOptions);
+      
+      hideLoading();
+      
+      if (search.results.length === 0) {
+        showNoResults(query);
+        hideFilters();
+        updateStatus(0, query);
+        return;
+      }
+
+      showFilters();
+      displayResults(search.results);
+      updateStatus(search.results.length, query);
+      
+      // Update URL without page reload
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('q', query);
+      history.replaceState(null, '', newUrl);
+
+    } catch (error) {
+      console.error('Search error:', error);
+      hideLoading();
+      showSearchError();
+    }
+  }
+
+  async function displayResults(results) {
+    const resultsList = [];
+
+    for (const result of results) {
+      try {
+        const data = await result.data();
+        const resultElement = createResultElement(data);
+        resultsList.push(resultElement);
+      } catch (error) {
+        console.error('Error loading result data:', error);
+      }
+    }
+
+    resultsContainer.innerHTML = resultsList.join('');
+  }
+
+  function createResultElement(data) {
+    const url = data.url;
+    const title = data.meta?.title || 'Untitled';
+    const excerpt = data.excerpt || '';
+    const date = data.meta?.date || '';
+    const categories = data.meta?.categories ? data.meta.categories.split(',') : [];
+    const formats = data.meta?.formats ? data.meta.formats.split(',') : [];
+
+    let categoriesHtml = '';
+    if (categories.length > 0) {
+      categoriesHtml = categories.map(cat => 
+        `<span class="result-pill result-category">${cat.trim()}</span>`
+      ).join('');
+    }
+
+    let formatsHtml = '';
+    if (formats.length > 0) {
+      formatsHtml = formats.map(format => 
+        `<span class="result-pill result-format">${format.trim()}</span>`
+      ).join('');
+    }
+
+    const dateHtml = date ? `<time class="result-date">${new Date(date).toLocaleDateString('{{ .Site.Language.Lang }}')}</time>` : '';
+
+    return `
+      <article class="search-result">
+        <header class="result-header">
+          <h3 class="result-title">
+            <a href="${url}">${title}</a>
+          </h3>
+          ${dateHtml}
+        </header>
+        
+        ${excerpt ? `<div class="result-excerpt">${excerpt}</div>` : ''}
+        
+        <footer class="result-footer">
+          <div class="result-pills">
+            ${categoriesHtml}
+            ${formatsHtml}
+          </div>
+        </footer>
+      </article>
+    `;
+  }
+
+  function updateStatus(count, query) {
+    if (!statusContainer) return;
+    
+    const statusInfo = document.getElementById('search-results-info');
+    if (statusInfo) {
+      const countText = `${count} {{ i18n "search_results_count" }}`;
+      const queryText = `{{ i18n "search_results_for" }} "${query}"`;
+      statusInfo.textContent = `${countText} ${queryText}`;
+    }
+    
+    statusContainer.style.display = count > 0 ? 'block' : 'none';
+  }
+
+  function showLoading() {
+    if (loadingIndicator) {
+      loadingIndicator.style.display = 'block';
+    }
+    resultsContainer.innerHTML = '';
+  }
+
+  function hideLoading() {
+    if (loadingIndicator) {
+      loadingIndicator.style.display = 'none';
+    }
+  }
+
+  function showNoResults(query) {
+    if (noResultsContainer) {
+      const title = document.getElementById('no-results-title');
+      if (title) {
+        title.textContent = `{{ i18n "search_no_results" }} "${query}"`;
+      }
+      noResultsContainer.style.display = 'block';
+    }
+  }
+
+  function hideNoResults() {
+    if (noResultsContainer) {
+      noResultsContainer.style.display = 'none';
+    }
+  }
+
+  function showFilters() {
+    if (filtersContainer) {
+      filtersContainer.style.display = 'block';
+    }
+  }
+
+  function hideFilters() {
+    if (filtersContainer) {
+      filtersContainer.style.display = 'none';
+    }
+    if (statusContainer) {
+      statusContainer.style.display = 'none';
+    }
+  }
+
+  function clearResults() {
+    resultsContainer.innerHTML = '';
+    currentQuery = '';
+    
+    // Clear URL params
+    const newUrl = new URL(window.location);
+    newUrl.searchParams.delete('q');
+    history.replaceState(null, '', newUrl);
+  }
+
+  function showSearchError() {
+    resultsContainer.innerHTML = `
+      <div class="search-error">
+        <p>Search temporarily unavailable. Please try again later.</p>
+      </div>
+    `;
+  }
+
+})();
+</script>
+
+{{ end }}
