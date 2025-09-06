@@ -29,8 +29,19 @@
       /* Loading state for images */
       img:not([src]),img[src=""]{opacity:0}
     </style>
-    {{ $opts := dict "targetPath" "assets/main.css" "enableSourceMap" false "minify" true }}
-    {{ $css := resources.Get "css/main.scss" | css.Sass $opts | resources.Fingerprint }}
+    {{/* Hugo version compatibility: use appropriate SCSS function based on version */}}
+    {{ $opts := dict "targetPath" "assets/main.css" "enableSourceMap" false }}
+    {{ $css := "" }}
+    {{ $scssResource := resources.Get "css/main.scss" }}
+    {{ if $scssResource }}
+      {{/* Hugo v0.128.0+ uses css.Sass, earlier versions use resources.ToCSS */}}
+      {{ $hugoVersion := hugo.Version }}
+      {{ if ge $hugoVersion "0.128.0" }}
+        {{ $css = $scssResource | css.Sass $opts | resources.Minify | resources.Fingerprint }}
+      {{ else }}
+        {{ $css = $scssResource | resources.ToCSS $opts | resources.Minify | resources.Fingerprint }}
+      {{ end }}
+    {{ end }}
     <!-- Non-blocking CSS loading with improved fallback -->
     <link rel="preload" href="{{ $css.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <noscript><link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}"></noscript>
