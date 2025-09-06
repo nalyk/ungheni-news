@@ -87,12 +87,12 @@
       {{- end -}}
     {{- end -}}
     <!-- Critical font preloads - only most essential fonts for above-the-fold -->
-    <link rel="preload" href="{{ "/fonts/ibmplexsans/IBMPlexSans-Regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="{{ "/fonts/ibmplexsans/IBMPlexSans-Medium.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="{{ "/fonts/ibmplexserif/IBMPlexSerif-SemiBold.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/ungheni-news/fonts/ibmplexsans/IBMPlexSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/ungheni-news/fonts/ibmplexsans/IBMPlexSans-Medium.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/ungheni-news/fonts/ibmplexserif/IBMPlexSerif-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <!-- Additional fonts loaded on demand via CSS -->
-    <link rel="prefetch" href="{{ "/fonts/ibmplexserif/IBMPlexSerif-Bold.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
-    <link rel="prefetch" href="{{ "/fonts/ibmplexsans/IBMPlexSans-Italic.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+    <link rel="prefetch" href="/ungheni-news/fonts/ibmplexserif/IBMPlexSerif-Bold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="prefetch" href="/ungheni-news/fonts/ibmplexsans/IBMPlexSans-Italic.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="icon" href="{{ "img/brand/logo.svg" | relURL }}" type="image/svg+xml" />
     {{ with .OutputFormats.Get "RSS" }}<link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" href="{{ .RelPermalink }}">{{ end }}
     <!-- Critical JavaScript - theme toggle loaded immediately -->
