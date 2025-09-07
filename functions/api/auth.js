@@ -1,6 +1,38 @@
 // Cloudflare Pages Function for GitHub OAuth token exchange
 // This runs at /api/auth
 
+// Handle both POST (for token exchange) and GET (for auth redirect)
+export async function onRequestGet(context) {
+  // If this is just a GET request, redirect to GitHub OAuth
+  const { request } = context;
+  const url = new URL(request.url);
+  const code = url.searchParams.get('code');
+  
+  if (code) {
+    // This is the callback from GitHub, redirect back to admin
+    return new Response(null, {
+      status: 302,
+      headers: {
+        'Location': `/admin/auth/?code=${code}&state=${url.searchParams.get('state') || ''}`
+      }
+    });
+  }
+  
+  // Initial auth request - redirect to GitHub
+  const clientId = 'Ov23liSvb4wITabAOGoo';
+  const redirectUri = encodeURIComponent(`${url.origin}/api/auth`);
+  const state = Date.now().toString();
+  
+  const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo,user:email&state=${state}`;
+  
+  return new Response(null, {
+    status: 302,
+    headers: {
+      'Location': githubAuthUrl
+    }
+  });
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   

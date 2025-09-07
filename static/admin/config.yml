@@ -4,8 +4,6 @@ backend:
   branch: main
   base_url: https://triunghi.md
   auth_endpoint: admin/auth
-  # Force implicit auth flow
-  implicit_auth: true
 
 site_url: https://triunghi.md
 logo_url: /img/brand/logo.svg

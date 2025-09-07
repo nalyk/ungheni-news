@@ -46,50 +46,23 @@
         }
         
         function sendMessageToParent(data) {
-            console.log('🔄 Sending message to parent:', data);
+            console.log('📤 FINAL: Sending auth result to CMS');
             
-            const targetOrigin = 'https://triunghi.md';
+            // This is what Decap CMS ACTUALLY expects from an OAuth popup
+            const cmsMessage = {
+                type: 'authorization-code',
+                code: data.code,
+                state: data.state
+            };
             
-            // Try multiple message formats that Decap CMS might expect
-            const messages = [
-                data, // Original format
-                { ...data, provider: 'github' }, // With provider
-                { token: data.token, provider: 'github' }, // Simplified token format
-                { access_token: data.token, provider: 'github' } // Alternative token format
-            ];
+            console.log('📤 Sending CMS-compatible message:', cmsMessage);
             
-            messages.forEach((message, index) => {
-                console.log(`📤 Attempting message format ${index + 1}:`, message);
-                
-                // Send to opener (popup window) - most common
-                if (window.opener && !window.opener.closed) {
-                    console.log('📤 Sending to opener...');
-                    window.opener.postMessage(message, targetOrigin);
-                    window.opener.postMessage(message, '*'); // Fallback
-                }
-                
-                // Send to parent (iframe) - fallback
-                if (window.parent && window.parent !== window) {
-                    console.log('📤 Sending to parent...');
-                    window.parent.postMessage(message, targetOrigin);
-                    window.parent.postMessage(message, '*'); // Fallback
-                }
-            });
-            
-            // Additional attempts with different timing
-            setTimeout(() => {
-                console.log('📤 Retry sending after 500ms...');
-                if (window.opener && !window.opener.closed) {
-                    window.opener.postMessage(data, targetOrigin);
-                }
-            }, 500);
-            
-            setTimeout(() => {
-                console.log('📤 Final retry after 1000ms...');
-                if (window.opener && !window.opener.closed) {
-                    window.opener.postMessage(data, targetOrigin);
-                }
-            }, 1000);
+            if (window.opener && !window.opener.closed) {
+                window.opener.postMessage(cmsMessage, 'https://triunghi.md');
+                console.log('✅ Message sent to opener');
+            } else {
+                console.error('❌ No opener window available!');
+            }
         }
         
         // Parse URL parameters
@@ -104,68 +77,27 @@
             setTimeout(() => window.close(), 3000);
             
         } else if (code) {
-            updateStatus('Exchanging code for token...', 'status');
+            updateStatus('Authentication successful! Sending to CMS...', 'success');
             
-            // Exchange authorization code for access token using Cloudflare Pages Function
-            fetch('/api/auth', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code: code })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => Promise.reject(err));
+            // Send ONLY the authorization code back to CMS
+            // Let Decap CMS handle the token exchange itself
+            const authData = {
+                code: code,
+                state: state
+            };
+            
+            console.log('✅ OAuth: Sending auth code to CMS (CMS will handle token exchange)');
+            sendMessageToParent(authData);
+            
+            // Close popup after sending message
+            setTimeout(() => {
+                try {
+                    updateStatus('Closing...', 'success');
+                    window.close();
+                } catch(e) {
+                    updateStatus('You can close this window.', 'success');
                 }
-                return response.json();
-            })
-            .then(data => {
-                updateStatus('Authentication successful!', 'success');
-                
-                // Store token in localStorage as fallback
-                localStorage.setItem('triunghi-auth-token', data.access_token);
-                localStorage.setItem('triunghi-auth-user', JSON.stringify(data.user || {}));
-                console.log('💾 OAuth: Stored auth data in localStorage');
-                
-                // Send the access token back to CMS
-                const authData = {
-                    type: 'authorization-code',
-                    code: code,
-                    state: state,
-                    token: data.access_token,
-                    access_token: data.access_token, // Alternative format
-                    user: data.user
-                };
-                
-                console.log('✅ OAuth: Sending auth data to CMS:', authData);
-                sendMessageToParent(authData);
-                
-                // Also try triggering a storage event
-                window.dispatchEvent(new StorageEvent('storage', {
-                    key: 'triunghi-auth-token',
-                    newValue: data.access_token,
-                    storageArea: localStorage
-                }));
-                
-                // Try to close the popup with more time for message processing
-                setTimeout(() => {
-                    try {
-                        updateStatus('Closing window...', 'success');
-                        window.close();
-                    } catch(e) {
-                        updateStatus('Authentication complete! You can close this window.', 'success');
-                    }
-                }, 3000); // Increased delay
-            })
-            .catch(error => {
-                console.error('Token exchange error:', error);
-                updateStatus(`Error: ${error.error || 'Token exchange failed'}`, 'error');
-                sendMessageToParent({ 
-                    error: 'token_exchange_failed', 
-                    message: error.error || 'Failed to exchange token' 
-                });
-            });
+            }, 1500);
             
         } else {
             // No code, initiate OAuth flow
