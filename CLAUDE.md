@@ -30,12 +30,12 @@ The architecture combines static site generation with headless CMS editorial wor
 
 **IMPORTANT**: Hugo is installed locally at `/home/nalyk/bin/hugo`. Always use this path when calling Hugo directly, or use the `HUGO=/home/nalyk/bin/hugo` prefix with make commands to ensure compatibility.
 
-### Playwright MCP Setup
-- **MCP Playwright** is installed via: `claude mcp add playwright npx '@playwright/mcp@latest'`
-- **After restart**: MCP tools become available as `mcp__playwright__*`
-- **Homepage modernization**: COMPLETED - Modern layout with improved hero section, cards, responsive grid, and animations
-- **Development server**: Should be running on `http://localhost:1313/`
-- **Next task after restart**: Take desktop homepage screenshot using `mcp__playwright__browser_navigate` to verify modern layout improvements
+### ~~Playwright MCP Setup~~ 
+- **⚠️ DEPRECATED**: MCP Playwright tools (`mcp__playwright__*`) do not work reliably
+- **NEVER USE**: `mcp__playwright__browser_navigate`, `mcp__playwright__browser_snapshot`, etc.
+- **Alternative**: Manual testing or ask user to test directly
+- **Development server**: Should be running on `http://localhost:1313/` (no `/ungheni-news/` prefix)
+- **Production URL**: `https://triunghi.md/` (migrated from GitHub Pages to custom domain)
 
 ### Deployment
 - Push to `main` branch triggers automatic Cloudflare Pages deployment
@@ -238,3 +238,140 @@ This project leverages specialized Claude Code subagents in `.claude/agents/` fo
 - Circular dependencies → Break cycle at ui-designer (lowest priority)
 
 **Critical**: Never skip automatic triggers. Each agent's output must cascade to relevant dependent agents according to these rules.
+
+## Decap CMS OAuth Authentication Setup
+
+### Critical Implementation Details (HARD-LEARNED LESSONS)
+
+This section documents the complete OAuth authentication implementation for Decap CMS with GitHub backend on Cloudflare Pages, including all the critical gotchas that MUST be avoided.
+
+#### OAuth App Configuration (GitHub)
+- **Client ID**: `Ov23liSvb4wITabAOGoo`
+- **Homepage URL**: `https://triunghi.md/admin`
+- **Authorization callback URL**: `https://triunghi.md/api/auth` ⚠️ **CRITICAL**: Must match exactly!
+
+#### Environment Variables (Cloudflare Pages)
+- **Variable**: `GITHUB_CLIENT_SECRET` (Type: Secret/Encrypted)
+- **Location**: Dashboard → Project → Settings → Environment Variables
+
+#### Cloudflare Pages Functions Implementation
+
+**File Structure**: `functions/api/auth.js` at project root (NOT in static/)
+- Cloudflare Pages automatically detects `/functions/` directory during build
+- Creates `/api/auth` endpoint automatically via file-based routing
+- Works perfectly with GitHub auto-deployment
+
+#### OAuth Flow Implementation - THE CORRECT WAY
+
+**CRITICAL MISTAKES TO AVOID**:
+
+1. **❌ WRONG postMessage format**:
+   ```javascript
+   // This DOES NOT WORK - Decap CMS ignores JSON objects
+   window.opener.postMessage({
+     type: 'authorization_grant',
+     token: 'xxx'
+   }, origin);
+   ```
+
+2. **✅ CORRECT postMessage format**:
+   ```javascript
+   // This WORKS - Decap CMS expects STRING format
+   window.opener.postMessage(
+     'authorization:github:success:' + JSON.stringify({
+       token: 'xxx',
+       provider: 'github'
+     }),
+     'https://triunghi.md'
+   );
+   ```
+
+3. **❌ WRONG: Missing handshake**
+   - Just sending success message = CMS ignores it completely
+   - User stares at login button forever
+
+4. **✅ CORRECT: Two-step handshake**
+   ```javascript
+   // Step 1: Handshake (tells CMS auth flow started)
+   window.opener.postMessage("authorizing:github", "https://triunghi.md");
+   
+   // Step 2: Success (after small delay)
+   setTimeout(() => {
+     window.opener.postMessage(
+       'authorization:github:success:' + JSON.stringify({...}),
+       'https://triunghi.md'
+     );
+   }, 100);
+   ```
+
+5. **❌ WRONG origin handling**:
+   ```javascript
+   // Using window.location.origin or '*' can fail
+   window.opener.postMessage(message, window.location.origin); // ❌
+   window.opener.postMessage(message, '*'); // ❌ Security risk
+   ```
+
+6. **✅ CORRECT origin**:
+   ```javascript
+   // Use explicit domain origin
+   window.opener.postMessage(message, 'https://triunghi.md'); // ✅
+   ```
+
+#### Complete Working Flow
+
+1. **User clicks "Login with GitHub" in `/admin/`**
+2. **Decap CMS opens popup to `https://triunghi.md/api/auth`**
+3. **Cloudflare function redirects popup to GitHub OAuth**
+4. **GitHub redirects back to `https://triunghi.md/api/auth?code=...`**
+5. **Function exchanges code for token via GitHub API**
+6. **Function returns HTML with two-step postMessage:**
+   - First: `"authorizing:github"` (handshake)
+   - Second: `"authorization:github:success:{token data}"` (success)
+7. **Popup closes, CMS receives messages and completes login**
+
+#### Debugging OAuth Issues
+
+**Essential debugging setup** in `/admin/index.html`:
+```javascript
+window.addEventListener('message', function(event) {
+  console.log('🎯 CMS: Received postMessage from:', event.origin);
+  console.log('🔍 CMS: Message data:', event.data);
+  console.log('🔍 CMS: Message type:', typeof event.data);
+});
+```
+
+**Common failure symptoms**:
+- Popup opens, closes successfully, but user still sees login screen = **Message format issue**
+- No postMessage received = **Origin mismatch issue**
+- Console shows messages received but CMS doesn't respond = **Missing handshake**
+
+#### Security Considerations
+
+- ✅ Use specific origins, never `'*'` in production
+- ✅ Validate GitHub token and user permissions server-side  
+- ✅ Check repository access (owner/collaborator only)
+- ✅ Environment variables for secrets (never hardcode)
+
+#### File Locations Summary
+
+```
+functions/api/auth.js          # OAuth endpoint (server-side)
+static/admin/index.html        # CMS interface with debug logging
+static/admin/config.yml        # CMS config with auth_endpoint
+```
+
+### Deployment Notes
+
+- Push to `main` triggers automatic CF Pages build
+- CF Pages detects `/functions/` and creates endpoints automatically
+- No additional configuration needed once environment variables are set
+- OAuth flow works immediately after deployment
+
+### Performance Impact
+
+- OAuth popup flow adds ~2-3 seconds to login process
+- No impact on static site performance
+- Token exchange happens server-side (secure)
+- Debugging logs can be removed in production for cleaner console
+
+**LESSON LEARNED**: The devil is in the details with OAuth flows. Every character in the postMessage format matters, and the two-step handshake is absolutely critical for Decap CMS recognition.
