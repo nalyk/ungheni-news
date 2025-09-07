@@ -2,26 +2,22 @@ backend:
   name: github
   repo: nalyk/ungheni-news
   branch: main
-  base_url: https://triunghi.md
-  auth_endpoint: admin/auth
 
 site_url: https://triunghi.md
-logo_url: /admin/logo.svg
+logo_url: /img/brand/logo.svg
 
 publish_mode: editorial_workflow
 
 media_folder: "static/uploads"          # Fallback bucket in repo (small assets only)
 public_folder: "/uploads"
 
-# Optional: Cloudinary free tier; create an unsigned upload preset and fill values.
-media_library:
-  name: cloudinary
-  config:
-    cloud_name: "YOUR_CLOUD_NAME"       # e.g. demo
-    api_key: "YOUR_API_KEY"
-    default_transformations:
-      - - fetch_format: auto
-        - quality: auto
+# Media uploads: Using local storage for now
+# Optional: Configure Cloudinary later if needed
+# media_library:
+#   name: cloudinary
+#   config:
+#     cloud_name: "your-cloud-name"
+#     api_key: "your-api-key"
 
 collections:
   - name: "news_ro"
