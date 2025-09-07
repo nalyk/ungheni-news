@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triunghi.md - OAuth Authentication</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            padding: 2rem;
+            text-align: center;
+            margin: 0;
+        }
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .logo { margin-bottom: 1.5rem; }
+        .status { color: #666; }
+        .error { color: #dc3545; margin-top: 1rem; }
+        .success { color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="logo">
+            <h2>triunghi.md</h2>
+            <p>Authentication</p>
+        </div>
+        <div id="status" class="status">Initializing...</div>
+    </div>
+    
+    <script>
+        const CLIENT_ID = 'Ov23liSvb4wITabAOGoo';
+        const REDIRECT_URI = window.location.href.split('?')[0]; // Current URL without params
+        
+        function updateStatus(message, type = 'status') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = type;
+        }
+        
+        function sendMessageToParent(data) {
+            console.log('Sending message to parent:', data);
+            
+            // Send to opener (popup window)
+            if (window.opener && !window.opener.closed) {
+                window.opener.postMessage(data, '*');
+            }
+            
+            // Send to parent (iframe)
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage(data, '*');
+            }
+        }
+        
+        // Parse URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const error = urlParams.get('error');
+        const state = urlParams.get('state');
+        
+        if (error) {
+            updateStatus(`Authentication failed: ${error}`, 'error');
+            sendMessageToParent({ error: 'auth_failed', message: error });
+            setTimeout(() => window.close(), 3000);
+            
+        } else if (code) {
+            updateStatus('Exchanging code for token...', 'status');
+            
+            // Exchange authorization code for access token
+            fetch('/api/auth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code: code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    updateStatus(`Error: ${data.error}`, 'error');
+                    sendMessageToParent({ error: 'token_exchange_failed', message: data.error });
+                } else {
+                    updateStatus('Authentication successful!', 'success');
+                    
+                    // Send the access token back to CMS
+                    const authData = {
+                        type: 'authorization-code',
+                        code: code,
+                        state: state,
+                        token: data.access_token // Include the actual token
+                    };
+                    
+                    sendMessageToParent(authData);
+                    
+                    // Try to close the popup
+                    setTimeout(() => {
+                        try {
+                            window.close();
+                        } catch(e) {
+                            updateStatus('Please close this window', 'status');
+                        }
+                    }, 1500);
+                }
+            })
+            .catch(error => {
+                console.error('Token exchange error:', error);
+                updateStatus('Token exchange failed', 'error');
+                sendMessageToParent({ error: 'network_error', message: 'Failed to exchange token' });
+            });
+            
+        } else {
+            // No code, initiate OAuth flow
+            updateStatus('Redirecting to GitHub...', 'status');
+            
+            const authUrl = `https://github.com/login/oauth/authorize?` + new URLSearchParams({
+                client_id: CLIENT_ID,
+                redirect_uri: REDIRECT_URI,
+                scope: 'repo,user:email',
+                state: Date.now().toString()
+            });
+            
+            console.log('Redirecting to:', authUrl);
+            
+            setTimeout(() => {
+                window.location.href = authUrl;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
