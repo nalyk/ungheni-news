@@ -1,14 +1,18 @@
 {{ define "main" }}
-  <div class="homepage" style="container-type:inline-size;">
+  <main class="homepage" style="container-type:inline-size;">
     {{/* Hero Section - Prioritizes local news */}}
     <section class="hero-section" aria-labelledby="hero-title">
-      {{ partial "home/hero.html" . }}
+      <div class="hero-wrapper">
+        {{ partial "home/hero.html" . }}
+      </div>
     </section>
 
     {{/* Latest News Section - Recent articles with deduplication */}}
     <section class="latest-news-section" aria-labelledby="latest-news-title">
       <div class="container">
-        <h2 id="latest-news-title" class="section-title">{{ i18n "latest_news" }}</h2>
+        <header class="section-header">
+          <h2 id="latest-news-title" class="section-title">{{ i18n "latest_news" }}</h2>
+        </header>
         
         {{/* Get latest articles and exclude hero */}}
         {{ $sec := .GetPage (printf "/%s/news" .Site.Language.Lang) }}
@@ -36,7 +40,7 @@
         {{ end }}
         
         {{ if gt (len $latestPages) 0 }}
-          <div class="cards-grid">
+          <div class="latest-news-grid">
             {{ range $latestPages }}
               {{ partial "card.html" . }}
             {{ end }}
@@ -56,11 +60,13 @@
           {{ if ne .type "latest" }}
             {{ $title := i18n .key }}
             {{ if .category }}
-              {{ partial "home/category-rail.html" (dict "ctx" $ "title" $title "category" .category "limit" (.limit | default 6)) }}
+              <div class="category-rail-wrapper">
+                {{ partial "home/category-rail.html" (dict "ctx" $ "title" $title "category" .category "limit" (.limit | default 6)) }}
+              </div>
             {{ end }}
           {{ end }}
         {{ end }}
       </div>
     </section>
-  </div>
+  </main>
 {{ end }}

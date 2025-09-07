@@ -30,6 +30,13 @@ The architecture combines static site generation with headless CMS editorial wor
 
 **IMPORTANT**: Hugo is installed locally at `/home/nalyk/bin/hugo`. Always use this path when calling Hugo directly, or use the `HUGO=/home/nalyk/bin/hugo` prefix with make commands to ensure compatibility.
 
+### Playwright MCP Setup
+- **MCP Playwright** is installed via: `claude mcp add playwright npx '@playwright/mcp@latest'`
+- **After restart**: MCP tools become available as `mcp__playwright__*`
+- **Homepage modernization**: COMPLETED - Modern layout with improved hero section, cards, responsive grid, and animations
+- **Development server**: Should be running on `http://localhost:1313/ungheni-news/`
+- **Next task after restart**: Take desktop homepage screenshot using `mcp__playwright__browser_navigate` to verify modern layout improvements
+
 ### Deployment
 - Push to `main` branch triggers automatic Cloudflare Pages deployment
 - Cloudflare Worker runs scheduled builds every 5 minutes

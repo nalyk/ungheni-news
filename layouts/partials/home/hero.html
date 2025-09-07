@@ -17,52 +17,74 @@
   {{ $hero = cond (gt (len $pages) 0) (index $pages 0) nil }}
 {{ end }}
 {{ if $hero }}
-  <article class="card hero">
-    {{ $img := or $hero.Params.cover (cond (in $hero.Params.tags "politic") "img/placeholders/politic.svg" "img/placeholders/local.svg") }}
-    {{ with $img }}
-      {{ $res := $hero.Resources.GetMatch . | default (resources.Get .) }}
-      {{ if and $res (ne $res.MediaType.SubType "svg") }}
-        {{ $lg := $res.Fit "1600x900 webp" | resources.Fingerprint }}
-        {{ $md := $res.Fit "1200x675 webp" | resources.Fingerprint }}
-        {{ $sm := $res.Fit "800x450 webp"  | resources.Fingerprint }}
-        <a href="{{ $hero.RelPermalink }}" class="hero-media">
-          <img src="{{ $lg.RelPermalink }}" 
-               srcset="{{ $sm.RelPermalink }} 800w, {{ $md.RelPermalink }} 1200w, {{ $lg.RelPermalink }} 1600w" 
-               sizes="(max-width: 50rem) 100vw, 50vw" 
-               width="1600" 
-               height="900" 
-               alt="{{ $hero.Title }}" 
-               loading="eager" 
-               fetchpriority="high" 
-               decoding="async" 
-               importance="high" />
-        </a>
-      {{ else }}
-        {{ $static := . | relURL }}
-        <a href="{{ $hero.RelPermalink }}" class="hero-media">
-          <img src="{{ $static }}" 
-               width="1600" 
-               height="900" 
-               alt="{{ $hero.Title }}" 
-               loading="eager" 
-               fetchpriority="high" 
-               decoding="async" 
-               importance="high" />
-        </a>
+  <article class="hero-card" itemscope itemtype="https://schema.org/Article">
+    <div class="hero-container">
+      {{ $img := or $hero.Params.cover (cond (in $hero.Params.tags "politic") "img/placeholders/politic.svg" "img/placeholders/local.svg") }}
+      {{ with $img }}
+        {{ $res := $hero.Resources.GetMatch . | default (resources.Get .) }}
+        {{ if and $res (ne $res.MediaType.SubType "svg") }}
+          {{ $lg := $res.Fit "1600x900 webp" | resources.Fingerprint }}
+          {{ $md := $res.Fit "1200x675 webp" | resources.Fingerprint }}
+          {{ $sm := $res.Fit "800x450 webp"  | resources.Fingerprint }}
+          <div class="hero-media">
+            <a href="{{ $hero.RelPermalink }}" class="hero-image-link" aria-label="Citește articolul principal">
+              <img src="{{ $lg.RelPermalink }}" 
+                   srcset="{{ $sm.RelPermalink }} 800w, {{ $md.RelPermalink }} 1200w, {{ $lg.RelPermalink }} 1600w" 
+                   sizes="(max-width: 48rem) 100vw, (max-width: 80rem) 60vw, 50vw" 
+                   width="1600" 
+                   height="900" 
+                   alt="{{ $hero.Title }}" 
+                   loading="eager" 
+                   fetchpriority="high" 
+                   decoding="async" 
+                   importance="high" 
+                   itemprop="image"
+                   class="hero-image" />
+            </a>
+          </div>
+        {{ else }}
+          {{ $static := . | relURL }}
+          <div class="hero-media">
+            <a href="{{ $hero.RelPermalink }}" class="hero-image-link" aria-label="Citește articolul principal">
+              <img src="{{ $static }}" 
+                   width="1600" 
+                   height="900" 
+                   alt="{{ $hero.Title }}" 
+                   loading="eager" 
+                   fetchpriority="high" 
+                   decoding="async" 
+                   importance="high" 
+                   itemprop="image"
+                   class="hero-image" />
+            </a>
+          </div>
+        {{ end }}
       {{ end }}
-    {{ end }}
-    <div class="hero-text">
-      <div class="hero-meta">
-        {{ partial "pills.html" (dict "category" (index ($hero.Params.categories | default slice) 0) "format" (index ($hero.Params.formats | default slice) 0) "size" "large") }}
-        <time datetime="{{ $hero.Date.Format "2006-01-02T15:04:05Z07:00" }}" class="hero-date">
-          {{ $hero.Date.Format "2 January 2006" }}
-        </time>
+      
+      <div class="hero-content">
+        <div class="hero-meta">
+          {{ partial "pills.html" (dict "category" (index ($hero.Params.categories | default slice) 0) "format" (index ($hero.Params.formats | default slice) 0) "size" "large") }}
+          <time datetime="{{ $hero.Date.Format "2006-01-02T15:04:05Z07:00" }}" 
+                class="hero-date" 
+                itemprop="datePublished">
+            {{ $hero.Date.Format "2 January 2006" }}
+          </time>
+        </div>
+        
+        <h1 class="hero-title" itemprop="headline">
+          <a href="{{ $hero.RelPermalink }}" class="hero-title-link">{{ $hero.Title }}</a>
+        </h1>
+        
+        {{ with $hero.Summary }}
+          <p class="hero-summary" itemprop="description">{{ . | plainify }}</p>
+        {{ end }}
+        
+        {{ with $hero.Params.authors }}
+          <div class="hero-byline">
+            <span class="hero-authors" itemprop="author">{{ i18n "by" }} {{ delimit . ", " }}</span>
+          </div>
+        {{ end }}
       </div>
-      <h1><a href="{{ $hero.RelPermalink }}">{{ $hero.Title }}</a></h1>
-      {{ with $hero.Summary }}<p class="hero-summary">{{ . | plainify }}</p>{{ end }}
-      {{ with $hero.Params.authors }}
-        <p class="hero-authors">{{ i18n "by" }} {{ delimit . ", " }}</p>
-      {{ end }}
     </div>
   </article>
 {{ end }}
