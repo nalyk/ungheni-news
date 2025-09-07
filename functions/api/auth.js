@@ -42,11 +42,13 @@ export async function onRequestGet(context) {
   <p>Authorization successful. This window will close automatically.</p>
   <script>
     if (window.opener) {
-      window.opener.postMessage({
-        type: 'authorization_grant',
-        provider: 'github',
-        token: '${tokenData.access_token}'
-      }, window.location.origin);
+      window.opener.postMessage(
+        'authorization:github:success:' + JSON.stringify({
+          token: '${tokenData.access_token}',
+          provider: 'github'
+        }), 
+        window.location.origin
+      );
     }
     window.close();
   </script>
@@ -68,10 +70,12 @@ export async function onRequestGet(context) {
   <p>Authorization failed: ${error.message}</p>
   <script>
     if (window.opener) {
-      window.opener.postMessage({
-        type: 'authorization_error',
-        error: '${error.message}'
-      }, window.location.origin);
+      window.opener.postMessage(
+        'authorization:github:error:' + JSON.stringify({
+          error: '${error.message}'
+        }), 
+        window.location.origin
+      );
     }
     window.close();
   </script>
