@@ -3,7 +3,7 @@ backend:
   repo: nalyk/ungheni-news
   branch: main
 
-site_url: /
+site_url: https://triunghi.md
 logo_url: /admin/logo.svg
 
 publish_mode: editorial_workflow

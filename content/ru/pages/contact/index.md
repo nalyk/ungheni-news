@@ -2,5 +2,5 @@
 title: Контакт
 ---
 
-Пишите нам: redactie@ungheni-news.md
+Пишите нам: redactie@triunghi.md
 

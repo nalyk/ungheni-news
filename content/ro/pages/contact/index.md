@@ -2,5 +2,5 @@
 title: Contact
 ---
 
-Scrie-ne: redactie@ungheni-news.md
+Scrie-ne: redactie@triunghi.md
 
