@@ -34,7 +34,7 @@ The architecture combines static site generation with headless CMS editorial wor
 - **MCP Playwright** is installed via: `claude mcp add playwright npx '@playwright/mcp@latest'`
 - **After restart**: MCP tools become available as `mcp__playwright__*`
 - **Homepage modernization**: COMPLETED - Modern layout with improved hero section, cards, responsive grid, and animations
-- **Development server**: Should be running on `http://localhost:1313/ungheni-news/`
+- **Development server**: Should be running on `http://localhost:1313/`
 - **Next task after restart**: Take desktop homepage screenshot using `mcp__playwright__browser_navigate` to verify modern layout improvements
 
 ### Deployment

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth</title>
+    <script>
+      // Handle OAuth callback from GitHub
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      
+      if (code) {
+        // Send authorization code to opener window (CMS)
+        if (window.opener) {
+          window.opener.postMessage({
+            type: 'authorization-code',
+            code: code,
+            state: params.get('state')
+          }, window.location.origin);
+        }
+        window.close();
+      } else {
+        // Redirect to GitHub OAuth
+        const clientId = 'YOUR_GITHUB_CLIENT_ID'; // You need to replace this
+        const redirectUri = encodeURIComponent(window.location.href);
+        const scope = 'repo';
+        
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
+      }
+    </script>
+  </head>
+  <body>
+    <p>Authenticating...</p>
+  </body>
+</html>

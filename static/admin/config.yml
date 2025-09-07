@@ -2,6 +2,8 @@ backend:
   name: github
   repo: nalyk/ungheni-news
   branch: main
+  base_url: https://triunghi.md
+  auth_endpoint: admin/auth
 
 site_url: https://triunghi.md
 logo_url: /admin/logo.svg
