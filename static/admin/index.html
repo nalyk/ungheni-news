@@ -52,6 +52,83 @@
     
     <!-- Latest Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
+    
+    <!-- Force CMS authentication after OAuth -->
+    <script>
+      console.log('🔧 CMS: Setting up authentication interceptor...');
+      
+      // Wait for CMS to be ready, then intercept authentication
+      const waitForCMS = () => {
+        if (window.CMS) {
+          console.log('✅ CMS: Decap CMS loaded, setting up auth interceptor');
+          setupAuthInterceptor();
+        } else {
+          console.log('⏳ CMS: Waiting for Decap CMS to load...');
+          setTimeout(waitForCMS, 500);
+        }
+      };
+      
+      function setupAuthInterceptor() {
+        // Check for stored auth token and force login
+        const checkStoredAuth = () => {
+          const token = localStorage.getItem('triunghi-auth-token');
+          if (token && token.startsWith('gho_')) {
+            console.log('🔑 CMS: Found stored auth token, forcing login state');
+            
+            // Try to trigger CMS login state
+            try {
+              // Method 1: Trigger a custom event that CMS might listen to
+              window.dispatchEvent(new CustomEvent('cms-auth-complete', {
+                detail: { token: token, provider: 'github' }
+              }));
+              
+              // Method 2: Try to access CMS internals if available
+              if (window.CMS && window.CMS.getBackend) {
+                console.log('🔧 CMS: Attempting to set backend auth state');
+                const backend = window.CMS.getBackend();
+                if (backend && backend.authenticate) {
+                  backend.authenticate({ token: token });
+                }
+              }
+              
+              // Method 3: Dispatch auth success event
+              window.postMessage({
+                type: 'cms-auth-success',
+                token: token,
+                provider: 'github'
+              }, window.location.origin);
+              
+              // Method 4: Force page refresh to reload with auth state
+              setTimeout(() => {
+                console.log('🔄 CMS: Force refreshing to update auth state');
+                window.location.reload();
+              }, 3000);
+              
+            } catch (error) {
+              console.error('❌ CMS: Error setting auth state:', error);
+            }
+          }
+        };
+        
+        // Check immediately and after any auth messages
+        checkStoredAuth();
+        
+        // Also check when we receive new auth messages
+        window.addEventListener('message', function(event) {
+          if (event.data && (event.data.token || event.data.access_token)) {
+            setTimeout(checkStoredAuth, 100);
+          }
+        });
+      }
+      
+      // Start waiting for CMS
+      waitForCMS();
+      
+      // Also try immediate check in case CMS loads quickly
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(waitForCMS, 1000);
+      });
+    </script>
   </body>
 </html>
 
