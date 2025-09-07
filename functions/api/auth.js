@@ -41,16 +41,29 @@ export async function onRequestGet(context) {
 <body>
   <p>Authorization successful. This window will close automatically.</p>
   <script>
+    console.log('🚀 OAuth: Sending success message to parent window...');
+    console.log('🔧 OAuth: window.opener exists:', !!window.opener);
+    console.log('🔧 OAuth: Current origin:', window.location.origin);
+    
     if (window.opener) {
-      window.opener.postMessage(
-        'authorization:github:success:' + JSON.stringify({
-          token: '${tokenData.access_token}',
-          provider: 'github'
-        }), 
-        window.location.origin
-      );
+      const message = 'authorization:github:success:' + JSON.stringify({
+        token: '${tokenData.access_token}',
+        provider: 'github'
+      });
+      console.log('📤 OAuth: Sending message:', message);
+      
+      // Send to same origin (both popup and parent are on triunghi.md)
+      window.opener.postMessage(message, 'https://triunghi.md');
+      
+      console.log('✅ OAuth: Message sent successfully');
+    } else {
+      console.error('❌ OAuth: No window.opener found!');
     }
-    window.close();
+    
+    setTimeout(() => {
+      console.log('🔒 OAuth: Closing popup window...');
+      window.close();
+    }, 1000);
   </script>
 </body>
 </html>`;
@@ -69,15 +82,24 @@ export async function onRequestGet(context) {
 <body>
   <p>Authorization failed: ${error.message}</p>
   <script>
+    console.log('❌ OAuth: Sending error message to parent window...');
+    console.log('🔧 OAuth: Error:', '${error.message}');
+    
     if (window.opener) {
-      window.opener.postMessage(
-        'authorization:github:error:' + JSON.stringify({
-          error: '${error.message}'
-        }), 
-        window.location.origin
-      );
+      const message = 'authorization:github:error:' + JSON.stringify({
+        error: '${error.message}'
+      });
+      console.log('📤 OAuth: Sending error message:', message);
+      window.opener.postMessage(message, 'https://triunghi.md');
+      console.log('✅ OAuth: Error message sent');
+    } else {
+      console.error('❌ OAuth: No window.opener found for error!');
     }
-    window.close();
+    
+    setTimeout(() => {
+      console.log('🔒 OAuth: Closing error popup...');
+      window.close();
+    }, 2000);
   </script>
 </body>
 </html>`;

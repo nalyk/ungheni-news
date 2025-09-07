@@ -6,6 +6,28 @@
     <title>Decap CMS - Triunghi.md</title>
   </head>
   <body>
+    <!-- Debug postMessage reception -->
+    <script>
+      console.log('🔧 CMS: Setting up postMessage listener for debugging...');
+      window.addEventListener('message', function(event) {
+        console.log('🎯 CMS: Received postMessage from:', event.origin);
+        console.log('🔍 CMS: Message data:', event.data);
+        console.log('🔍 CMS: Message type:', typeof event.data);
+        
+        // Check if this looks like our auth message
+        if (typeof event.data === 'string' && event.data.includes('authorization:github:')) {
+          console.log('✅ CMS: This looks like our auth message!');
+          if (event.data.includes('success')) {
+            console.log('🎉 CMS: SUCCESS message detected');
+          } else if (event.data.includes('error')) {
+            console.log('❌ CMS: ERROR message detected');
+          }
+        } else {
+          console.log('📝 CMS: Not our auth message, probably CMS internal');
+        }
+      }, false);
+    </script>
+    
     <!-- Latest Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
   </body>
