@@ -5,7 +5,7 @@ summary: A început implementarea Proiectului „Spații sigure de joacă, agrem
   trei milioane patru sute mii de lei.
 slug: parc-danuteni
 categories: local
-formats: stire
+formats: factcheck
 cutia_ungheni:
   impact_local: optional impact
   ce_se_schimba: schimba tot
