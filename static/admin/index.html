@@ -6,75 +6,7 @@
     <title>Decap CMS - Triunghi.md</title>
   </head>
   <body>
-    <!-- Debug OAuth messages -->
-    <script>
-      console.log('🎯 CMS: Setting up OAuth message listener...');
-      
-      // Listen for OAuth messages from popup
-      window.addEventListener('message', function(event) {
-        console.log('🎯 CMS: Received message from', event.origin, ':', event.data);
-        
-        // Log all message properties for debugging
-        console.log('🔍 Message details:', {
-          origin: event.origin,
-          source: event.source,
-          data: event.data,
-          type: typeof event.data,
-          keys: Object.keys(event.data || {})
-        });
-        
-        // Check if this looks like an OAuth response
-        if (event.data && (event.data.type === 'authorization-code' || event.data.token || event.data.access_token)) {
-          console.log('✅ CMS: Detected OAuth message!', event.data);
-          
-          // Store token in localStorage as fallback
-          if (event.data.token) {
-            localStorage.setItem('triunghi-auth-token', event.data.token);
-            console.log('💾 CMS: Stored token in localStorage');
-          }
-          if (event.data.access_token) {
-            localStorage.setItem('triunghi-auth-token', event.data.access_token);
-            console.log('💾 CMS: Stored access_token in localStorage');
-          }
-        }
-      }, false);
-      
-      // Also listen for storage changes (in case localStorage method works)
-      window.addEventListener('storage', function(event) {
-        console.log('📦 CMS: Storage event:', event.key, event.newValue);
-        if (event.key === 'triunghi-auth-token') {
-          console.log('✅ CMS: Auth token detected in storage!');
-        }
-      });
-      
-      console.log('✨ CMS: OAuth debugging setup complete');
-    </script>
-    
     <!-- Latest Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
-    
-    <!-- PROPERLY handle CMS authentication WITHOUT infinite loops -->
-    <script>
-      console.log('🔧 CMS: Starting PROPER authentication handling');
-      
-      // Prevent infinite refresh loops
-      let hasTriedRefresh = sessionStorage.getItem('cms-refresh-attempted') === 'true';
-      
-      if (hasTriedRefresh) {
-        console.log('🚫 CMS: Already attempted refresh, clearing loop prevention');
-        sessionStorage.removeItem('cms-refresh-attempted');
-      }
-      
-      // Only run auth detection ONCE per session
-      if (!hasTriedRefresh) {
-        const token = localStorage.getItem('triunghi-auth-token');
-        if (token && token.startsWith('gho_')) {
-          console.log('🔑 CMS: Found auth token, marking refresh attempt and reloading ONCE');
-          sessionStorage.setItem('cms-refresh-attempted', 'true');
-          window.location.reload();
-        }
-      }
-    </script>
   </body>
 </html>
-
