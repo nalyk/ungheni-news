@@ -41,29 +41,36 @@ export async function onRequestGet(context) {
 <body>
   <p>Authorization successful. This window will close automatically.</p>
   <script>
-    console.log('🚀 OAuth: Sending success message to parent window...');
+    console.log('🚀 OAuth: Starting Decap CMS handshake...');
     console.log('🔧 OAuth: window.opener exists:', !!window.opener);
     console.log('🔧 OAuth: Current origin:', window.location.origin);
     
     if (window.opener) {
-      const message = 'authorization:github:success:' + JSON.stringify({
-        token: '${tokenData.access_token}',
-        provider: 'github'
-      });
-      console.log('📤 OAuth: Sending message:', message);
+      // Step 1: Send initial handshake (as seen in working implementations)
+      console.log('📤 OAuth: Sending authorizing handshake...');
+      window.opener.postMessage("authorizing:github", "https://triunghi.md");
       
-      // Send to same origin (both popup and parent are on triunghi.md)
-      window.opener.postMessage(message, 'https://triunghi.md');
+      // Step 2: Send the actual success message
+      setTimeout(() => {
+        const message = 'authorization:github:success:' + JSON.stringify({
+          token: '${tokenData.access_token}',
+          provider: 'github'
+        });
+        console.log('📤 OAuth: Sending success message:', message);
+        window.opener.postMessage(message, 'https://triunghi.md');
+        console.log('✅ OAuth: Success message sent');
+        
+        // Step 3: Close after short delay
+        setTimeout(() => {
+          console.log('🔒 OAuth: Closing popup window...');
+          window.close();
+        }, 500);
+      }, 100);
       
-      console.log('✅ OAuth: Message sent successfully');
     } else {
       console.error('❌ OAuth: No window.opener found!');
+      setTimeout(() => window.close(), 2000);
     }
-    
-    setTimeout(() => {
-      console.log('🔒 OAuth: Closing popup window...');
-      window.close();
-    }, 1000);
   </script>
 </body>
 </html>`;
