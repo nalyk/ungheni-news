@@ -46,17 +46,50 @@
         }
         
         function sendMessageToParent(data) {
-            console.log('Sending message to parent:', data);
+            console.log('🔄 Sending message to parent:', data);
             
-            // Send to opener (popup window)
-            if (window.opener && !window.opener.closed) {
-                window.opener.postMessage(data, '*');
-            }
+            const targetOrigin = 'https://triunghi.md';
             
-            // Send to parent (iframe)
-            if (window.parent && window.parent !== window) {
-                window.parent.postMessage(data, '*');
-            }
+            // Try multiple message formats that Decap CMS might expect
+            const messages = [
+                data, // Original format
+                { ...data, provider: 'github' }, // With provider
+                { token: data.token, provider: 'github' }, // Simplified token format
+                { access_token: data.token, provider: 'github' } // Alternative token format
+            ];
+            
+            messages.forEach((message, index) => {
+                console.log(`📤 Attempting message format ${index + 1}:`, message);
+                
+                // Send to opener (popup window) - most common
+                if (window.opener && !window.opener.closed) {
+                    console.log('📤 Sending to opener...');
+                    window.opener.postMessage(message, targetOrigin);
+                    window.opener.postMessage(message, '*'); // Fallback
+                }
+                
+                // Send to parent (iframe) - fallback
+                if (window.parent && window.parent !== window) {
+                    console.log('📤 Sending to parent...');
+                    window.parent.postMessage(message, targetOrigin);
+                    window.parent.postMessage(message, '*'); // Fallback
+                }
+            });
+            
+            // Additional attempts with different timing
+            setTimeout(() => {
+                console.log('📤 Retry sending after 500ms...');
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage(data, targetOrigin);
+                }
+            }, 500);
+            
+            setTimeout(() => {
+                console.log('📤 Final retry after 1000ms...');
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage(data, targetOrigin);
+                }
+            }, 1000);
         }
         
         // Parse URL parameters
@@ -90,25 +123,40 @@
             .then(data => {
                 updateStatus('Authentication successful!', 'success');
                 
+                // Store token in localStorage as fallback
+                localStorage.setItem('triunghi-auth-token', data.access_token);
+                localStorage.setItem('triunghi-auth-user', JSON.stringify(data.user || {}));
+                console.log('💾 OAuth: Stored auth data in localStorage');
+                
                 // Send the access token back to CMS
                 const authData = {
                     type: 'authorization-code',
                     code: code,
                     state: state,
-                    token: data.access_token
+                    token: data.access_token,
+                    access_token: data.access_token, // Alternative format
+                    user: data.user
                 };
                 
-                console.log('Sending auth data to CMS:', authData);
+                console.log('✅ OAuth: Sending auth data to CMS:', authData);
                 sendMessageToParent(authData);
                 
-                // Try to close the popup
+                // Also try triggering a storage event
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'triunghi-auth-token',
+                    newValue: data.access_token,
+                    storageArea: localStorage
+                }));
+                
+                // Try to close the popup with more time for message processing
                 setTimeout(() => {
                     try {
+                        updateStatus('Closing window...', 'success');
                         window.close();
                     } catch(e) {
-                        updateStatus('You can close this window now', 'success');
+                        updateStatus('Authentication complete! You can close this window.', 'success');
                     }
-                }, 2000);
+                }, 3000); // Increased delay
             })
             .catch(error => {
                 console.error('Token exchange error:', error);
