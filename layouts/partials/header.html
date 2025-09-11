@@ -244,6 +244,11 @@
         }
       });
       
+      // Ensure desktop shows search by default
+      if (window.matchMedia('(min-width: 64rem)').matches) {
+        searchForm.classList.add('active');
+      }
+
       // Autocomplete functionality
       if (searchInput && suggestionsContainer) {
         searchInput.addEventListener('input', function(e) {

@@ -4683,3 +4683,22 @@ html {
 .articles-grid { display: grid; gap: var(--space-6); grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
 .list-sidebar { position: sticky; top: calc(4rem + var(--space-6)); }
 @media (max-width: 64rem) { .list-content { grid-template-columns: 1fr; } .list-sidebar { position: static; } }
+/* Desktop: persistent inline search */
+@media (min-width: 64rem) {
+  .header-actions { gap: var(--space-4); }
+  #header-search {
+    position: static;
+    width: auto;
+    background: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  #header-search .search-input-wrapper { width: 18rem; }
+  #header-search .search-input { width: 100%; }
+  #header-search .search-submit { display: none; }
+  .search-toggle { display: none; }
+}
