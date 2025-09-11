@@ -1,9 +1,27 @@
 {{ define "main" }}
-  <h1>Debugging Homepage</h1>
-  <h2>Total Regular Pages: {{ len site.RegularPages }}</h2>
-  <ul>
-    {{ range site.RegularPages }}
-      <li>{{ .Title }} (Kind: {{ .Kind }}, Type: {{ .Type }}, Section: {{ .Section }}, Lang: {{ .Language.Lang }})</li>
+  <div class="newspaper-grid">
+    {{ $news_section_path := printf "/%s/news" .Site.Language.Lang }}
+    {{ $news_section := .Site.GetPage $news_section_path }}
+    {{ $pages := $news_section.RegularPages.ByDate.Reverse | first 13 }}
+    
+    {{ $hero := first 1 $pages }}
+    {{ range $hero }}
+      {{ partial "card.html" (dict "card_class" "card-hero" "page" .) }}
     {{ end }}
-  </ul>
+
+    {{ $featured := after 1 $pages | first 1 }}
+    {{ range $featured }}
+      {{ partial "card.html" (dict "card_class" "card-featured" "page" .) }}
+    {{ end }}
+
+    {{ $standard_pages := after 2 $pages | first 3 }}
+    {{ range $standard_pages }}
+      {{ partial "card.html" (dict "card_class" "card-standard" "page" .) }}
+    {{ end }}
+
+    {{ $small_pages := after 5 $pages | first 8 }}
+    {{ range $small_pages }}
+      {{ partial "card.html" (dict "card_class" "card-small" "page" .) }}
+    {{ end }}
+  </div>
 {{ end }}
