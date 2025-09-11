@@ -8,8 +8,19 @@
     <title>{{ block "title" . }}{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} · {{ .Site.Title }}{{ end }}{{ end }}</title>
     {{ partial "head/seo.html" . }}
 
-    {{ $css := resources.Get "css/main.scss" | css.Sass (dict "targetPath" "assets/main.css") | resources.Minify | resources.Fingerprint }}
-    <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+    {{ $opts := dict "targetPath" "assets/main.css" "enableSourceMap" false }}
+    {{ $css := "" }}
+    {{ $scssResource := resources.Get "css/main.scss" }}
+    {{ if $scssResource }}
+      {{ $hugoVersion := hugo.Version }}
+      {{ if ge $hugoVersion "0.128.0" }}
+        {{ $css = $scssResource | css.Sass $opts | resources.Minify | resources.Fingerprint }}
+      {{ else }}
+        {{ $css = $scssResource | resources.ToCSS $opts | resources.Minify | resources.Fingerprint }}
+      {{ end }}
+    {{ end }}
+    <link rel="preload" href="{{ $css.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}"></noscript>
 
     <link rel="preload" href="/fonts/ibmplexsans/IBMPlexSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/ibmplexserif/IBMPlexSerif-Bold.woff2" as="font" type="font/woff2" crossorigin>
