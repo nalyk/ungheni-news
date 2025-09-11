@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="light">
     <meta name="theme-color" content="#4A90E2">
     <meta name="format-detection" content="telephone=no">
     <title>{{ block "title" . }}{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} · {{ .Site.Title }}{{ end }}{{ end }}</title>
@@ -95,8 +95,7 @@
     <link rel="prefetch" href="/fonts/ibmplexsans/IBMPlexSans-Italic.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="icon" href="{{ "img/brand/logo.svg" | relURL }}" type="image/svg+xml" />
     {{ with .OutputFormats.Get "RSS" }}<link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" href="{{ .RelPermalink }}">{{ end }}
-    <!-- Critical JavaScript - theme toggle loaded immediately -->
-    <script src="{{ (resources.Get "js/theme.js" | resources.Minify | resources.Fingerprint).RelPermalink }}"></script>
+    {{/* Dark theme removed: no theme toggle script */}}
     <!-- Non-critical JavaScript - main functionality loaded deferred -->
     <script defer src="{{ (resources.Get "js/main.js" | resources.Minify | resources.Fingerprint).RelPermalink }}" type="module"></script>
   </head>

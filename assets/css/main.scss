@@ -288,40 +288,7 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
-/* Dark Theme - Professional dark mode for evening reading */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: var(--color-gray-950);
-    --bg-subtle: var(--color-gray-900);
-    --bg-muted: var(--color-gray-800);
-    --bg-elevated: var(--color-gray-700);
-    
-    --text-primary: var(--color-gray-50);
-    --text-secondary: var(--color-gray-300);
-    --text-tertiary: var(--color-gray-400);
-    --text-quaternary: var(--color-gray-500);
-    --text-disabled: var(--color-gray-600);
-    --text-inverse: var(--color-gray-950);
-    
-    --border-subtle: var(--color-gray-800);
-    --border-default: var(--color-gray-700);
-    --border-strong: var(--color-gray-600);
-    
-    --accent-primary: var(--color-primary-400);
-    --accent-primary-hover: var(--color-primary-300);
-    --accent-primary-subtle: var(--color-primary-950);
-    
-    --accent-secondary: var(--color-accent-400);
-    --accent-secondary-hover: var(--color-accent-300);
-    --accent-secondary-subtle: var(--color-accent-950);
-    
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
-  }
-}
+/* Dark theme removed: enforce light theme tokens only */
 
 /* High Contrast Mode - Enhanced accessibility */
 @media (prefers-contrast: high) {
@@ -3701,31 +3668,7 @@ img {
   contain: layout style paint;
 }
 
-/* ===============================================
-   DARK MODE TOGGLE COMPONENT
-   =============================================== */
-
-/* Theme Toggle Implementation */
-[data-theme="dark"] {
-  color-scheme: dark;
-}
-
-[data-theme="light"] {
-  color-scheme: light;
-}
-
-/* Auto theme based on system preference */
-@media (prefers-color-scheme: dark) {
-  [data-theme="auto"] {
-    color-scheme: dark;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  [data-theme="auto"] {
-    color-scheme: light;
-  }
-}
+/* Dark mode toggle removed */
 
 /* ===============================================
    COMPONENT STATES & INTERACTIONS
