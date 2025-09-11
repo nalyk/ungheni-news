@@ -13,7 +13,9 @@
       {{ $cats := site.Data.categories }}
       {{ range first 3 $cats }}
         {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-        <a href="{{ (site.GetPage (printf "/categories/%s" .slug)).RelPermalink }}" class="nav-link primary" {{ if eq .priority "high" }}data-priority="local"{{ end }}>
+        {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
+        {{ $isCurrent := or (eq $.RelPermalink $catPage.RelPermalink) (hasPrefix $.RelPermalink $catPage.RelPermalink) }}
+        <a href="{{ $catPage.RelPermalink }}" class="nav-link primary" {{ if eq .priority "high" }}data-priority="local"{{ end }} {{ if $isCurrent }}aria-current="page"{{ end }}>
           {{ if eq .slug "local" }}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="nav-icon">
               <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2" fill="none"/>
@@ -36,7 +38,9 @@
       <nav class="secondary-nav dropdown-menu" aria-label="Categorii suplimentare">
         {{ range after 3 $cats }}
           {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-          <a href="{{ (site.GetPage (printf "/categories/%s" .slug)).RelPermalink }}" class="nav-link secondary">
+          {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
+          {{ $isCurrent := or (eq $.RelPermalink $catPage.RelPermalink) (hasPrefix $.RelPermalink $catPage.RelPermalink) }}
+          <a href="{{ $catPage.RelPermalink }}" class="nav-link secondary" {{ if $isCurrent }}aria-current="page"{{ end }}>
             {{ $title }}
           </a>
         {{ end }}
@@ -62,7 +66,7 @@
               </svg>
             </button>
           </div>
-          <div class="search-suggestions" id="search-suggestions">
+          <div class="search-suggestions" id="search-suggestions" role="listbox" aria-label="{{ i18n "search" }}">
             <!-- Suggestions will be populated here -->
           </div>
         </form>
@@ -112,7 +116,9 @@
         <nav class="mobile-nav-menu" aria-label="Navigare mobilă">
           {{ range $cats }}
             {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-            <a href="{{ (site.GetPage (printf "/categories/%s" .slug)).RelPermalink }}" class="mobile-nav-link" {{ if eq .priority "high" }}data-priority="local"{{ end }}>
+            {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
+            {{ $isCurrent := or (eq $.RelPermalink $catPage.RelPermalink) (hasPrefix $.RelPermalink $catPage.RelPermalink) }}
+            <a href="{{ $catPage.RelPermalink }}" class="mobile-nav-link" {{ if eq .priority "high" }}data-priority="local"{{ end }} {{ if $isCurrent }}aria-current="page"{{ end }}>
               {{ if eq .slug "local" }}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="nav-icon">
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2" fill="none"/>
@@ -303,7 +309,7 @@
         const suggestionHtml = `
           <div class="suggestions-header">{{ i18n "popular_searches" | default "Căutări populare" }}</div>
           ${popularSearches.map(term => 
-            `<div class="suggestion-item popular" onclick="selectSuggestion('${term}')">${term}</div>`
+            `<div class="suggestion-item popular" role="option" onclick="selectSuggestion('${term}')">${term}</div>`
           ).join('')}
         `;
         
@@ -321,7 +327,7 @@
             if (res && res.results && res.results.length) {
               const items = await Promise.all(res.results.map(r => r.data()));
               const html = items.map(item => `
-                <div class="suggestion-item" onclick="selectSuggestion('${item.url.replace(/'/g, "\\'")}')">
+                <div class="suggestion-item" role="option" onclick="selectSuggestion('${item.url.replace(/'/g, "\\'")}')">
                   ${highlightMatch(item.meta?.title || item.url, query)}
                 </div>
               `).join('');
@@ -340,7 +346,7 @@
           return;
         }
         const suggestionHtml = filteredSuggestions.map(term => 
-          `<div class="suggestion-item" onclick="selectSuggestion('${term}')">${highlightMatch(term, query)}</div>`
+          `<div class="suggestion-item" role="option" onclick="selectSuggestion('${term}')">${highlightMatch(term, query)}</div>`
         ).join('');
         suggestionsContainer.innerHTML = suggestionHtml;
         suggestionsContainer.style.display = 'block';

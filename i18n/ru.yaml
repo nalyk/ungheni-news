@@ -199,3 +199,12 @@
   translation: "Показано"
 - id: search_of_total
   translation: "из"
+# Header / Nav additions
+- id: more_categories
+  translation: "Еще"
+- id: search_hint
+  translation: "Поиск"
+- id: navigation
+  translation: "Навигация"
+- id: popular_searches
+  translation: "Популярные запросы"

@@ -94,6 +94,21 @@
 (function() {
   'use strict';
 
+  // Localized category and format display maps
+  const categoriesMap = {
+    {{- range $c := site.Data.categories -}}
+      {{- $title := cond (eq $.Site.Language.Lang "ru") ($c.ru | default $c.ro) $c.ro -}}
+      "{{ $c.slug }}": "{{ $title }}",
+    {{- end -}}
+  };
+  const formatsMap = {
+    "stire": "{{ i18n "format_stire" }}",
+    "analiza": "{{ i18n "format_analiza" }}",
+    "explainer": "{{ i18n "format_explainer" }}",
+    "opinie": "{{ i18n "format_opinie" }}",
+    "factcheck": "{{ i18n "format_factcheck" }}"
+  };
+
   let pagefind;
   let searchInput;
   let resultsContainer;
@@ -295,42 +310,50 @@
     const title = data.meta?.title || 'Untitled';
     const excerpt = data.excerpt || '';
     const date = data.meta?.date || '';
+    const image = data.meta?.image || '';
     const categories = data.meta?.categories ? data.meta.categories.split(',') : [];
     const formats = data.meta?.formats ? data.meta.formats.split(',') : [];
 
     let categoriesHtml = '';
     if (categories.length > 0) {
-      categoriesHtml = categories.map(cat => 
-        `<span class="result-pill result-category">${cat.trim()}</span>`
-      ).join('');
+      categoriesHtml = categories.map(cat => {
+        const slug = (cat || '').trim();
+        const label = categoriesMap[slug] || slug;
+        return `<span class="result-pill result-category">${label}</span>`
+      }).join('');
     }
 
     let formatsHtml = '';
     if (formats.length > 0) {
-      formatsHtml = formats.map(format => 
-        `<span class="result-pill result-format">${format.trim()}</span>`
-      ).join('');
+      formatsHtml = formats.map(format => {
+        const key = (format || '').trim();
+        const label = formatsMap[key] || key;
+        return `<span class="result-pill result-format">${label}</span>`
+      }).join('');
     }
 
     const dateHtml = date ? `<time class="result-date">${new Date(date).toLocaleDateString('{{ .Site.Language.Lang }}')}</time>` : '';
 
+    const thumbHtml = image ? `<a class="result-thumb" href="${url}"><img src="${image}" alt="" loading="lazy" decoding="async" /></a>` : '';
+
     return `
       <article class="search-result">
-        <header class="result-header">
-          <h3 class="result-title">
-            <a href="${url}">${title}</a>
-          </h3>
-          ${dateHtml}
-        </header>
-        
-        ${excerpt ? `<div class="result-excerpt">${excerpt}</div>` : ''}
-        
-        <footer class="result-footer">
-          <div class="result-pills">
-            ${categoriesHtml}
-            ${formatsHtml}
-          </div>
-        </footer>
+        ${thumbHtml}
+        <div class="result-body">
+          <header class="result-header">
+            <h3 class="result-title">
+              <a href="${url}">${title}</a>
+            </h3>
+            ${dateHtml}
+          </header>
+          ${excerpt ? `<div class="result-excerpt">${excerpt}</div>` : ''}
+          <footer class="result-footer">
+            <div class="result-pills">
+              ${categoriesHtml}
+              ${formatsHtml}
+            </div>
+          </footer>
+        </div>
       </article>
     `;
   }

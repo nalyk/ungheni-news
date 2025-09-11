@@ -201,3 +201,12 @@
   translation: "Se afișează"
 - id: search_of_total
   translation: "din"
+# Header / Nav additions
+- id: more_categories
+  translation: "Mai multe"
+- id: search_hint
+  translation: "Căutare"
+- id: navigation
+  translation: "Navigare"
+- id: popular_searches
+  translation: "Căutări populare"

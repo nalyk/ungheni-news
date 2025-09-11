@@ -9,8 +9,16 @@
 
 {{ define "main" }}
 {{- $page := . -}}
-{{- $categories := $page.Params.categories | default slice -}}
-{{- $category := index $categories 0 -}}
+{{- /* Normalize category: support string or list */ -}}
+{{- $categories := $page.Params.categories -}}
+{{- $category := "" -}}
+{{- with $categories -}}
+  {{- if (reflect.IsSlice .) -}}
+    {{- $category = index . 0 -}}
+  {{- else -}}
+    {{- $category = . -}}
+  {{- end -}}
+{{- end -}}
 {{- $formats := $page.Params.formats | default slice -}}
 {{- $format := index $formats 0 -}}
 {{- $authors := $page.Params.authors | default slice -}}
@@ -29,7 +37,7 @@
   {{- end -}}
 {{- end -}}
 
-<!-- Pagefind meta tags for search indexing -->
+ Pagefind meta tags for search indexing 
 <div data-pagefind-meta="title:{{ .Title }}"></div>
 <div data-pagefind-meta="date:{{ (.PublishDate | default .Date).Format "2006-01-02" }}"></div>
 {{- with $categories -}}
@@ -43,6 +51,26 @@
 {{- end -}}
 {{- with $tags -}}
 <div data-pagefind-meta="tags:{{ delimit . ", " }}"></div>
+{{- end -}}
+{{- /* Pagefind filters (enable category/format filters in search) */ -}}
+{{- with $categories -}}
+  {{- if (reflect.IsSlice .) -}}
+    {{- range . -}}<div data-pagefind-filter="categories">{{ . }}</div>{{- end -}}
+  {{- else -}}
+    <div data-pagefind-filter="categories">{{ . }}</div>
+  {{- end -}}
+{{- end -}}
+{{- with $formats -}}
+  {{- if (reflect.IsSlice .) -}}
+    {{- range . -}}<div data-pagefind-filter="formats">{{ . }}</div>{{- end -}}
+  {{- else -}}
+    <div data-pagefind-filter="formats">{{ . }}</div>
+  {{- end -}}
+{{- end -}}
+{{- /* Pagefind image meta for search thumbnails */ -}}
+{{- with $featuredImage -}}
+  {{- $abs := cond (hasPrefix . "http") . (. | relURL | absURL) -}}
+  <div data-pagefind-meta="image:{{ $abs }}"></div>
 {{- end -}}
 
 <div class="article-layout">
@@ -170,15 +198,18 @@
     {{/* Featured Image */}}
     {{- if $featuredImage -}}
       <figure class="article-featured-image">
-        <img src="{{ $featuredImage }}" 
-             alt="{{ $featuredImageAlt }}" 
-             class="featured-image"
-             width="800"
-             height="450"
-             loading="eager"
-             fetchpriority="high"
-             decoding="async"
-             itemprop="image">
+        {{- $src := cond (ne ($page.Resources.GetMatch "featured*") nil) "featured*" $featuredImage -}}
+        {{- partial "media/image.html" (dict 
+              "page" $page 
+              "src" $src 
+              "alt" $featuredImageAlt 
+              "widths" (slice 800 1200 1600) 
+              "sizes" "(max-width: 48rem) 100vw, 70vw" 
+              "class" "featured-image" 
+              "loading" "eager" 
+              "fetchpriority" "high" 
+              "decoding" "async" 
+              "aspect" "1600x900") -}}
         {{- with $page.Params.image_caption -}}
           <figcaption class="featured-image-caption">{{- . | markdownify -}}</figcaption>
         {{- end -}}
@@ -366,64 +397,19 @@
   }, { once: true });
 </script>
 
-{{/* CSS Styles */}}
-<style>
-  .article-layout {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 3rem;
-    align-items: start;
-  }
+{{/* CSS Styles moved to assets/css/main.scss */}}
   
-  .article-content {
-    max-width: none;
-  }
   
-  /* Header Styles */
-  .article-header {
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid rgba(127, 127, 127, 0.15);
-  }
   
-  /* Breadcrumbs */
-  .breadcrumbs {
-    margin-bottom: 1.5rem;
-  }
   
-  .breadcrumb-list {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    gap: 0.5rem;
-    align-items: center;
-  }
   
-  .breadcrumb-item {
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
   
-  .breadcrumb-item:not(:last-child)::after {
-    content: "›";
-    margin-left: 0.5rem;
-    color: rgba(127, 127, 127, 0.4);
-  }
   
-  .breadcrumb-link {
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
   
-  .breadcrumb-link:hover {
-    color: var(--accent);
-    text-decoration: underline;
-  }
+  
+  
+  
+  
   
   .breadcrumb-current {
     color: var(--fg);
@@ -919,5 +905,6 @@
       line-height: 1.5;
     }
   }
-</style>
+
+
 {{ end }}

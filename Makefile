@@ -8,8 +8,17 @@ dev:
 build:
 	HUGO_ENV=production $(HUGO) --gc --minify
 
+PAGEFIND_NPM_CACHE ?= .cache/npm
+
 pagefind:
-	npx -y pagefind --site public --output-subdir pagefind --root-selector "main" --exclude-selectors "nav,header,footer,.sidebar" || echo "Pagefind not installed; skipping"
+	@mkdir -p $(PAGEFIND_NPM_CACHE)
+	@echo "[pagefind] using npm cache at $(PAGEFIND_NPM_CACHE)"
+	npm_config_cache=$(PAGEFIND_NPM_CACHE) npx -y pagefind \
+	  --site public \
+	  --output-subdir pagefind \
+	  --root-selector "main" \
+	  --exclude-selectors "nav,header,footer,.sidebar" \
+	  || echo "Pagefind not installed; skipping"
 
 check:
 	$(HUGO) --printI18nWarnings --panicOnWarning || exit 1
