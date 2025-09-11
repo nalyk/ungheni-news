@@ -1,0 +1,93 @@
+{{/*
+  Responsive Image Partial
+
+  Inputs (dict):
+  - page: Hugo page context (for Page Resources)
+  - src: string path (front matter param) or resource name (e.g., "featured*")
+  - alt: string alt text (required for accessibility)
+  - widths: slice of widths for srcset (e.g., slice 400 600 800 1200)
+  - sizes: sizes attribute string (defaults sensible per context)
+  - class: optional class string
+  - loading: "lazy" | "eager" (default lazy)
+  - fetchpriority: optional ("high" for hero)
+  - decoding: "async" (default)
+  - aspect: optional aspect ratio string for Hugo processing (e.g., "1600x900")
+
+  Behavior:
+  - If site.Params.cloudinary_url is set and src is not a page resource, generate Cloudinary srcset
+  - Else if a Page Resource match exists, use Hugo image processing (webp, fingerprint)
+  - Else fall back to static image path
+*/}}
+
+{{- $ctx := . -}}
+{{- $page := $ctx.page | default .Page -}}
+{{- $src := $ctx.src -}}
+{{- $alt := $ctx.alt | default "" -}}
+{{- $widths := $ctx.widths | default (slice 400 600 800 1200 1600) -}}
+{{- $sizes := $ctx.sizes | default "(max-width: 48rem) 100vw, 50vw" -}}
+{{- $class := $ctx.class | default "" -}}
+{{- $loading := $ctx.loading | default "lazy" -}}
+{{- $fetchpriority := $ctx.fetchpriority -}}
+{{- $decoding := $ctx.decoding | default "async" -}}
+{{- $aspect := $ctx.aspect | default "" -}}
+
+{{- $cloudinary := site.Params.cloudinary_url -}}
+{{- $isSvg := false -}}
+{{- $isResource := false -}}
+{{- $res := (cond (and $page $src) ($page.Resources.GetMatch $src) nil) -}}
+{{- with $res -}}
+  {{- $isResource = true -}}
+  {{- if eq .MediaType.SubType "svg" -}}{{ $isSvg = true }}{{- end -}}
+{{- else -}}
+  {{- if strings.HasSuffix (lower (printf "%v" $src)) ".svg" -}}{{ $isSvg = true }}{{- end -}}
+{{- end -}}
+
+{{- if and $cloudinary (not $isResource) (not $isSvg) -}}
+  {{/* Cloudinary-based responsive images */}}
+  {{- $clean := trim $src " /" -}}
+  {{- $base := printf "%s/image/upload/f_auto,q_auto" (strings.TrimRight $cloudinary "/") -}}
+  {{- $srcset := slice -}}
+  {{- range $w := $widths -}}
+    {{- $u := printf "%s,w_%d/%s" $base $w $clean -}}
+    {{- $srcset = $srcset | append (printf "%s %dw" $u $w) -}}
+  {{- end -}}
+  <img 
+    src="{{ printf "%s,w_%d/%s" $base (index $widths (sub (len $widths) 1)) $clean }}"
+    srcset="{{ delimit $srcset ", " }}"
+    sizes="{{ $sizes }}"
+    alt="{{ $alt }}"
+    loading="{{ $loading }}"
+    {{ with $fetchpriority }}fetchpriority="{{ . }}"{{ end }}
+    decoding="{{ $decoding }}"
+    class="{{ $class }}"
+  />
+{{- else if and $isResource (not $isSvg) -}}
+  {{/* Hugo image processing to webp with fingerprint */}}
+  {{- $srcset := slice -}}
+  {{- range $w := $widths -}}
+    {{- $target := (printf "%dx webp" $w) -}}
+    {{- $img := (cond (ne $aspect "") ($res.Fit (printf "%s webp" $aspect)) ($res.Resize $target)) | resources.Fingerprint -}}
+    {{- $srcset = $srcset | append (printf "%s %dw" $img.RelPermalink $w) -}}
+  {{- end -}}
+  <img 
+    src="{{ (index (last 1 $srcset) 0) | replaceRE " .*$" "" }}"
+    srcset="{{ delimit $srcset ", " }}"
+    sizes="{{ $sizes }}"
+    alt="{{ $alt }}"
+    loading="{{ $loading }}"
+    {{ with $fetchpriority }}fetchpriority="{{ . }}"{{ end }}
+    decoding="{{ $decoding }}"
+    class="{{ $class }}"
+  />
+{{- else -}}
+  {{/* Static fallback (including SVG) */}}
+  <img 
+    src="{{ $src | relURL }}"
+    alt="{{ $alt }}"
+    loading="{{ $loading }}"
+    {{ with $fetchpriority }}fetchpriority="{{ . }}"{{ end }}
+    decoding="{{ $decoding }}"
+    class="{{ $class }}"
+  />
+{{- end -}}
+

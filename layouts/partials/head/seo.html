@@ -38,3 +38,32 @@
 <meta name="twitter:title" content="{{ $title }}" />
 <meta name="twitter:description" content="{{ $desc }}" />
 <meta name="twitter:image" content="{{ $img | absURL }}" />
+{{/* Structured data: WebSite + SearchAction (site-wide) */}}
+{{- $base := .Site.BaseURL | absURL -}}
+<script type="application/ld+json">
+{{ dict 
+  "@context" "https://schema.org" 
+  "@type" "WebSite" 
+  "url" $base 
+  "name" .Site.Title 
+  "potentialAction" (dict 
+    "@type" "SearchAction" 
+    "target" (printf "%ssearch/?q={search_term_string}" $base) 
+    "query-input" "required name=search_term_string") 
+  | jsonify }}
+</script>
+
+{{- if .IsHome -}}
+  {{- $pub := site.Params.publisher | default .Site.Title -}}
+  {{- $logo := "img/brand/logo.svg" | relURL | absURL -}}
+  <script type="application/ld+json">
+  {{ dict 
+    "@context" "https://schema.org" 
+    "@type" "Organization" 
+    "name" $pub 
+    "url" $base 
+    "logo" $logo 
+    "sameAs" (where (slice (.Site.Params.facebook_page | default "") (.Site.Params.twitter_site | default "")) "." "ne" "") 
+   | jsonify }}
+  </script>
+{{- end -}}

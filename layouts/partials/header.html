@@ -311,21 +311,37 @@
         suggestionsContainer.style.display = 'block';
       }
       
-      function fetchSuggestions(query) {
-        // In a full implementation, this would call Pagefind or an API
+      async function fetchSuggestions(query) {
+        // Try Pagefind results first
+        try {
+          const mod = await import('/pagefind/pagefind.js');
+          if (mod && mod.init) {
+            await mod.init();
+            const res = await mod.search(query, { excerpt_length: 0, limit: 5 });
+            if (res && res.results && res.results.length) {
+              const items = await Promise.all(res.results.map(r => r.data()));
+              const html = items.map(item => `
+                <div class="suggestion-item" onclick="selectSuggestion('${item.url.replace(/'/g, "\\'")}')">
+                  ${highlightMatch(item.meta?.title || item.url, query)}
+                </div>
+              `).join('');
+              suggestionsContainer.innerHTML = html;
+              suggestionsContainer.style.display = 'block';
+              return;
+            }
+          }
+        } catch (_) { /* noop */ }
+        // Fallback to popular terms filter
         const filteredSuggestions = popularSearches.filter(term => 
           term.toLowerCase().includes(query.toLowerCase())
         );
-        
         if (filteredSuggestions.length === 0) {
           closeSuggestions();
           return;
         }
-        
         const suggestionHtml = filteredSuggestions.map(term => 
           `<div class="suggestion-item" onclick="selectSuggestion('${term}')">${highlightMatch(term, query)}</div>`
         ).join('');
-        
         suggestionsContainer.innerHTML = suggestionHtml;
         suggestionsContainer.style.display = 'block';
       }
@@ -343,9 +359,13 @@
       }
       
       function selectSuggestion(suggestion) {
+        // If suggestion is a URL (Pagefind), navigate directly
+        if (/^https?:\/\//.test(suggestion)) {
+          window.location.href = suggestion;
+          return;
+        }
         searchInput.value = suggestion;
         closeSuggestions();
-        // Trigger search
         const searchUrl = '{{ "/search/" | relLangURL }}?q=' + encodeURIComponent(suggestion);
         window.location.href = searchUrl;
       }

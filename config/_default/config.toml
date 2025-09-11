@@ -30,6 +30,15 @@ removePathAccents = true
   # Site branding
   publisher = "Triunghi.md"
   tagline = "Presă locală pentru Ungheni cu minte rece și coloană vertebrală"
+  
+  # Media & performance
+  # Optional: set to your Cloudinary base URL (e.g., https://res.cloudinary.com/<cloud>/)
+  # When set, images referenced by front matter paths use Cloudinary responsive variants.
+  cloudinary_url = ""
+  
+  # Social profiles (used in JSON-LD/SEO when present)
+  twitter_site = "@triunghimd"
+  facebook_page = "https://www.facebook.com/triunghi.md"
 
 [taxonomies]
   tag = "tags"

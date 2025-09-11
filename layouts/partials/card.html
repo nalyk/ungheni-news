@@ -31,13 +31,19 @@
 {{- /* Check for featured image */ -}}
 {{- $image := "" -}}
 {{- $imageAlt := "" -}}
-{{- with $page.Resources.GetMatch "featured*" -}}
-  {{- $image = .RelPermalink -}}
-  {{- $imageAlt = .Title | default $title -}}
+{{- $res := $page.Resources.GetMatch "featured*" -}}
+{{- if $res -}}
+  {{- $image = $res.RelPermalink -}}
+  {{- $imageAlt = $res.Title | default $title -}}
 {{- else -}}
-  {{- with $page.Params.image -}}
+  {{- with $page.Params.cover -}}
     {{- $image = . -}}
     {{- $imageAlt = $page.Params.image_alt | default $title -}}
+  {{- else -}}
+    {{- with $page.Params.image -}}
+      {{- $image = . -}}
+      {{- $imageAlt = $page.Params.image_alt | default $title -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 
@@ -45,32 +51,17 @@
   <a href="{{ $permalink }}" class="card-link" aria-label="Citește articolul: {{ $title }}">
     {{- if $image -}}
       <div class="card-media">
-        {{- /* Try to get page resource for responsive images */ -}}
-        {{- $res := $page.Resources.GetMatch "featured*" -}}
-        {{- if and $res (ne $res.MediaType.SubType "svg") -}}
-          {{- $lg := $res.Fit "800x450 webp" | resources.Fingerprint -}}
-          {{- $md := $res.Fit "600x338 webp" | resources.Fingerprint -}}
-          {{- $sm := $res.Fit "400x225 webp" | resources.Fingerprint -}}
-          <img src="{{ $lg.RelPermalink }}" 
-               srcset="{{ $sm.RelPermalink }} 400w, {{ $md.RelPermalink }} 600w, {{ $lg.RelPermalink }} 800w" 
-               sizes="(max-width: 30rem) 100vw, (max-width: 50rem) 50vw, 25rem" 
-               alt="{{ $imageAlt }}" 
-               loading="lazy"
-               itemprop="image"
-               class="card-image"
-               width="800"
-               height="450"
-               decoding="async">
-        {{- else -}}
-          <img src="{{ $image }}" 
-               alt="{{ $imageAlt }}" 
-               loading="lazy"
-               itemprop="image"
-               class="card-image"
-               width="400"
-               height="225"
-               decoding="async">
-        {{- end -}}
+        {{- /* Prefer page resource if available, else path */ -}}
+        {{- $src := cond (ne $res nil) "featured*" $image -}}
+        {{- partial "media/image.html" (dict 
+              "page" $page 
+              "src" $src 
+              "alt" $imageAlt 
+              "widths" (slice 400 600 800) 
+              "sizes" "(max-width: 30rem) 100vw, (max-width: 50rem) 50vw, 25rem" 
+              "class" "card-image" 
+              "loading" "lazy" 
+              "decoding" "async") -}}
       </div>
     {{- else -}}
       <div class="card-media card-media-placeholder" aria-hidden="true">
