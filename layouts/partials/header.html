@@ -1,187 +1,158 @@
-<header class="site nyt-header" id="main-header">
-  <div class="container header-container">
-    <!-- NYT-style masthead section -->
-    <div class="masthead">
-      <div class="masthead-brand">
-        <a href="{{ .Site.Home.RelPermalink }}" class="masthead-link">
-          <img src="/img/logo-symbol.svg" alt="Triunghi symbol" class="masthead-symbol" width="40" height="40">
-          <div class="masthead-text">
-            <span class="masthead-title">Triunghi</span>
-            <span class="masthead-subtitle">presă locală ungheni</span>
-          </div>
-        </a>
-      </div>
-      
-      <!-- NYT-style date and location -->
-      <div class="masthead-meta">
-        <time class="masthead-date" datetime="{{ now.Format "2006-01-02" }}">
-          {{ now.Format "Monday, 2 January 2006" }}
-        </time>
-        <span class="masthead-location">Ungheni, Moldova</span>
+<header class="nyt-header" id="main-header">
+  <!-- NYT Top Bar: Date and utilities like real NYT -->
+  <div class="nyt-top-bar">
+    <div class="container">
+      <div class="top-bar-content">
+        <div class="top-bar-left">
+          <time class="header-date" datetime="{{ now.Format "2006-01-02" }}">
+            {{ now.Format "Monday, January 2, 2006" }}
+          </time>
+        </div>
+        
+        <div class="top-bar-right">
+          <!-- Language selector -->
+          <details class="lang-picker">
+            <summary class="lang-trigger">
+              {{ .Site.Language.Lang | upper }}
+              <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none">
+                <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </summary>
+            <div class="lang-menu">
+              {{ range $.Sites }}
+                {{ if ne .Language.Lang $.Site.Language.Lang }}
+                  <a href="{{ .Home.RelPermalink }}" class="lang-option">
+                    {{ .Language.Lang | upper }}
+                  </a>
+                {{ end }}
+              {{ end }}
+            </div>
+          </details>
+          
+          <!-- Search -->
+          <button class="search-toggle" id="search-toggle" aria-label="{{ i18n "search" | default "Căutare" }}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
-    
-    <!-- NYT-style navigation bar -->
-    <div class="nyt-navigation">
-      {{ $cats := site.Data.categories }}
-      <nav class="primary-nav" aria-label="Navigare principală">
-        <button class="sections-menu-trigger" id="sections-toggle" aria-expanded="false" aria-controls="mobile-nav">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="sections-icon">
-            <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          <span>{{ i18n "sections" | default "Secțiuni" }}</span>
-        </button>
-        
-        <div class="nav-sections">
-          <ul class="nav-list" role="list">
+  </div>
+  
+  <!-- NYT Masthead: Large centered title like NYT -->
+  <div class="nyt-masthead">
+    <div class="container">
+      <div class="masthead-content">
+        <a href="{{ .Site.Home.RelPermalink }}" class="masthead-brand">
+          <h1 class="masthead-title">Triunghi</h1>
+          <p class="masthead-subtitle">presă locală ungheni</p>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- NYT Navigation: Clean horizontal bar below masthead -->
+  <div class="nyt-navigation">
+    <div class="container">
+      <nav class="main-navigation" aria-label="{{ i18n "main_navigation" | default "Navigare principală" }}">
+        <div class="nav-wrapper">
+          <!-- Mobile menu button -->
+          <button class="menu-toggle mobile-only" id="menu-toggle" aria-expanded="false">
+            <span class="hamburger">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+            <span class="menu-text">MENIU</span>
+          </button>
+          
+          <!-- Main navigation list -->
+          <ul class="nav-list">
+            {{ $cats := site.Data.categories }}
             {{ range first 6 $cats }}
               {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
               {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
               {{ $isCurrent := or (eq $.RelPermalink $catPage.RelPermalink) (hasPrefix $.RelPermalink $catPage.RelPermalink) }}
               <li class="nav-item">
-                <a href="{{ $catPage.RelPermalink }}" class="nav-link" {{ if eq .priority "high" }}data-priority="local"{{ end }} {{ if $isCurrent }}aria-current="page"{{ end }}>
+                <a href="{{ $catPage.RelPermalink }}" 
+                   class="nav-link" 
+                   {{ if $isCurrent }}aria-current="page"{{ end }}>
                   {{ $title }}
                 </a>
               </li>
             {{ end }}
           </ul>
-          
-          <!-- More sections dropdown -->
-          <div class="nav-more">
-            <button class="nav-more-trigger" aria-expanded="false" aria-haspopup="true">
-              <span>Mai multe</span>
-              <svg class="dropdown-icon" width="12" height="12" viewBox="0 0 24 24" fill="none">
-                <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2"/>
-              </svg>
-            </button>
-            <nav class="nav-more-menu" aria-label="Categorii suplimentare">
-              {{ range after 6 $cats }}
-                {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-                {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
-                {{ $isCurrent := or (eq $.RelPermalink $catPage.RelPermalink) (hasPrefix $.RelPermalink $catPage.RelPermalink) }}
-                <a href="{{ $catPage.RelPermalink }}" class="nav-more-link" {{ if $isCurrent }}aria-current="page"{{ end }}>
-                  {{ $title }}
-                </a>
-              {{ end }}
-            </nav>
-          </div>
         </div>
       </nav>
-      
-    </div>
-    
-    <!-- NYT-style header utilities -->
-    <div class="header-utilities">
-      <!-- Search -->
-      <div class="nyt-search">
-        <button class="search-trigger" id="search-toggle" aria-label="{{ i18n "search" }}" aria-expanded="false">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-        <form class="search-form" id="header-search" role="search">
-          <div class="search-input-wrapper">
-            <input type="search" class="search-input" placeholder="{{ i18n "search_placeholder" }}" aria-label="{{ i18n "search_placeholder" }}" autocomplete="off">
-            <button type="submit" class="search-submit" aria-label="{{ i18n "search" }}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2"/>
-              </svg>
-            </button>
-          </div>
-          <div class="search-suggestions" id="search-suggestions" role="listbox">
-            <!-- Suggestions populated via JavaScript -->
-          </div>
-        </form>
-      </div>
-      
-      <!-- Language selector -->
-      <details class="nyt-lang-picker">
-        <summary class="lang-trigger">
-          {{ .Site.Language.Lang | upper }}
-        </summary>
-        <div class="lang-menu">
-          {{ range $.Sites }}
-            {{ if ne .Language.Lang $.Site.Language.Lang }}
-              <a href="{{ .Home.RelPermalink }}" class="lang-option">
-                {{ .Language.Lang | upper }}
-              </a>
-            {{ end }}
-          {{ end }}
-        </div>
-      </details>
-      
-      <!-- Mobile menu toggle -->
-      <button class="mobile-nav-trigger" id="mobile-nav-trigger" aria-expanded="false" aria-label="Meniu mobil">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
     </div>
   </div>
   
   <!-- Mobile Navigation Overlay -->
-    <div class="mobile-nav-overlay" id="mobile-nav">
-      <div class="mobile-nav-content">
-        <div class="mobile-nav-header">
-          <h2>{{ i18n "navigation" | default "Navigare" }}</h2>
-          <button class="mobile-nav-close" aria-label="Închide meniul">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-        </div>
-        
-        <nav class="mobile-nav-menu" aria-label="Navigare mobilă">
-          {{ range $cats }}
-            {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-            {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
-            {{ $isCurrent := or (eq $.RelPermalink $catPage.RelPermalink) (hasPrefix $.RelPermalink $catPage.RelPermalink) }}
-            <a href="{{ $catPage.RelPermalink }}" class="mobile-nav-link" {{ if eq .priority "high" }}data-priority="local"{{ end }} {{ if $isCurrent }}aria-current="page"{{ end }}>
-              {{ if eq .slug "local" }}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="nav-icon">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2" fill="none"/>
-                  <circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="2" fill="none"/>
-                </svg>
-              {{ end }}
-              <span class="nav-text">{{ $title }}</span>
-              {{ if eq .priority "high" }}
-                <span class="priority-badge">Prioritar</span>
-              {{ end }}
-            </a>
-          {{ end }}
-        </nav>
-        
-        <div class="mobile-nav-footer">
-          <div class="mobile-search">
-            <form class="mobile-search-form" role="search">
-              <input type="search" class="mobile-search-input" placeholder="{{ i18n "search_placeholder" }}">
-              <button type="submit" class="mobile-search-submit">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </button>
-            </form>
-          </div>
-        </div>
+  <div class="mobile-nav-overlay" id="mobile-nav">
+    <div class="mobile-nav-content">
+      <div class="mobile-nav-header">
+        <h2>{{ i18n "navigation" | default "Navigare" }}</h2>
+        <button class="mobile-nav-close" aria-label="{{ i18n "close_menu" | default "Închide meniul" }}">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
       </div>
+      
+      <!-- Mobile search -->
+      <div class="mobile-search">
+        <form class="mobile-search-form" role="search">
+          <div class="search-input-wrapper">
+            <input type="search" class="search-input" placeholder="{{ i18n "search_placeholder" | default "Căutare..." }}">
+            <button type="submit" class="search-submit">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Mobile navigation menu -->
+      <nav class="mobile-nav-menu" aria-label="{{ i18n "mobile_navigation" | default "Navigare mobilă" }}">
+        {{ $cats := site.Data.categories }}
+        {{ range $cats }}
+          {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
+          {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
+          {{ $isCurrent := or (eq $.RelPermalink $catPage.RelPermalink) (hasPrefix $.RelPermalink $catPage.RelPermalink) }}
+          <a href="{{ $catPage.RelPermalink }}" 
+             class="mobile-nav-link {{ if eq .priority "high" }}priority-high{{ end }}" 
+             {{ if $isCurrent }}aria-current="page"{{ end }}>
+            {{ if eq .slug "local" }}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="nav-icon">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            {{ end }}
+            <span class="nav-text">{{ $title }}</span>
+            {{ if eq .priority "high" }}
+              <span class="priority-badge">{{ i18n "priority" | default "Prioritar" }}</span>
+            {{ end }}
+          </a>
+        {{ end }}
+      </nav>
     </div>
   </div>
 </header>
 
-<!-- NYT Navigation JavaScript -->
+<!-- Header JavaScript -->
 <script>
 (function() {
   'use strict';
 
   document.addEventListener('DOMContentLoaded', function() {
     const header = document.getElementById('main-header');
-    const searchTrigger = document.getElementById('search-toggle');
-    const searchForm = document.getElementById('header-search');
-    const mobileNavTrigger = document.getElementById('mobile-nav-trigger');
-    const sectionsToggle = document.getElementById('sections-toggle');
+    const searchToggle = document.getElementById('search-toggle');
+    const menuToggle = document.getElementById('menu-toggle');
     const mobileNav = document.getElementById('mobile-nav');
     const mobileNavClose = document.querySelector('.mobile-nav-close');
-    const navMoreTrigger = document.querySelector('.nav-more-trigger');
+    const navMoreToggle = document.querySelector('.nav-more-toggle');
     const navMoreMenu = document.querySelector('.nav-more-menu');
     
     // Exit early if header doesn't exist
@@ -190,11 +161,11 @@
     let lastScrollY = window.scrollY;
     let ticking = false;
 
-    // NYT-style header scroll behavior
+    // Header scroll behavior
     function updateHeader() {
       const currentScrollY = window.scrollY;
       
-      if (currentScrollY > 100) {
+      if (currentScrollY > 60) {
         header.classList.add('header-scrolled');
       } else {
         header.classList.remove('header-scrolled');
@@ -215,74 +186,18 @@
     updateHeader();
     window.addEventListener('scroll', requestTick, { passive: true });
     
-    // Search functionality
-    if (searchTrigger && searchForm) {
-      const searchInput = searchForm.querySelector('.search-input');
-      const suggestionsContainer = document.getElementById('search-suggestions');
-      
-      searchTrigger.addEventListener('click', function() {
-        const isActive = searchForm.classList.contains('active');
-        
-        if (isActive) {
-          searchForm.classList.remove('active');
-          searchTrigger.setAttribute('aria-expanded', 'false');
-        } else {
-          searchForm.classList.add('active');
-          searchTrigger.setAttribute('aria-expanded', 'true');
-          setTimeout(() => searchInput.focus(), 100);
-        }
-      });
-      
-      // Desktop search is always visible
-      if (window.matchMedia('(min-width: 64rem)').matches) {
-        searchForm.classList.add('active');
-      }
-    }
-    
-    // More sections dropdown
-    if (navMoreTrigger && navMoreMenu) {
-      navMoreTrigger.addEventListener('click', function() {
-        const isActive = navMoreMenu.classList.contains('active');
-        
-        if (isActive) {
-          navMoreMenu.classList.remove('active');
-          navMoreTrigger.setAttribute('aria-expanded', 'false');
-        } else {
-          navMoreMenu.classList.add('active');
-          navMoreTrigger.setAttribute('aria-expanded', 'true');
-        }
-      });
-    }
-    
-    // Mobile navigation
-    if (mobileNavTrigger && mobileNav) {
-      mobileNavTrigger.addEventListener('click', function() {
+    // Mobile menu functionality
+    if (menuToggle && mobileNav) {
+      menuToggle.addEventListener('click', function() {
         const isActive = mobileNav.classList.contains('active');
         
         if (isActive) {
           mobileNav.classList.remove('active');
-          mobileNavTrigger.setAttribute('aria-expanded', 'false');
+          menuToggle.setAttribute('aria-expanded', 'false');
           document.body.classList.remove('mobile-nav-open');
         } else {
           mobileNav.classList.add('active');
-          mobileNavTrigger.setAttribute('aria-expanded', 'true');
-          document.body.classList.add('mobile-nav-open');
-        }
-      });
-    }
-    
-    // Sections toggle (same as mobile nav for now)
-    if (sectionsToggle && mobileNav) {
-      sectionsToggle.addEventListener('click', function() {
-        const isActive = mobileNav.classList.contains('active');
-        
-        if (isActive) {
-          mobileNav.classList.remove('active');
-          sectionsToggle.setAttribute('aria-expanded', 'false');
-          document.body.classList.remove('mobile-nav-open');
-        } else {
-          mobileNav.classList.add('active');
-          sectionsToggle.setAttribute('aria-expanded', 'true');
+          menuToggle.setAttribute('aria-expanded', 'true');
           document.body.classList.add('mobile-nav-open');
         }
       });
@@ -292,9 +207,23 @@
     if (mobileNavClose) {
       mobileNavClose.addEventListener('click', function() {
         mobileNav.classList.remove('active');
-        if (mobileNavTrigger) mobileNavTrigger.setAttribute('aria-expanded', 'false');
-        if (sectionsToggle) sectionsToggle.setAttribute('aria-expanded', 'false');
+        if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
         document.body.classList.remove('mobile-nav-open');
+      });
+    }
+    
+    // More sections dropdown
+    if (navMoreToggle && navMoreMenu) {
+      navMoreToggle.addEventListener('click', function() {
+        const isActive = navMoreMenu.classList.contains('active');
+        
+        if (isActive) {
+          navMoreMenu.classList.remove('active');
+          navMoreToggle.setAttribute('aria-expanded', 'false');
+        } else {
+          navMoreMenu.classList.add('active');
+          navMoreToggle.setAttribute('aria-expanded', 'true');
+        }
       });
     }
     
@@ -317,17 +246,9 @@
     document.addEventListener('click', function(e) {
       // Close more menu
       if (navMoreMenu && navMoreMenu.classList.contains('active')) {
-        if (!navMoreMenu.contains(e.target) && !navMoreTrigger.contains(e.target)) {
+        if (!navMoreMenu.contains(e.target) && !navMoreToggle.contains(e.target)) {
           navMoreMenu.classList.remove('active');
-          navMoreTrigger.setAttribute('aria-expanded', 'false');
-        }
-      }
-      
-      // Close search on mobile
-      if (searchForm && searchForm.classList.contains('active') && window.matchMedia('(max-width: 63.999rem)').matches) {
-        if (!searchForm.contains(e.target) && !searchTrigger.contains(e.target)) {
-          searchForm.classList.remove('active');
-          searchTrigger.setAttribute('aria-expanded', 'false');
+          navMoreToggle.setAttribute('aria-expanded', 'false');
         }
       }
     });
@@ -338,21 +259,14 @@
         // Close mobile nav
         if (mobileNav && mobileNav.classList.contains('active')) {
           mobileNav.classList.remove('active');
-          if (mobileNavTrigger) mobileNavTrigger.setAttribute('aria-expanded', 'false');
-          if (sectionsToggle) sectionsToggle.setAttribute('aria-expanded', 'false');
+          if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
           document.body.classList.remove('mobile-nav-open');
         }
         
         // Close more menu
         if (navMoreMenu && navMoreMenu.classList.contains('active')) {
           navMoreMenu.classList.remove('active');
-          navMoreTrigger.setAttribute('aria-expanded', 'false');
-        }
-        
-        // Close search on mobile
-        if (searchForm && searchForm.classList.contains('active') && window.matchMedia('(max-width: 63.999rem)').matches) {
-          searchForm.classList.remove('active');
-          searchTrigger.setAttribute('aria-expanded', 'false');
+          navMoreToggle.setAttribute('aria-expanded', 'false');
         }
       }
     });
