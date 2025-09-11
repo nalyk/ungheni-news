@@ -34,7 +34,10 @@
 {{- $cloudinary := site.Params.cloudinary_url -}}
 {{- $isSvg := false -}}
 {{- $isResource := false -}}
-{{- $res := (cond (and $page $src) ($page.Resources.GetMatch $src) nil) -}}
+{{- $res := false -}}
+{{- if and (ne $page nil) (gt (len (printf "%v" $src)) 0) -}}
+  {{- $res = $page.Resources.GetMatch $src -}}
+{{- end -}}
 {{- with $res -}}
   {{- $isResource = true -}}
   {{- if eq .MediaType.SubType "svg" -}}{{ $isSvg = true }}{{- end -}}
@@ -90,4 +93,3 @@
     class="{{ $class }}"
   />
 {{- end -}}
-
