@@ -210,3 +210,5 @@
   translation: "Navigare"
 - id: popular_searches
   translation: "Căutări populare"
+- id: sections
+  translation: "Secțiuni"

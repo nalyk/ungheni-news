@@ -208,3 +208,5 @@
   translation: "Навигация"
 - id: popular_searches
   translation: "Популярные запросы"
+- id: sections
+  translation: "Разделы"

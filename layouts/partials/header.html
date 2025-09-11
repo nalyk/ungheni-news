@@ -8,23 +8,28 @@
       </a>
     </div>
     
-    <!-- Primary Navigation (Top Priority Categories) -->
+    <!-- Primary Navigation (NYT-inspired: text tabs + Sections) -->
+    {{ $cats := site.Data.categories }}
     <nav class="primary-nav" aria-label="Navigare principală">
-      {{ $cats := site.Data.categories }}
-      {{ range first 3 $cats }}
-        {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-        {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
-        {{ $isCurrent := or (eq $.RelPermalink $catPage.RelPermalink) (hasPrefix $.RelPermalink $catPage.RelPermalink) }}
-        <a href="{{ $catPage.RelPermalink }}" class="nav-link primary" {{ if eq .priority "high" }}data-priority="local"{{ end }} {{ if $isCurrent }}aria-current="page"{{ end }}>
-          {{ if eq .slug "local" }}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="nav-icon">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2" fill="none"/>
-              <circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
-          {{ end }}
-          {{ $title }}
-        </a>
-      {{ end }}
+      <button class="sections-toggle" id="sections-toggle" aria-expanded="false" aria-controls="mobile-nav">
+        {{ i18n "sections" | default "Secțiuni" }}
+        <svg class="dropdown-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+      <ul class="primary-nav-list" role="list">
+        {{ range first 6 $cats }}
+          {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
+          {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
+          {{ $isCurrent := or (eq $.RelPermalink $catPage.RelPermalink) (hasPrefix $.RelPermalink $catPage.RelPermalink) }}
+          <li class="primary-nav-item">
+            <a href="{{ $catPage.RelPermalink }}" class="nav-link primary" {{ if eq .priority "high" }}data-priority="local"{{ end }} {{ if $isCurrent }}aria-current="page"{{ end }}>
+              {{ if eq .slug "local" }}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="nav-icon"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+              {{ end }}
+              {{ $title }}
+            </a>
+          </li>
+        {{ end }}
+      </ul>
     </nav>
     
     <!-- Secondary Navigation Dropdown -->
@@ -410,6 +415,23 @@
       });
     });
     
+    // Sections toggle opens the mobile overlay as a full sections menu
+    const sectionsToggle = document.getElementById('sections-toggle');
+    if (sectionsToggle && mobileNav) {
+      sectionsToggle.addEventListener('click', function() {
+        const expanded = sectionsToggle.getAttribute('aria-expanded') === 'true';
+        if (expanded) {
+          mobileNav.classList.remove('active');
+          document.body.classList.remove('mobile-nav-open');
+          sectionsToggle.setAttribute('aria-expanded', 'false');
+        } else {
+          mobileNav.classList.add('active');
+          document.body.classList.add('mobile-nav-open');
+          sectionsToggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+    }
+
     // Secondary navigation dropdown
     if (navDropdownTrigger && secondaryNav) {
       navDropdownTrigger.addEventListener('click', function() {
