@@ -1,19 +1,28 @@
-{{ $page := . }}
-{{ $card_class := "card-standard" }}
-{{ if reflect.IsMap . }}
-  {{ $page = .page }}
-  {{ $card_class = .card_class | default "card-standard" }}
-{{ end }}
+{{ $page := .page }}
+{{ $card_class := .card_class | default "card-standard" }}
 
 {{ $category_slug := index ($page.Params.categories | default (slice)) 0 }}
 {{ $category_page := site.GetPage (printf "categories/%s" $category_slug) }}
 {{ $category_name := $category_page.Title | default "General" }}
 
+{{ $format_slug := index ($page.Params.formats | default (slice)) 0 }}
+{{ $format_name := "" }}
+{{ with where site.Data.formats.formats "slug" $format_slug }}
+  {{ with index . 0 }}
+    {{ $format_name = .ro.name }}
+  {{ end }}
+{{ end }}
+
 <a href="{{ $page.RelPermalink }}" class="card {{ $card_class }}">
   <div class="card-content">
-    <span class="card-category">{{ $category_name }}</span>
+    <div class="card-header">
+      <span class="card-category">{{ $category_name }}</span>
+      {{ if $format_name }}
+        <span class="card-format">{{ $format_name }}</span>
+      {{ end }}
+    </div>
     <h3 class="card-title">{{ $page.Title }}</h3>
-    <p class="card-summary">{{ $page.Params.summary | default $page.Summary | truncate 150 }}</p>
+    <p class="card-summary">{{ $page.Params.summary | default $page.Summary | truncate 120 }}</p>
     <div class="card-meta">
       <time datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "January 2, 2006" }}</time>
     </div>
