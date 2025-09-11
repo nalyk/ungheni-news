@@ -1,22 +1,24 @@
 <header class="site-header">
   <div class="container">
-    <div class="masthead">
-      <h1 class="site-title"><a href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a></h1>
-      <p class="site-tagline">{{ .Site.Params.description }}</p>
-    </div>
-    <div class="header-actions">
-        <nav class="primary-nav" aria-label="{{ i18n "main_navigation" }}">
-            <ul>
-                {{ $cats := site.Data.categories }}
-                {{ range first 6 $cats }}
-                    {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-                    {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
-                    {{ if $catPage }}
-                    <li><a href="{{ $catPage.RelPermalink }}" {{ if eq $.RelPermalink $catPage.RelPermalink }}aria-current="page"{{ end }}>{{ $title }}</a></li>
-                    {{ end }}
-                {{ end }}
-            </ul>
-        </nav>
+    <div class="header-content">
+      <div class="masthead">
+        <h1 class="site-title"><a href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a></h1>
+      </div>
+
+      <nav class="primary-nav" aria-label="{{ i18n "main_navigation" }}">
+        <ul>
+          {{ $cats := site.Data.categories }}
+          {{ range first 6 $cats }}
+            {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
+            {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
+            {{ if $catPage }}
+              <li><a href="{{ $catPage.RelPermalink }}" {{ if eq $.RelPermalink $catPage.RelPermalink }}aria-current="page"{{ end }}>{{ $title }}</a></li>
+            {{ end }}
+          {{ end }}
+        </ul>
+      </nav>
+
+      <div class="header-actions">
         <div class="lang-picker">
           {{ range $.Sites }}
             {{ if ne .Language.Lang $.Site.Language.Lang }}
@@ -24,6 +26,24 @@
             {{ end }}
           {{ end }}
         </div>
+        <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Menu" aria-expanded="false">
+          <span class="hamburger"></span>
+        </button>
+      </div>
     </div>
+  </div>
+  <div id="mobile-nav" class="mobile-nav">
+    <nav>
+      <ul>
+        {{ $cats := site.Data.categories }}
+        {{ range $cats }}
+          {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
+          {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
+          {{ if $catPage }}
+            <li><a href="{{ $catPage.RelPermalink }}">{{ $title }}</a></li>
+          {{ end }}
+        {{ end }}
+      </ul>
+    </nav>
   </div>
 </header>
