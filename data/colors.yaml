@@ -1,24 +1,8 @@
-modern:
-  bg: "#ffffff"
-  surface: "#f8fafc"
-  surfaceElev: "#f1f5f9"
-  fg: "#0b0f19"
-  muted: "#6b7280"
-  border: "#e2e8f0"
-  accent: "#2563eb"      # Electric blue
-  accent2: "#e11d48"     # Crimson
-  onAccent: "#ffffff"
-  onAccent2: "#0b0f19"
-
-modern-dark:
-  bg: "#0b0f19"
-  surface: "#111827"
-  surfaceElev: "#0f172a"
-  fg: "#e5e7eb"
-  muted: "#94a3b8"
-  border: "#1f2937"
-  accent: "#60a5fa"
-  accent2: "#fb7185"
-  onAccent: "#0b0f19"
-  onAccent2: "#0b0f19"
-
+newspaper:
+  bg: "#f8f7f2"          # A warm, papery off-white, like newsprint.
+  surface: "#ffffff"       # Pure white for contrast on elements like cards.
+  fg: "#121212"            # A strong, near-black for maximum readability.
+  muted: "#505050"         # A softer gray for bylines, timestamps, and secondary text.
+  border: "#dcdcd2"       # A subtle border color that complements the papery background.
+  accent: "#0d47a1"        # A deep, classic navy blue for links and important UI elements.
+  accent-secondary: "#b71c1c" # A traditional, authoritative red for breaking news or special highlights.

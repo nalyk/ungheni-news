@@ -4,112 +4,30 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light">
-    <meta name="theme-color" content="#4A90E2">
-    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="{{ site.Data.colors.newspaper.accent }}">
     <title>{{ block "title" . }}{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} · {{ .Site.Title }}{{ end }}{{ end }}</title>
     {{ partial "head/seo.html" . }}
-    {{/* Theme colors now handled by main.scss design system */}}
-    <!-- Critical CSS for above-the-fold content -->
-    <style>
-      /* Prevent layout shift with critical container styles */
-      .container{max-width:80rem;margin:0 auto;padding:0 1rem}
-      .skip-link{position:absolute;top:-40px;left:6px;background:#000;color:#fff;padding:8px;z-index:100;text-decoration:none;transition:top 0.3s}
-      .skip-link:focus{top:6px}
-      /* Prevent FOUT with system font stack fallbacks */
-      body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"IBM Plex Sans",sans-serif;margin:0;line-height:1.6;color:#2c3e50}
-      h1,h2,h3,h4,h5,h6{font-family:Georgia,"Times New Roman","IBM Plex Serif",serif;font-weight:600;line-height:1.2}
-      img{max-width:100%;height:auto;vertical-align:middle}
-      /* Critical layout prevention styles */
-      .hero .hero-media{aspect-ratio:16/9;overflow:hidden;border-radius:0.5rem;position:relative}
-      .card-media{aspect-ratio:16/9;overflow:hidden;border-radius:0.5rem 0.5rem 0 0;position:relative;background:#f8f9fa}
-      .card-media-placeholder{background:#f8f9fa;display:flex;align-items:center;justify-content:center}
-      /* Prevent header layout shift */
-      header{min-height:4rem}
-      .hero{margin-bottom:2rem}
-      /* Loading state for images */
-      img:not([src]),img[src=""]{opacity:0}
-    </style>
-    {{/* Hugo version compatibility: use appropriate SCSS function based on version */}}
-    {{ $opts := dict "targetPath" "assets/main.css" "enableSourceMap" false }}
-    {{ $css := "" }}
-    {{ $scssResource := resources.Get "css/main.scss" }}
-    {{ if $scssResource }}
-      {{/* Hugo v0.128.0+ uses css.Sass, earlier versions use resources.ToCSS */}}
-      {{ $hugoVersion := hugo.Version }}
-      {{ if ge $hugoVersion "0.128.0" }}
-        {{ $css = $scssResource | css.Sass $opts | resources.Minify | resources.Fingerprint }}
-      {{ else }}
-        {{ $css = $scssResource | resources.ToCSS $opts | resources.Minify | resources.Fingerprint }}
-      {{ end }}
-    {{ end }}
-    <!-- Non-blocking CSS loading with improved fallback -->
-    <link rel="preload" href="{{ $css.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}"></noscript>
-    <!-- Polyfill for browsers that don't support preload -->
-    <script>
-      !function(e){"use strict";var t=function(t,n,r){function o(e){return i.body?e():void setTimeout(function(){o(e)})}function a(){d.addEventListener&&d.removeEventListener("load",a),d.media=r||"all"}var d,i=e.document,s=i.createElement("link");if(n)d=n;else{var c=(i.body||i.getElementsByTagName("head")[0]).childNodes;d=c[c.length-1]}var l=i.styleSheets;if(s.rel="stylesheet",s.href=t,s.media="only x",o(function(){d.parentNode.insertBefore(s,n?d:d.nextSibling)}),s.addEventListener&&s.addEventListener("load",a),s.onloadcssdefined=function(e){for(var t,n=0;n<l.length;n++)l[n].href&&l[n].href===s.href&&(t=!0);t?e():setTimeout(function(){s.onloadcssdefined(e)})},s.onloadcssdefined(a),!s.addEventListener)s.media=r||"all";return s};"undefined"!=typeof exports?exports.loadCSS=t:e.loadCSS=t}("undefined"!=typeof global?global:this);
-      if(!window.CSS||!CSS.supports("color","var(--fake-var)")){loadCSS("{{ $css.RelPermalink }}");}
-    </script>
-    <!-- Performance optimization: Context-aware resource hints -->
-    {{- /* DNS prefetches for external resources */ -}}
-    {{- if site.Params.cloudinary_url -}}
-    <link rel="dns-prefetch" href="{{ site.Params.cloudinary_url | urls.Parse | printf "%s://%s" .Scheme .Host }}">
-    {{- end -}}
-    
-    {{- /* Preconnect for critical third-party resources */ -}}
-    {{- if site.Params.cloudinary_url -}}
-    <link rel="preconnect" href="{{ site.Params.cloudinary_url | urls.Parse | printf "%s://%s" .Scheme .Host }}" crossorigin>
-    {{- end -}}
-    
-    <!-- Smart prefetching based on page context -->
-    {{- if .IsHome -}}
-      {{- /* Homepage: prefetch most likely navigation targets */ -}}
-      {{- range first 2 (where site.RegularPages "Section" "news") -}}
-        <link rel="prefetch" href="{{ .RelPermalink }}">
-      {{- end -}}
-      {{- /* Prefetch main category pages */ -}}
-      {{- range first 3 (where site.Pages "Section" "categories") -}}
-        <link rel="prefetch" href="{{ .RelPermalink }}">
-      {{- end -}}
-    {{- else if eq .Section "news" -}}
-      {{- /* News pages: prefetch related articles and home */ -}}
-      <link rel="prefetch" href="{{ "/" | relLangURL }}">
-      {{- with .GetTerms "categories" -}}
-        {{- range first 1 . -}}
-          <link rel="prefetch" href="{{ .RelPermalink }}">
-        {{- end -}}
-      {{- end -}}
-    {{- else if .IsSection -}}
-      {{- /* Section pages: prefetch home and first few articles */ -}}
-      <link rel="prefetch" href="{{ "/" | relLangURL }}">
-      {{- range first 2 .RegularPages -}}
-        <link rel="prefetch" href="{{ .RelPermalink }}">
-      {{- end -}}
-    {{- end -}}
-    <!-- Critical font preloads - only most essential fonts for above-the-fold -->
+
+    {{ $css := resources.Get "css/main.scss" | css.Sass (dict "targetPath" "assets/main.css") | resources.Minify | resources.Fingerprint }}
+    <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+
     <link rel="preload" href="/fonts/ibmplexsans/IBMPlexSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/ibmplexsans/IBMPlexSans-Medium.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/ibmplexserif/IBMPlexSerif-Regular.woff2" as="font" type="font/woff2" crossorigin>
-    <!-- Additional fonts loaded on demand via CSS -->
-    <link rel="prefetch" href="/fonts/ibmplexserif/IBMPlexSerif-Bold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="prefetch" href="/fonts/ibmplexsans/IBMPlexSans-Italic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/ibmplexserif/IBMPlexSerif-Bold.woff2" as="font" type="font/woff2" crossorigin>
+
     <link rel="icon" href="{{ "img/brand/logo.svg" | relURL }}" type="image/svg+xml" />
     {{ with .OutputFormats.Get "RSS" }}<link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" href="{{ .RelPermalink }}">{{ end }}
-    {{/* Dark theme removed: no theme toggle script */}}
-    <!-- Non-critical JavaScript - main functionality loaded deferred -->
     <script defer src="{{ (resources.Get "js/main.js" | resources.Minify | resources.Fingerprint).RelPermalink }}" type="module"></script>
   </head>
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
     <div data-pagefind-ignore>
       {{ partial "header.html" . }}
-      {{ partial "home/breaking.html" . }}
     </div>
-    <main id="content" class="container" data-pagefind-body>
+    <main id="content" class="container">
       {{ block "main" . }}{{ end }}
     </main>
     <div data-pagefind-ignore>
       {{ partial "footer.html" . }}
     </div>
   </body>
-  </html>
+</html>

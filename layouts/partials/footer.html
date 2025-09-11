@@ -1,13 +1,16 @@
-<footer class="site">
+<footer class="site-footer">
   <div class="container">
     <nav class="footer-nav" aria-label="Secondary">
-      <a href="{{ (site.GetPage "taxonomyTerm" "authors").RelPermalink }}">Autori</a>
-      {{ $lang := .Site.Language.Lang }}
-      <a href="{{ (site.GetPage (printf "/%s/pages/despre-noi" $lang)).RelPermalink }}">{{ if eq $lang "ru" }}О нас{{ else }}Despre noi{{ end }}</a>
-      <a href="{{ (site.GetPage (printf "/%s/pages/termeni" $lang)).RelPermalink }}">{{ if eq $lang "ru" }}Условия{{ else }}Termeni si conditii{{ end }}</a>
-      <a href="{{ (site.GetPage (printf "/%s/pages/confidentialitate" $lang)).RelPermalink }}">{{ if eq $lang "ru" }}Конфиденциальность{{ else }}Politica de confidentialitate{{ end }}</a>
-      <a href="{{ (site.GetPage (printf "/%s/pages/contact" $lang)).RelPermalink }}">{{ if eq $lang "ru" }}Контакт{{ else }}Contact{{ end }}</a>
+      <ul>
+        {{ $lang := .Site.Language.Lang }}
+        <li><a href="{{ (site.GetPage (printf "/%s/pages/despre-noi" $lang)).RelPermalink }}">{{ i18n "about_us" }}</a></li>
+        <li><a href="{{ (site.GetPage (printf "/%s/pages/contact" $lang)).RelPermalink }}">{{ i18n "contact" }}</a></li>
+        <li><a href="{{ (site.GetPage (printf "/%s/pages/termeni" $lang)).RelPermalink }}">{{ i18n "terms" }}</a></li>
+        <li><a href="{{ (site.GetPage (printf "/%s/pages/confidentialitate" $lang)).RelPermalink }}">{{ i18n "privacy" }}</a></li>
+      </ul>
     </nav>
-    <p class="meta">© {{ now.Year }} {{ .Site.Title }} · Built with Hugo.</p>
+    <div class="footer-bottom">
+        <p>&copy; {{ now.Year }} {{ .Site.Title }}.</p>
+    </div>
   </div>
 </footer>

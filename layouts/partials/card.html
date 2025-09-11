@@ -1,95 +1,21 @@
-{{/*
-  Card Component - Reusable Article Card
-  
-  Purpose: Display article cards consistently across listings (homepage, category pages, etc.)
-  
-  Parameters:
-  - . (page context): The page/article to display as a card
-  
-  Features:
-  - Responsive image handling with aspect ratio preservation
-  - Accessible clickable card with proper focus states
-  - Title clamping (2 lines max) and summary clamping (1 line max)
-  - Date formatting and pills display
-  - Graceful handling of missing images
-  - Semantic HTML with microdata
-  
-  Usage: 
-  {{ range .Pages }}
-    {{ partial "card.html" . }}
-  {{ end }}
-*/}}
+{{ $page := . }}
+{{ $card_class := "card-standard" }}
+{{ if reflect.IsMap . }}
+  {{ $page = .page }}
+  {{ $card_class = .card_class | default "card-standard" }}
+{{ end }}
 
-{{- $page := . -}}
-{{- $title := $page.Title -}}
-{{- $summary := $page.Params.summary | default $page.Summary -}}
-{{- $date := $page.Date -}}
-{{- $permalink := $page.RelPermalink -}}
-{{- $category := index ($page.Params.categories | default slice) 0 -}}
-{{- $format := index ($page.Params.formats | default slice) 0 -}}
+{{ $category_slug := index ($page.Params.categories | default (slice)) 0 }}
+{{ $category_page := site.GetPage (printf "categories/%s" $category_slug) }}
+{{ $category_name := $category_page.Title | default "General" }}
 
-{{- /* Check for featured image */ -}}
-{{- $image := "" -}}
-{{- $imageAlt := "" -}}
-{{- $res := $page.Resources.GetMatch "featured*" -}}
-{{- if $res -}}
-  {{- $image = $res.RelPermalink -}}
-  {{- $imageAlt = $res.Title | default $title -}}
-{{- else -}}
-  {{- with $page.Params.cover -}}
-    {{- $image = . -}}
-    {{- $imageAlt = $page.Params.image_alt | default $title -}}
-  {{- else -}}
-    {{- with $page.Params.image -}}
-      {{- $image = . -}}
-      {{- $imageAlt = $page.Params.image_alt | default $title -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-
-<article class="card card-article" itemscope itemtype="https://schema.org/Article">
-  <a href="{{ $permalink }}" class="card-link" aria-label="Citește articolul: {{ $title }}">
-    {{- if $image -}}
-      <div class="card-media">
-        {{- /* Prefer page resource if available, else path */ -}}
-        {{- $src := cond (ne $res nil) "featured*" $image -}}
-        {{- partial "media/image.html" (dict 
-              "page" $page 
-              "src" $src 
-              "alt" $imageAlt 
-              "widths" (slice 400 600 800) 
-              "sizes" "(max-width: 30rem) 100vw, (max-width: 50rem) 50vw, 25rem" 
-              "class" "card-image" 
-              "loading" "lazy" 
-              "decoding" "async") -}}
-      </div>
-    {{- else -}}
-      <div class="card-media card-media-placeholder" aria-hidden="true">
-        <svg class="card-placeholder-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-          <circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" stroke-width="2"/>
-          <polyline points="21,15 16,10 5,21" stroke="currentColor" stroke-width="2"/>
-        </svg>
-      </div>
-    {{- end -}}
-    
-    <div class="card-content">
-      <div class="card-meta">
-        {{- partial "pills.html" (dict "category" $category "format" $format "size" "small") -}}
-        <time datetime="{{ $date.Format "2006-01-02T15:04:05Z07:00" }}" 
-              itemprop="datePublished"
-              class="card-date">
-          {{- $date.Format "2 Jan" -}}
-        </time>
-      </div>
-      
-      <h3 class="card-title" itemprop="headline">{{ $title }}</h3>
-      
-      {{- if $summary -}}
-        <p class="card-summary" itemprop="description">{{ $summary }}</p>
-      {{- end -}}
+<a href="{{ $page.RelPermalink }}" class="card {{ $card_class }}">
+  <div class="card-content">
+    <span class="card-category">{{ $category_name }}</span>
+    <h3 class="card-title">{{ $page.Title }}</h3>
+    <p class="card-summary">{{ $page.Params.summary | default $page.Summary | truncate 150 }}</p>
+    <div class="card-meta">
+      <time datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "January 2, 2006" }}</time>
     </div>
-  </a>
-</article>
-
-{{- /* Card styles are now integrated into the main CSS design system */ -}}
+  </div>
+</a>

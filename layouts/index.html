@@ -1,73 +1,26 @@
 {{ define "main" }}
-  <main class="nyt-homepage" style="container-type:inline-size;">
-    <!-- NYT-style main content area -->
-    <div class="homepage-content">
-      <!-- Primary story section (hero) -->
-      <section class="primary-story-section" aria-labelledby="primary-story">
-        {{ partial "home/hero.html" . }}
-      </section>
+  <div class="newspaper-grid">
+    {{ $pages := where site.RegularPages "Type" "news" | first 13 }}
+    
+    {{ $hero := first 1 $pages }}
+    {{ range $hero }}
+      {{ partial "card.html" (dict "card_class" "card-hero" "page" .) }}
+    {{ end }}
 
-      <!-- Secondary stories grid -->
-      <section class="secondary-stories-section" aria-labelledby="secondary-stories-title">
-        <div class="container">
-          <header class="section-header">
-            <h2 id="secondary-stories-title" class="section-title">{{ i18n "latest_news" | default "Știri recente" }}</h2>
-          </header>
-        
-        {{/* Get latest articles and exclude hero */}}
-        {{ $sec := .GetPage (printf "/%s/news" .Site.Language.Lang) }}
-        {{ $allPages := cond (ne $sec nil) (sort $sec.RegularPages "Date" "desc") (slice) }}
-        
-        {{/* Get hero article for deduplication */}}
-        {{ $localPages := where $allPages "Params.categories" "intersect" (slice "local") }}
-        {{ $heroPage := cond (gt (len $localPages) 0) (index $localPages 0) nil }}
-        {{ if not $heroPage }}
-          {{ $featured := where $allPages ".Params.featured" true }}
-          {{ $heroPage = cond (gt (len $featured) 0) (index $featured 0) nil }}
-        {{ end }}
-        {{ if not $heroPage }}
-          {{ $heroPage = cond (gt (len $allPages) 0) (index $allPages 0) nil }}
-        {{ end }}
-        
-        {{/* Filter out hero from latest news */}}
-        {{ $latestPages := slice }}
-        {{ $count := 0 }}
-        {{ range $allPages }}
-          {{ if and (lt $count 6) (ne .RelPermalink $heroPage.RelPermalink) }}
-            {{ $latestPages = $latestPages | append . }}
-            {{ $count = add $count 1 }}
-          {{ end }}
-        {{ end }}
-        
-          {{ if gt (len $latestPages) 0 }}
-            <div class="nyt-stories-grid">
-              {{ range $latestPages }}
-                {{ partial "card.html" . }}
-              {{ end }}
-            </div>
-          {{ else }}
-            <div class="empty-state">
-              <p>{{ i18n "no_articles_yet" | default "Nu există articole încă" }}</p>
-            </div>
-          {{ end }}
-        </div>
-      </section>
+    {{ $featured := after 1 $pages | first 1 }}
+    {{ range $featured }}
+      {{ partial "card.html" (dict "card_class" "card-featured" "page" .) }}
+    {{ end }}
 
-      <!-- NYT-style sections layout -->
-      <section class="homepage-sections" aria-label="Secțiuni principale">
-        <div class="container">
-          {{ range $.Site.Data.rails }}
-            {{ if ne .type "latest" }}
-              {{ $title := i18n .key }}
-              {{ if .category }}
-                <div class="nyt-section-rail">
-                  {{ partial "home/category-rail.html" (dict "ctx" $ "title" $title "category" .category "limit" (.limit | default 4)) }}
-                </div>
-              {{ end }}
-            {{ end }}
-          {{ end }}
-        </div>
-      </section>
-    </div>
-  </main>
+    {{ $standard_pages := after 2 $pages | first 3 }}
+    {{ range $standard_pages }}
+      {{ partial "card.html" (dict "card_class" "card-standard" "page" .) }}
+    {{ end }}
+
+    {{ $small_pages := after 5 $pages | first 8 }}
+    {{ range $small_pages }}
+      {{ partial "card.html" (dict "card_class" "card-small" "page" .) }}
+    {{ end }}
+
+  </div>
 {{ end }}
