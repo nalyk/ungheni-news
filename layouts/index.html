@@ -1,18 +1,18 @@
 {{ define "main" }}
-  <main class="homepage" style="container-type:inline-size;">
-    {{/* Hero Section - Prioritizes local news */}}
-    <section class="hero-section" aria-labelledby="hero-title">
-      <div class="hero-wrapper">
+  <main class="nyt-homepage" style="container-type:inline-size;">
+    <!-- NYT-style main content area -->
+    <div class="homepage-content">
+      <!-- Primary story section (hero) -->
+      <section class="primary-story-section" aria-labelledby="primary-story">
         {{ partial "home/hero.html" . }}
-      </div>
-    </section>
+      </section>
 
-    {{/* Latest News Section - Recent articles with deduplication */}}
-    <section class="latest-news-section" aria-labelledby="latest-news-title">
-      <div class="container">
-        <header class="section-header">
-          <h2 id="latest-news-title" class="section-title">{{ i18n "latest_news" }}</h2>
-        </header>
+      <!-- Secondary stories grid -->
+      <section class="secondary-stories-section" aria-labelledby="secondary-stories-title">
+        <div class="container">
+          <header class="section-header">
+            <h2 id="secondary-stories-title" class="section-title">{{ i18n "latest_news" | default "Știri recente" }}</h2>
+          </header>
         
         {{/* Get latest articles and exclude hero */}}
         {{ $sec := .GetPage (printf "/%s/news" .Site.Language.Lang) }}
@@ -39,34 +39,35 @@
           {{ end }}
         {{ end }}
         
-        {{ if gt (len $latestPages) 0 }}
-          <div class="latest-news-grid">
-            {{ range $latestPages }}
-              {{ partial "card.html" . }}
-            {{ end }}
-          </div>
-        {{ else }}
-          <div class="empty-state">
-            <p>{{ i18n "no_articles_yet" | default "Nu există articole încă" }}</p>
-          </div>
-        {{ end }}
-      </div>
-    </section>
+          {{ if gt (len $latestPages) 0 }}
+            <div class="nyt-stories-grid">
+              {{ range $latestPages }}
+                {{ partial "card.html" . }}
+              {{ end }}
+            </div>
+          {{ else }}
+            <div class="empty-state">
+              <p>{{ i18n "no_articles_yet" | default "Nu există articole încă" }}</p>
+            </div>
+          {{ end }}
+        </div>
+      </section>
 
-    {{/* Category Rails in Priority Order */}}
-    <section class="category-rails" aria-label="Secțiuni de categorie">
-      <div class="container">
-        {{ range $.Site.Data.rails }}
-          {{ if ne .type "latest" }}
-            {{ $title := i18n .key }}
-            {{ if .category }}
-              <div class="category-rail-wrapper">
-                {{ partial "home/category-rail.html" (dict "ctx" $ "title" $title "category" .category "limit" (.limit | default 6)) }}
-              </div>
+      <!-- NYT-style sections layout -->
+      <section class="homepage-sections" aria-label="Secțiuni principale">
+        <div class="container">
+          {{ range $.Site.Data.rails }}
+            {{ if ne .type "latest" }}
+              {{ $title := i18n .key }}
+              {{ if .category }}
+                <div class="nyt-section-rail">
+                  {{ partial "home/category-rail.html" (dict "ctx" $ "title" $title "category" .category "limit" (.limit | default 4)) }}
+                </div>
+              {{ end }}
             {{ end }}
           {{ end }}
-        {{ end }}
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   </main>
 {{ end }}

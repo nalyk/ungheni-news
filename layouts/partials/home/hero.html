@@ -17,19 +17,19 @@
   {{ $hero = cond (gt (len $pages) 0) (index $pages 0) nil }}
 {{ end }}
 {{ if $hero }}
-  <article class="hero-card" itemscope itemtype="https://schema.org/Article">
-    <div class="hero-container">
+  <article class="nyt-primary-story" itemscope itemtype="https://schema.org/Article">
+    <div class="primary-story-container">
       {{ $img := or $hero.Params.cover (cond (in $hero.Params.tags "politic") "img/placeholders/politic.svg" "img/placeholders/local.svg") }}
       {{ with $img }}
-        <div class="hero-media">
-          <a href="{{ $hero.RelPermalink }}" class="hero-image-link" aria-label="Citește articolul principal">
+        <div class="primary-story-media">
+          <a href="{{ $hero.RelPermalink }}" class="story-image-link" aria-label="Citește articolul principal">
             {{ partial "media/image.html" (dict 
               "page" $hero 
               "src" . 
               "alt" $hero.Title 
-              "widths" (slice 800 1200 1600) 
-              "sizes" "(max-width: 48rem) 100vw, (max-width: 80rem) 60vw, 50vw" 
-              "class" "hero-image" 
+              "widths" (slice 1000 1400 1800) 
+              "sizes" "(max-width: 48rem) 100vw, 70vw" 
+              "class" "primary-story-image" 
               "loading" "eager" 
               "fetchpriority" "high" 
               "decoding" "async" 
@@ -38,27 +38,29 @@
         </div>
       {{ end }}
       
-      <div class="hero-content">
-        <div class="hero-meta">
-          {{ partial "pills.html" (dict "category" (index ($hero.Params.categories | default slice) 0) "format" (index ($hero.Params.formats | default slice) 0) "size" "large") }}
+      <div class="primary-story-content">
+        <div class="story-meta">
+          {{ with (index ($hero.Params.categories | default slice) 0) }}
+            <span class="story-category">{{ . | title }}</span>
+          {{ end }}
           <time datetime="{{ $hero.Date.Format "2006-01-02T15:04:05Z07:00" }}" 
-                class="hero-date" 
+                class="story-date" 
                 itemprop="datePublished">
-            {{ $hero.Date.Format "2 January 2006" }}
+            {{ $hero.Date.Format "2 January" }}
           </time>
         </div>
         
-        <h1 class="hero-title" itemprop="headline">
-          <a href="{{ $hero.RelPermalink }}" class="hero-title-link">{{ $hero.Title }}</a>
+        <h1 class="primary-story-headline" itemprop="headline">
+          <a href="{{ $hero.RelPermalink }}" class="story-headline-link">{{ $hero.Title }}</a>
         </h1>
         
         {{ with $hero.Summary }}
-          <p class="hero-summary" itemprop="description">{{ . | plainify }}</p>
+          <p class="primary-story-summary" itemprop="description">{{ . | plainify }}</p>
         {{ end }}
         
         {{ with $hero.Params.authors }}
-          <div class="hero-byline">
-            <span class="hero-authors" itemprop="author">{{ i18n "by" }} {{ delimit . ", " }}</span>
+          <div class="story-byline">
+            <span class="story-authors" itemprop="author">{{ i18n "by" | default "De" }} {{ delimit . ", " }}</span>
           </div>
         {{ end }}
       </div>
