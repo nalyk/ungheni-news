@@ -3,10 +3,8 @@ title: "Analiză Aprofundată: Bugetul Local pe 2026 și Impactul Asupra Infrast
 summary: O examinare detaliată a bugetului recent aprobat, cu focus pe alocările
   pentru proiecte de infrastructură majoră și ce înseamnă acestea pentru
   cetățeni.
-categories:
-  - local
-formats:
-  - analiza
+categories: local
+formats: analiza
 date: 2025-09-12
 draft: false
 featured: true
