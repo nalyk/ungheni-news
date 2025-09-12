@@ -1,14 +1,23 @@
 {{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
 {{ $news_section := .Site.GetPage $lang_news_path }}
-{{ $latest := first 6 $news_section.RegularPages.ByDate.Reverse }}
+{{ $latest := first 12 $news_section.RegularPages.ByDate.Reverse }}
 
 <section class="home-latest-news">
   <div class="container">
-    <h2 class="section-title"><span>Ultimele Știri</span></h2>
+    <div class="section-header-interactive">
+      <h2 class="section-title"><span>Ultimele Știri</span></h2>
+      <div class="news-filters">
+        <button class="filter-btn is-active" data-filter="all">Toate</button>
+        {{ range site.Data.formats.formats }}
+          <button class="filter-btn" data-filter="{{ .slug }}">{{ .ro.name }}</button>
+        {{ end }}
+      </div>
+    </div>
+
     {{ if $latest }}
       <div class="news-grid">
         {{ range $latest }}
-          <div class="news-card">
+          <div class="news-card" data-format="{{ .Params.format | default "stire" }}">
             <a href="{{ .RelPermalink }}" class="news-card-link">
               <div class="news-card-image-wrapper">
                 {{ with .Params.image }}
