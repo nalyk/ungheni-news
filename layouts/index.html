@@ -13,6 +13,8 @@
       {{ end }}
     </section>
 
+    {{ partial "home/latest-news.html" . }}
+
     {{/* --- SERVICE RAIL --- */}}
     {{ $service_pages := where $news_section.RegularPages ".Params.categories" "intersect" (slice "servicii-publice") | first 3 }}
     {{ if $service_pages }}

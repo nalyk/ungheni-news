@@ -1,0 +1,32 @@
+{{ $pages := where site.RegularPages "Type" "news" }}
+{{ $latest := first 6 $pages }}
+
+<section class="home-latest-news">
+  <div class="container">
+    <h2 class="section-title"><span>Ultimele Știri</span></h2>
+    <div class="news-grid">
+      {{ range $latest }}
+        <div class="news-card">
+          <a href="{{ .RelPermalink }}">
+            <div class="news-card-image-wrapper">
+              {{ with .Params.image }}
+                <img src="{{ . }}" alt="{{ .Title }}" class="news-card-image" loading="lazy">
+              {{ else }}
+                <img src="/img/placeholders/local.svg" alt="" class="news-card-image placeholder"> 
+              {{ end }}
+            </div>
+          </a>
+          <div class="news-card-content">
+            {{ with .Params.format }}
+              <div class="card-header">
+                <span class="card-format">{{ . }}</span>
+              </div>
+            {{ end }}
+            <h3 class="news-card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+            <p class="news-card-summary">{{ .Summary }}</p>
+          </div>
+        </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
