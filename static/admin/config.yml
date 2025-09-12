@@ -274,14 +274,26 @@ collections:
       # Article Content
       - { name: body, label: "Содержание статьи", widget: markdown, hint: "Основная часть статьи. Используйте форматирование Markdown для структуры." }
 
-  - name: "pages"
-    label: "Pages"
-    folder: "content/pages"
+  - name: "pages_ro"
+    label: "Pagini (RO)"
+    folder: "content/ro/pages"
     create: true
     slug: "{{slug}}"
     path: "{{slug}}/index"
     format: "frontmatter"
     fields:
-      - { name: title, label: Title }
-      - { name: slug, label: Slug, required: false }
-      - { name: body, label: Body, widget: markdown }
+      - { name: title, label: "Titlu Pagină" }
+      - { name: slug, label: "URL Slug", required: false }
+      - { name: body, label: "Conținut", widget: markdown }
+
+  - name: "pages_ru"
+    label: "Страницы (RU)"
+    folder: "content/ru/pages"
+    create: true
+    slug: "{{slug}}"
+    path: "{{slug}}/index"
+    format: "frontmatter"
+    fields:
+      - { name: title, label: "Название Страницы" }
+      - { name: slug, label: "URL Слаг", required: false }
+      - { name: body, label: "Содержание", widget: markdown }
