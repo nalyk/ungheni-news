@@ -1,4 +1,6 @@
-{{ $latest := first 10 (where site.RegularPages "Type" "news").ByDate.Reverse }}
+{{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
+{{ $news_section := .Site.GetPage $lang_news_path }}
+{{ $latest := first 10 $news_section.RegularPages.ByDate.Reverse }}
 
 <div class="widget widget-latest-news">
   <h3 class="widget-title">{{ i18n "latest_news" | default "Ultimele Știri" }}</h3>
