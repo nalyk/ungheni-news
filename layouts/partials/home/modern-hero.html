@@ -1,7 +1,14 @@
 {{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
 {{ $news_section := .Site.GetPage $lang_news_path }}
 
-{{ $local_story := first 1 (where $news_section.RegularPages ".Params.categories" "intersect" (slice "local")) }}
+{{/* Logic for Hero Section */}}
+{{/* 1. Find the most recent article explicitly featured for the hero */}}
+{{ $featured_story := first 1 (where (where $news_section.RegularPages ".Params.categories" "intersect" (slice "local")) ".Params.featured" true) }}
+
+{{/* 2. If no article is featured, fall back to the absolute latest local article */}}
+{{ $local_story := $featured_story | default (first 1 (where $news_section.RegularPages ".Params.categories" "intersect" (slice "local"))) }}
+
+{{/* 3. Get the latest national and service stories for the sub-hero section */}}
 {{ $national_story := first 1 (where $news_section.RegularPages ".Params.categories" "intersect" (slice "national")) }}
 {{ $service_story := first 1 (where $news_section.RegularPages ".Params.categories" "intersect" (slice "servicii-publice")) }}
 
