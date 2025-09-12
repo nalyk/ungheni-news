@@ -1,10 +1,18 @@
 ---
 title: "Analiză Aprofundată: Bugetul Local pe 2026 și Impactul Asupra Infrastructurii"
+summary: O examinare detaliată a bugetului recent aprobat, cu focus pe alocările
+  pentru proiecte de infrastructură majoră și ce înseamnă acestea pentru
+  cetățeni.
+categories:
+  - local
+formats:
+  - analiza
 date: 2025-09-12
-summary: "O examinare detaliată a bugetului recent aprobat, cu focus pe alocările pentru proiecte de infrastructură majoră și ce înseamnă acestea pentru cetățeni."
-categories: ["local"]
-formats: ["analiza"]
-authors: ["Ana Popescu"]
+draft: true
+featured: true
+cover: ungheni-vazut-de-sus-5-scaled.jpg
+authors:
+  - Ana Popescu
 ---
 
 Corpul articolului de analiză despre bugetul local. Aici vom detalia cum au fost împărțite fondurile, cine beneficiază și care sunt proiecțiile pe termen lung. Se vor folosi grafice și date concrete pentru a susține argumentația.
