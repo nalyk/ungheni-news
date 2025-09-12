@@ -1,0 +1,15 @@
+{{ $latest := first 10 (where site.RegularPages "Type" "news").ByDate.Reverse }}
+
+<div class="widget widget-latest-news">
+  <h3 class="widget-title">{{ i18n "latest_news" | default "Ultimele Știri" }}</h3>
+  <ul class="news-list">
+    {{ range $latest }}
+      <li class="news-item">
+        <a href="{{ .RelPermalink }}" class="news-item-link">
+          <span class="news-item-title">{{ .Title }}</span>
+        </a>
+        <time class="news-item-time" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2 Jan, 15:04" }}</time>
+      </li>
+    {{ end }}
+  </ul>
+</div>

@@ -1,0 +1,30 @@
+{{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
+{{ $news_section := .Site.GetPage $lang_news_path }}
+
+{{ $local_story := first 1 (where $news_section.RegularPages ".Params.categories" "intersect" (slice "local")) }}
+{{ $national_story := first 1 (where $news_section.RegularPages ".Params.categories" "intersect" (slice "national")) }}
+{{ $service_story := first 1 (where $news_section.RegularPages ".Params.categories" "intersect" (slice "servicii-publice")) }}
+
+<section class="modern-hero">
+  <div class="hero-grid">
+    {{ with $local_story }}
+      <div class="hero-main">
+        {{ range . }}
+          {{ partial "home/category-card.html" (dict "page" . "card_class" "card-hero-main") }}
+        {{ end }}
+      </div>
+    {{ end }}
+    <div class="hero-sub">
+      {{ with $national_story }}
+        {{ range . }}
+          {{ partial "home/category-card.html" (dict "page" . "card_class" "card-hero-sub") }}
+        {{ end }}
+      {{ end }}
+      {{ with $service_story }}
+        {{ range . }}
+          {{ partial "home/category-card.html" (dict "page" . "card_class" "card-hero-sub card-service-alert") }}
+        {{ end }}
+      {{ end }}
+    </div>
+  </div>
+</section>

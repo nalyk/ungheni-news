@@ -1,0 +1,19 @@
+{{ $category_slug := .category }}
+{{ $limit := .limit | default 4 }}
+{{ $lang_news_path := printf "/%s/news" .context.Site.Language.Lang }}
+{{ $news_section := .context.Site.GetPage $lang_news_path }}
+
+{{ $pages := where $news_section.RegularPages ".Params.categories" "intersect" (slice $category_slug) | first $limit }}
+
+{{ if $pages }}
+<section class="category-block">
+  <h2 class="category-title"><a href="#">{{ i18n $category_slug | default $category_slug }}</a></h2>
+  <div class="category-grid-{{ $limit }}">
+    {{ range $i, $p := $pages }}
+      {{ $card_class := "card-standard" }}
+      {{ if eq $i 0 }}{{ $card_class = "card-featured" }}{{ end }}
+      {{ partial "home/category-card.html" (dict "page" $p "card_class" $card_class) }}
+    {{ end }}
+  </div>
+</section>
+{{ end }}

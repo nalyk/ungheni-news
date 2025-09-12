@@ -1,71 +1,21 @@
 {{ define "main" }}
-  {{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
-  {{ $news_section := .Site.GetPage $lang_news_path }}
+  <div class="container">
 
-  <div class="homepage-layout">
-    
-    {{/* --- HERO SECTION --- */}}
-    {{ $local_pages := where $news_section.RegularPages ".Params.categories" "intersect" (slice "local") }}
-    {{ $hero_page := first 1 $local_pages }}
-    <section class="hero-section">
-      {{ range $hero_page }}
-        {{ partial "card.html" (dict "page" . "card_class" "card-hero") }}
-      {{ end }}
-    </section>
+    {{/* 1. Modern Hero Section (Placeholder) */}}
+    {{ partial "home/modern-hero.html" . }}
 
-    {{ partial "home/latest-news.html" . }}
+    <div class="home-layout-grid">
+      {{/* 2. Main Content Column */}}
+      <main class="main-content">
+        {{ partial "home/category-block.html" (dict "context" . "category" "local" "limit" 4) }}
+        {{ partial "home/category-block.html" (dict "context" . "category" "economie-fez" "limit" 3) }}
+        {{ partial "home/category-block.html" (dict "context" . "category" "frontiera-transport" "limit" 3) }}
+      </main>
 
-    {{/* --- SERVICE RAIL --- */}}
-    {{ $service_pages := where $news_section.RegularPages ".Params.categories" "intersect" (slice "servicii-publice") | first 3 }}
-    {{ if $service_pages }}
-      <section class="homepage-section service-rail">
-        <h2 class="section-title"><span>{{ i18n "servicii_publice" | default "Servicii Publice" }}</span></h2>
-        <div class="service-grid">
-          {{ range $service_pages }}
-            {{ partial "card.html" (dict "page" . "card_class" "card-service") }}
-          {{ end }}
-        </div>
-      </section>
-    {{ end }}
-
-    {{/* --- LOCAL NEWS SECTION --- */}}
-    {{ $more_local_pages := after 1 $local_pages | first 6 }}
-    {{ if $more_local_pages }}
-      <section class="homepage-section">
-        <h2 class="section-title"><span>{{ i18n "local" | default "Local" }}</span></h2>
-        <div class="local-grid">
-          {{ range $more_local_pages }}
-            {{ partial "card.html" (dict "page" . "card_class" "card-standard") }}
-          {{ end }}
-        </div>
-      </section>
-    {{ end }}
-
-    {{/* --- OTHER CATEGORIES --- */}}
-    <div class="category-rails">
-      {{ $econ_pages := where $news_section.RegularPages ".Params.categories" "intersect" (slice "economie-fez") | first 4 }}
-      {{ if $econ_pages }}
-        <section class="homepage-section">
-          <h2 class="section-title"><span>{{ i18n "economie_fez" | default "Economie & FEZ" }}</span></h2>
-          <div class="category-grid">
-            {{ range $econ_pages }}
-              {{ partial "card.html" (dict "page" . "card_class" "card-small") }}
-            {{ end }}
-          </div>
-        </section>
-      {{ end }}
-
-      {{ $transport_pages := where $news_section.RegularPages ".Params.categories" "intersect" (slice "frontiera-transport") | first 4 }}
-      {{ if $transport_pages }}
-        <section class="homepage-section">
-          <h2 class="section-title"><span>{{ i18n "frontiera_transport" | default "Frontieră & Transport" }}</span></h2>
-          <div class="category-grid">
-            {{ range $transport_pages }}
-              {{ partial "card.html" (dict "page" . "card_class" "card-small") }}
-            {{ end }}
-          </div>
-        </section>
-      {{ end }}
+      {{/* 3. Sidebar Column */}}
+      <aside class="sidebar">
+        {{ partial "sidebar/latest-news.html" . }}
+      </aside>
     </div>
 
   </div>

@@ -1,0 +1,21 @@
+{{ $page := .page }}
+{{ $card_class := .card_class | default "card-standard" }}
+
+<div class="category-card {{ $card_class }}">
+  <a href="{{ $page.RelPermalink }}" class="card-link">
+    {{ with $page.Params.image }}
+      <div class="card-image-wrapper">
+        <img src="{{ . }}" alt="{{ $page.Title }}" class="card-image" loading="lazy">
+      </div>
+    {{ end }}
+    <div class="card-content">
+      {{ with index $page.Params.formats 0 }}
+        <span class="card-format">{{ . }}</span>
+      {{ end }}
+      <h3 class="card-title">{{ $page.Title }}</h3>
+      {{ if and (ne $card_class "card-featured") (ne $card_class "card-hero-main") (ne $card_class "card-hero-sub") }}
+        <p class="card-summary">{{ $page.Summary | truncate 70 }}</p>
+      {{ end }}
+    </div>
+  </a>
+</div>
