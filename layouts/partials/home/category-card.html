@@ -3,9 +3,11 @@
 
 <div class="category-card {{ $card_class }}">
   <a href="{{ $page.RelPermalink }}" class="card-link">
-    {{ with $page.Params.image }}
+    {{ $image := $page.Resources.GetMatch "hero.*" }}
+    {{ with $image }}
       <div class="card-image-wrapper">
-        <img src="{{ . }}" alt="{{ $page.Title }}" class="card-image" loading="lazy">
+        {{ $processed_image := .Fill "800x480 smart" }}
+        <img src="{{ $processed_image.RelPermalink }}" alt="{{ $page.Title }}" class="card-image" loading="lazy" width="{{ $processed_image.Width }}" height="{{ $processed_image.Height }}">
       </div>
     {{ end }}
     <div class="card-content">
