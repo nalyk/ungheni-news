@@ -6,8 +6,7 @@
     {{ $image := $page.Resources.GetMatch "cover.*" }}
     {{ with $image }}
       <div class="card-image-wrapper">
-        {{ $processed_image := .Fill "800x480 smart" }}
-        <img src="{{ $processed_image.RelPermalink }}" alt="{{ $page.Title }}" class="card-image" loading="lazy" width="{{ $processed_image.Width }}" height="{{ $processed_image.Height }}">
+        {{ partial "responsive-image.html" (dict "image" . "alt" $page.Title "class" "card-image") }}
       </div>
     {{ end }}
     <div class="card-content">
