@@ -3,7 +3,7 @@
 
 <div class="category-card {{ $card_class }}">
   <a href="{{ $page.RelPermalink }}" class="card-link">
-    {{ $image := $page.Resources.GetMatch "hero.*" }}
+    {{ $image := $page.Resources.GetMatch "cover.*" }}
     {{ with $image }}
       <div class="card-image-wrapper">
         {{ $processed_image := .Fill "800x480 smart" }}

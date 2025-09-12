@@ -25,6 +25,8 @@ collections:
   - name: "news_ro"
     label: "Știri (RO)"
     folder: "content/ro/news"
+    media_folder: ""
+    public_folder: ""
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     path: "{{slug}}/index"
@@ -149,6 +151,8 @@ collections:
   - name: "news_ru"
     label: "Новости (RU)"
     folder: "content/ru/news"
+    media_folder: ""
+    public_folder: ""
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     path: "{{slug}}/index"
