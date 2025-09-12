@@ -8,7 +8,7 @@ categories:
 formats:
   - analiza
 date: 2025-09-12
-draft: true
+draft: false
 featured: true
 cover: ungheni-vazut-de-sus-5-scaled.jpg
 authors:
