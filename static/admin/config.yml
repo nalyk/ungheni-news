@@ -25,6 +25,7 @@ collections:
   - name: "news_ro"
     label: "Știri (RO)"
     folder: "content/ro/news"
+    exclude: "_index.md"
     media_folder: ""
     public_folder: ""
     create: true
@@ -151,6 +152,7 @@ collections:
   - name: "news_ru"
     label: "Новости (RU)"
     folder: "content/ru/news"
+    exclude: "_index.md"
     media_folder: ""
     public_folder: ""
     create: true
