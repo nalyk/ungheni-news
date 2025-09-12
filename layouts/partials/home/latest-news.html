@@ -17,7 +17,7 @@
     {{ if $latest }}
       <div class="news-grid">
         {{ range $latest }}
-          <div class="news-card" data-format="{{ .Params.format | default "stire" }}">
+          <div class="news-card" data-format="{{ index .Params.formats 0 | default "stire" }}">
             <a href="{{ .RelPermalink }}" class="news-card-link">
               <div class="news-card-image-wrapper">
                 {{ with .Params.image }}
