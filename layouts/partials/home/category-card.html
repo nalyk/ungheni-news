@@ -6,7 +6,7 @@
     {{ with $page.Params.cover }}
       {{ $image_path := printf "%s%s" $page.RelPermalink . }}
       <div class="card-image-wrapper">
-        <img src="{{ $image_path }}" alt="{{ $page.Title }}" class="card-image">
+        <img src="{{ $image_path }}" alt="{{ $page.Title }}" class="card-image" data-path="{{ $image_path }}">
       </div>
     {{ end }}
     <div class="card-content">
