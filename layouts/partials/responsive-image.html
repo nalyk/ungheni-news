@@ -13,62 +13,67 @@
 {{- $image := .image -}}
 {{- if not $image }}{{ return }}{{ end -}}
 
-{{- $alt := .alt | default $image.Title -}}
-{{- $class := .class | default "" -}}
-{{- $loading := .loading | default "lazy" -}}
-{{- $priority := .priority | default "auto" -}}
-
-{{- if eq $image.MediaType.SubType "svg" -}}
-  {{/* Handle SVG: output a simple img tag, no processing */}}
-  <img src="{{ $image.RelPermalink }}"
-       alt="{{ $alt }}"
-       class="{{ $class }}"
-       loading="{{ $loading }}"
-       {{- if eq $priority "high" }} fetchpriority="high"{{ end }} />
+{{- if reflect.IsString $image -}}
+  {{/* Handle simple image path */}}
+  <img src="{{ $image }}" alt="{{ .alt }}" class="{{ .class }}" loading="{{ .loading | default "lazy" }}">
 {{- else -}}
-  {{/* Handle Raster Images: generate responsive <picture> element */}}
-  {{- $sizes := .sizes | default "(max-width: 768px) 100vw, 50vw" -}}
-  {{- $original_format := $image.MediaType.SubType -}}
-  {{- $widths := slice 400 600 800 1200 1600 -}}
+  {{- $alt := .alt | default $image.Title -}}
+  {{- $class := .class | default "" -}}
+  {{- $loading := .loading | default "lazy" -}}
+  {{- $priority := .priority | default "auto" -}}
 
-  {{- /* Generate WebP sources */ -}}
-  {{- $webp_sources := slice -}}
-  {{- range $widths -}}
-    {{- if ge $image.Width . -}}
-      {{- $resized := $image.Resize (printf "%dx webp" .) -}}
-      {{- $webp_sources = $webp_sources | append (printf "%s %dw" $resized.RelPermalink .) -}}
-    {{- end -}}
-  {{- end -}}
-  {{- $webp_srcset := delimit $webp_sources ", " -}}
-
-  {{- /* Generate original format sources */ -}}
-  {{- $original_sources := slice -}}
-  {{- range $widths -}}
-    {{- if ge $image.Width . -}}
-      {{- $resized := $image.Resize (printf "%dx %s" . $original_format) -}}
-      {{- $original_sources = $original_sources | append (printf "%s %dw" $resized.RelPermalink .) -}}
-    {{- end -}}
-  {{- end -}}
-  {{- $original_srcset := delimit $original_sources ", " -}}
-
-  {{- /* Select a fallback src */ -}}
-  {{- $fallback_src := ($image.Resize (printf "800x %s" $original_format)).RelPermalink -}}
-
-  <picture>
-    {{- if $webp_srcset -}}
-      <source type="image/webp" srcset="{{ $webp_srcset }}" sizes="{{ $sizes }}" />
-    {{- end -}}
-    {{- if and $original_srcset (ne $original_format "webp") -}}
-      <source type="{{ $image.MediaType }}" srcset="{{ $original_srcset }}" sizes="{{ $sizes }}" />
-    {{- end -}}
-    
-    <img src="{{ $fallback_src }}"
+  {{- if eq $image.MediaType.SubType "svg" -}}
+    {{/* Handle SVG: output a simple img tag, no processing */}}
+    <img src="{{ $image.RelPermalink }}"
          alt="{{ $alt }}"
          class="{{ $class }}"
-         width="{{ $image.Width }}"
-         height="{{ $image.Height }}"
          loading="{{ $loading }}"
-         decoding="async"
          {{- if eq $priority "high" }} fetchpriority="high"{{ end }} />
-  </picture>
+  {{- else -}}
+    {{/* Handle Raster Images: generate responsive <picture> element */}}
+    {{- $sizes := .sizes | default "(max-width: 768px) 100vw, 50vw" -}}
+    {{- $original_format := $image.MediaType.SubType -}}
+    {{- $widths := slice 400 600 800 1200 1600 -}}
+
+    {{- /* Generate WebP sources */ -}}
+    {{- $webp_sources := slice -}}
+    {{- range $widths -}}
+      {{- if ge $image.Width . -}}
+        {{- $resized := $image.Resize (printf "%dx webp" .) -}}
+        {{- $webp_sources = $webp_sources | append (printf "%s %dw" $resized.RelPermalink .) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $webp_srcset := delimit $webp_sources ", " -}}
+
+    {{- /* Generate original format sources */ -}}
+    {{- $original_sources := slice -}}
+    {{- range $widths -}}
+      {{- if ge $image.Width . -}}
+        {{- $resized := $image.Resize (printf "%dx %s" . $original_format) -}}
+        {{- $original_sources = $original_sources | append (printf "%s %dw" $resized.RelPermalink .) -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $original_srcset := delimit $original_sources ", " -}}
+
+    {{- /* Select a fallback src */ -}}
+    {{- $fallback_src := ($image.Resize (printf "800x %s" $original_format)).RelPermalink -}}
+
+    <picture>
+      {{- if $webp_srcset -}}
+        <source type="image/webp" srcset="{{ $webp_srcset }}" sizes="{{ $sizes }}" />
+      {{- end -}}
+      {{- if and $original_srcset (ne $original_format "webp") -}}
+        <source type="{{ $image.MediaType }}" srcset="{{ $original_srcset }}" sizes="{{ $sizes }}" />
+      {{- end -}}
+      
+      <img src="{{ $fallback_src }}"
+           alt="{{ $alt }}"
+           class="{{ $class }}"
+           width="{{ $image.Width }}"
+           height="{{ $image.Height }}"
+           loading="{{ $loading }}"
+           decoding="async"
+           {{- if eq $priority "high" }} fetchpriority="high"{{ end }} />
+    </picture>
+  {{- end -}}
 {{- end -}}
