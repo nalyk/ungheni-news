@@ -9,6 +9,7 @@ tags: ["politic"]
 categories: ["servicii-publice", "local"]
 formats: ["stire"]
 summary: Lista străzilor incluse în programul de reparații din această toamnă a fost publicată.
+cover: cover.svg
 ---
 
 Lucrările vor începe cu străzile cu trafic intens și se vor desfășura etapizat. Sunt prevăzute reparații la carosabil și trotuare.
