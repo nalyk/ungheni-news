@@ -104,3 +104,21 @@ This is a critical and complex part of the project. Refer to this summary if you
 - **Hugo Installation**: The required Hugo version `v0.127.0` is installed at `~/bin/hugo`.
 - **Acknowledge Limitations**: I do not have sub-agents. I will use sequential thinking to manage complexity.
 - **Playwright is Functional**: The `playwright-extension` has been tested and is functional in this environment.
+
+## 8. UI/UX Development and Verification Protocol
+
+This protocol is my standard procedure for implementing and verifying any changes that affect the website's layout, UI, or UX.
+
+1.  **Code Implementation:** I will make the required changes to the relevant HTML, CSS, and/or JavaScript files.
+2.  **Deployment:** I will commit and push the changes to the `main` branch, which will trigger a Cloudflare Pages deployment.
+3.  **Wait for Deployment:** I will use the `browser_wait_for` tool to pause for a reasonable amount of time (e.g., 2-3 minutes) to allow the deployment to complete.
+4.  **Verification:** This is the most critical step. I will perform a series of checks to verify the deployment and the changes.
+    *   **Structural Verification:** I will navigate to the affected page and use `browser_snapshot` to get the new accessibility tree. I will analyze this snapshot to confirm that the HTML structure has changed as expected.
+    *   **Visual Verification:** I will use `browser_take_screenshot` to capture a visual representation of the changes. I will then present the path to this screenshot to you for visual feedback. This is how I will "see" the result through your eyes.
+    *   **Responsive Design Verification:** For any significant layout changes, I will use `browser_resize` to test the page at different viewport sizes (e.g., 375px for mobile, 768px for tablet, 1440px for desktop). I will take screenshots at each size to verify the responsiveness.
+    *   **Asset Loading Verification:** I will use `browser_network_requests` to check for any 404 errors, ensuring that all new assets (images, CSS, JS) are loading correctly. This would have caught the issue with the image in our previous interaction.
+    *   **Interaction Verification:** For changes involving interactive elements (buttons, forms, etc.), I will use tools like `browser_click`, `browser_hover`, and `browser_type` to test their functionality.
+5.  **Analysis and Decision:** Based on the results of the verification steps, I will determine if the change was successful.
+    *   If successful, I will report my findings and the successful verification to you.
+    *   If unsuccessful, I will analyze the errors (e.g., 404s in network requests, incorrect structure in the snapshot) and formulate a plan to fix the issue.
+6.  **Report and Handoff:** I will present a summary of my actions, the verification results (including screenshot paths), and my conclusion to you for final approval or further feedback.
