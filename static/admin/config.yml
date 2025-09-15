@@ -22,6 +22,18 @@ public_folder: "/uploads"
 #     api_key: "your-api-key"
 
 collections:
+  - name: "authors"
+    label: "Autori"
+    label_singular: "Autor"
+    folder: "content/authors"
+    create: true
+    slug: "{{slug}}"
+    path: "{{slug}}/_index"
+    fields:
+      - { name: title, label: "Nume Autor" }
+      - { name: bio, label: "Biografie", widget: "text", required: false }
+      - { name: avatar, label: "Avatar", widget: "image", required: false }
+
   - name: "section_settings"
     label: "Setări Secțiuni"
     files:
@@ -117,7 +129,12 @@ collections:
       # Attribution & Metadata  
       - name: authors
         label: "Autori"
-        widget: "list"
+        widget: "relation"
+        collection: "authors"
+        search_fields: ["title"]
+        value_field: "title"
+        display_fields: ["title"]
+        multiple: true
         required: false
         hint: "Lista autorilor care au contribuit la articol"
       - name: tags
@@ -242,8 +259,13 @@ collections:
         
       # Attribution & Metadata  
       - name: authors
-        label: "Авторы"
-        widget: "list"
+        label: "Autori"
+        widget: "relation"
+        collection: "authors"
+        search_fields: ["title"]
+        value_field: "title"
+        display_fields: ["title"]
+        multiple: true
         required: false
         hint: "Lista autorilor care au contribuit la articol"
       - name: tags
