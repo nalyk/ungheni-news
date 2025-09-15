@@ -3,10 +3,10 @@
 
 <div class="category-card {{ $card_class }}">
   <a href="{{ $page.RelPermalink }}" class="card-link">
-    {{ with $page.Params.cover }}
-      {{ $image_path := printf "%s%s" $page.RelPermalink . }}
+    {{ $image := $page.Resources.GetMatch "cover.*" }}
+    {{ with $image }}
       <div class="card-image-wrapper">
-        <img src="{{ $image_path }}" alt="{{ $page.Title }}" class="card-image" data-path="{{ $image_path }}">
+        {{ partial "responsive-image.html" (dict "image" . "alt" $page.Title "class" "card-image") }}
       </div>
     {{ end }}
     <div class="card-content">

@@ -8,7 +8,9 @@ formats: analiza
 date: 2025-09-12
 draft: false
 featured: true
-cover: cover.jpg
+resources:
+- name: cover.jpg
+  src: cover.jpg
 authors:
   - Ana Popescu
 ---
