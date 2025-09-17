@@ -12,7 +12,8 @@
     {{ $.Scratch.Add "_cat_pages" (slice $p) }}
   {{ end }}
 {{ end }}
-{{ $pages := first $limit ($.Scratch.Get "_cat_pages") }}
+{{ $_cp := $.Scratch.Get "_cat_pages" | default (slice) }}
+{{ $pages := first $limit $_cp }}
 
 {{ if $pages }}
 <section class="category-block">

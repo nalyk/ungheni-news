@@ -212,3 +212,14 @@
   translation: "Căutări populare"
 - id: sections
   translation: "Secțiuni"
+# Missing keys for header/footer
+- id: main_navigation
+  translation: "Navigare principală"
+- id: about_us
+  translation: "Despre noi"
+- id: contact
+  translation: "Contact"
+- id: terms
+  translation: "Termeni și condiții"
+- id: privacy
+  translation: "Politica de confidențialitate"

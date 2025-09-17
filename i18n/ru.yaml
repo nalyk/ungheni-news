@@ -210,3 +210,14 @@
   translation: "Популярные запросы"
 - id: sections
   translation: "Разделы"
+# Missing keys for header/footer
+- id: main_navigation
+  translation: "Основная навигация"
+- id: about_us
+  translation: "О нас"
+- id: contact
+  translation: "Контакты"
+- id: terms
+  translation: "Условия использования"
+- id: privacy
+  translation: "Политика конфиденциальности"

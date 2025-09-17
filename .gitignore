@@ -15,6 +15,7 @@ node_modules/
 .env
 
 .cache/
+.hugo_cache/
 .gemini/
 .playwright-mcp/
 .mcp.json
