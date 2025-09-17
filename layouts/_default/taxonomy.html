@@ -1,8 +1,12 @@
 {{ define "main" }}
 <section>
   <h1>{{ .Title }}</h1>
+  {{/* Ensure taxonomy listing is language-scoped */}}
+  {{ $lang := .Site.Language.Lang }}
+  {{ $langPages := where .Pages "Lang" $lang }}
+  {{ $p := .Paginate $langPages }}
   <ul>
-    {{ range .Paginator.Pages }}
+    {{ range $p.Pages }}
       <li>
         <a href="{{ .RelPermalink }}">{{ .Title }}</a>
         <small> · {{ .Date.Format "2006-01-02" }}</small>
@@ -10,8 +14,7 @@
     {{ end }}
   </ul>
   <nav>
-    {{ template "_internal/pagination.html" . }}
+    {{ template "_internal/pagination.html" $p }}
   </nav>
 </section>
 {{ end }}
-
