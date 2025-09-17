@@ -1,7 +1,6 @@
 {{ define "main" }}
 <section>
   <h1>{{ .Title }}</h1>
-  {{/* Language-scoped taxonomy listing using site pages to avoid cross-lang bleed */}}
   {{ $lang := .Site.Language.Lang }}
   {{ $.Scratch.Set "_tp" (slice) }}
   {{ range .Pages }}

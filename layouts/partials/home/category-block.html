@@ -4,7 +4,9 @@
 {{ $sec := .context.Site.GetPage $lang_news_path }}
 {{ $all := cond (ne $sec nil) ($sec.RegularPages | default $sec.Pages) (slice) }}
 {{ if eq (len $all) 0 }}
-  {{ $all = where (where .context.Site.Pages "Type" "news") "Lang" .context.Site.Language.Lang }}
+  {{ $lang_news_path := printf "/%s/news" .context.Site.Language.Lang }}
+  {{ $sec := .context.Site.GetPage $lang_news_path }}
+  {{ $all = cond (ne $sec nil) ($sec.RegularPages | default $sec.Pages) (slice) }}
 {{ end }}
 
 {{/* Build a robust page list where categories may be string or list */}}

@@ -1,8 +1,19 @@
-{{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
-{{ $sec := .Site.GetPage $lang_news_path }}
-{{ $pages := cond (ne $sec nil) ($sec.RegularPages | default $sec.Pages) (slice) }}
+{{ $prefix := .Site.LanguagePrefix }}
+{{ $pages := slice }}
+{{ range .Site.RegularPages }}
+  {{ $p := . }}
+  {{ $rp := .RelPermalink }}
+  {{ $isRU := hasPrefix $rp "/ru/" }}
+  {{ if or (and (ne $prefix "") (hasPrefix $rp $prefix)) (and (eq $prefix "") (not $isRU)) }}
+    {{ if eq $p.Type "news" }}
+      {{ $pages = $pages | append $p }}
+    {{ end }}
+  {{ end }}
+{{ end }}
 {{ if eq (len $pages) 0 }}
-  {{ $pages = where (where .Site.Pages "Type" "news") "Lang" .Site.Language.Lang }}
+  {{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
+  {{ $sec := .Site.GetPage $lang_news_path }}
+  {{ $pages = cond (ne $sec nil) ($sec.RegularPages | default $sec.Pages) (slice) }}
 {{ end }}
 {{ $latest := first 10 ($pages.ByDate.Reverse | default (slice)) }}
 

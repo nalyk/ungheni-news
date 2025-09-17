@@ -1,10 +1,12 @@
 {{/* Use site section for the current language */}}
+{{/* Prefer language-scoped pages by prefix, then filter to news. */}}
 {{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
 {{ $sec := .Site.GetPage $lang_news_path }}
 {{ $all := cond (ne $sec nil) ($sec.RegularPages | default $sec.Pages) (slice) }}
 {{ if eq (len $all) 0 }}
-  {{/* Fallback: derive by type + language */}}
-  {{ $all = where (where .Site.Pages "Type" "news") "Lang" .Site.Language.Lang }}
+  {{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
+  {{ $sec := .Site.GetPage $lang_news_path }}
+  {{ $all = cond (ne $sec nil) ($sec.RegularPages | default $sec.Pages) (slice) }}
 {{ end }}
 {{ $local_list  := union (where $all ".Params.categories" "intersect" (slice "local")) (where $all ".Params.categories" "eq" "local") }}
 {{ $national_list := union (where $all ".Params.categories" "intersect" (slice "national")) (where $all ".Params.categories" "eq" "national") }}
@@ -18,6 +20,9 @@
 {{ $local_news_list := union (where $local_list ".Params.formats" "intersect" (slice "stire")) (where $local_list ".Params.formats" "eq" "stire") }}
 {{ $local_news := first 1 $local_news_list }}
 {{ $local_story := $featured_story | default $local_news | default (first 1 $local_list) }}
+{{ if not $local_story }}
+  {{ $local_story = first 1 ($all.ByDate.Reverse) }}
+{{ end }}
 
 {{/* 3. Latest national and service stories */}}
 {{ $national_story := first 1 $national_list }}
