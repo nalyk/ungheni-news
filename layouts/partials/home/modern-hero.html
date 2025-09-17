@@ -1,17 +1,44 @@
 {{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
 {{ $news_section := .Site.GetPage $lang_news_path }}
 
-{{/* Logic for Hero Section */}}
-{{/* 1. Find the most recent article explicitly featured for the hero */}}
-{{ $featured_story := first 1 (where (where $news_section.RegularPages ".Params.categories" "intersect" (slice "local")) ".Params.featured" true) }}
+{{/* Build robust slices for category membership regardless of string/list */}}
+{{ $all := $news_section.RegularPages }}
+{{ $local := slice }}
+{{ $national := slice }}
+{{ $service := slice }}
+{{ range $p := $all }}
+  {{ $rc := $p.Params.categories }}
+  {{ $pc := cond (reflect.IsSlice $rc) $rc (slice $rc) }}
+  {{ if in ($pc | default (slice)) "local" }}
+    {{ $local = $local | append $p }}
+  {{ end }}
+  {{ if in ($pc | default (slice)) "national" }}
+    {{ $national = $national | append $p }}
+  {{ end }}
+  {{ if in ($pc | default (slice)) "servicii-publice" }}
+    {{ $service = $service | append $p }}
+  {{ end }}
+{{ end }}
 
-{{/* 2. If no article is featured, prioritize local NEWS stories (stire format) over opinions */}}
-{{ $local_news := first 1 (where (where $news_section.RegularPages ".Params.categories" "intersect" (slice "local")) ".Params.formats" "intersect" (slice "stire")) }}
-{{ $local_story := $featured_story | default $local_news | default (first 1 (where $news_section.RegularPages ".Params.categories" "intersect" (slice "local"))) }}
+{{/* 1. Most recent featured local article (if any) */}}
+{{ $featured_local := where $local ".Params.featured" true }}
+{{ $featured_story := first 1 $featured_local }}
 
-{{/* 3. Get the latest national and service stories for the sub-hero section */}}
-{{ $national_story := first 1 (where $news_section.RegularPages ".Params.categories" "intersect" (slice "national")) }}
-{{ $service_story := first 1 (where $news_section.RegularPages ".Params.categories" "intersect" (slice "servicii-publice")) }}
+{{/* 2. If no featured, prioritize local news with format 'stire' */}}
+{{ $local_news_list := slice }}
+{{ range $p := $local }}
+  {{ $rf := $p.Params.formats }}
+  {{ $pf := cond (reflect.IsSlice $rf) $rf (slice $rf) }}
+  {{ if in ($pf | default (slice)) "stire" }}
+    {{ $local_news_list = $local_news_list | append $p }}
+  {{ end }}
+{{ end }}
+{{ $local_news := first 1 $local_news_list }}
+{{ $local_story := $featured_story | default $local_news | default (first 1 $local) }}
+
+{{/* 3. Latest national and service stories */}}
+{{ $national_story := first 1 $national }}
+{{ $service_story := first 1 $service }}
 
 <section class="modern-hero">
   <div class="hero-grid">

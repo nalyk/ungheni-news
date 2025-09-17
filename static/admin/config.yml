@@ -54,7 +54,7 @@ collections:
     media_folder: ""
     public_folder: ""
     create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{slug}}"
     path: "{{slug}}/index"
     format: "frontmatter"
     fields:
@@ -185,7 +185,7 @@ collections:
     media_folder: ""
     public_folder: ""
     create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{slug}}"
     path: "{{slug}}/index"
     format: "frontmatter"
     fields:
@@ -333,4 +333,3 @@ collections:
       - { name: title, label: "Название Страницы" }
       - { name: slug, label: "URL Слаг", required: false }
       - { name: body, label: "Содержание", widget: markdown }
-

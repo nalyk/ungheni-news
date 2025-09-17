@@ -5,7 +5,7 @@
 <section class="home-latest-news">
   <div class="container">
     <div class="section-header-interactive">
-      <h2 class="section-title"><span>Ultimele Știri</span></h2>
+      <h2 class="section-title"><span>{{ i18n "latest_news" }}</span></h2>
       <div class="news-filters">
         <button class="filter-btn is-active" data-filter="all">Toate</button>
         {{ range site.Data.formats.formats }}
@@ -17,21 +17,23 @@
     {{ if $latest }}
       <div class="news-grid">
         {{ range $latest }}
-          <div class="news-card" data-format="{{ index .Params.formats 0 | default "stire" }}">
+          {{ $rf := .Params.formats }}
+          {{ $fmt := cond (reflect.IsSlice $rf) (index ($rf | default (slice)) 0) $rf }}
+          <div class="news-card" data-format="{{ $fmt | default "stire" }}">
             <a href="{{ .RelPermalink }}" class="news-card-link">
               <div class="news-card-image-wrapper">
-                {{ with .Params.image }}
-                  <img src="{{ . }}" alt="{{ $.Title }}" class="news-card-image" loading="lazy">
+                {{ with .Params.cover }}
+                  <img src="{{ . | relURL }}" alt="{{ $.Title }}" class="news-card-image" loading="lazy">
                 {{ else }}
                   <img src="/img/placeholders/local.svg" alt="" class="news-card-image placeholder">
                 {{ end }}
               </div>
             </a>
             <div class="news-card-content">
-              {{ with .Params.format }}
-                <div class="card-header">
-                  <span class="card-format">{{ . }}</span>
-                </div>
+              {{ if $fmt }}
+              <div class="card-header">
+                <span class="card-format">{{ $fmt }}</span>
+              </div>
               {{ end }}
               <h3 class="news-card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
               <p class="news-card-summary">{{ if .Summary }}{{ .Summary | truncate 120 }}{{ end }}</p>

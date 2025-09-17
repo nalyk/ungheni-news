@@ -3,7 +3,16 @@
 {{ $lang_news_path := printf "/%s/news" .context.Site.Language.Lang }}
 {{ $news_section := .context.Site.GetPage $lang_news_path }}
 
-{{ $pages := where $news_section.RegularPages ".Params.categories" "intersect" (slice $category_slug) | first $limit }}
+{{/* Build a robust page list where categories may be string or list */}}
+{{ $.Scratch.Set "_cat_pages" (slice) }}
+{{ range $p := $news_section.RegularPages }}
+  {{ $rc := $p.Params.categories }}
+  {{ $pc := cond (reflect.IsSlice $rc) $rc (slice $rc) }}
+  {{ if in ($pc | default (slice)) $category_slug }}
+    {{ $.Scratch.Add "_cat_pages" (slice $p) }}
+  {{ end }}
+{{ end }}
+{{ $pages := first $limit ($.Scratch.Get "_cat_pages") }}
 
 {{ if $pages }}
 <section class="category-block">

@@ -10,7 +10,9 @@
       </div>
     {{ end }}
     <div class="card-content">
-      {{ with index $page.Params.formats 0 }}
+      {{ $rf := $page.Params.formats }}
+      {{ $fmt := cond (reflect.IsSlice $rf) (index ($rf | default (slice)) 0) $rf }}
+      {{ with $fmt }}
         <span class="card-format">{{ . }}</span>
       {{ end }}
       <h3 class="card-title">{{ $page.Title }}</h3>

@@ -1,11 +1,13 @@
 {{ $page := .page }}
 {{ $card_class := .card_class | default "card-standard" }}
 
-{{ $category_slug := index ($page.Params.categories | default (slice)) 0 }}
+{{ $rawCat := $page.Params.categories }}
+{{ $category_slug := cond (reflect.IsSlice $rawCat) (index ($rawCat | default (slice)) 0) $rawCat }}
 {{ $category_page := site.GetPage (printf "categories/%s" $category_slug) }}
 {{ $category_name := $category_page.Title | default "General" }}
 
-{{ $format_slug := index ($page.Params.formats | default (slice)) 0 }}
+{{ $rawFmt := $page.Params.formats }}
+{{ $format_slug := cond (reflect.IsSlice $rawFmt) (index ($rawFmt | default (slice)) 0) $rawFmt }}
 {{ $format_name := "" }}
 {{ with where site.Data.formats.formats "slug" $format_slug }}
   {{ with index . 0 }}

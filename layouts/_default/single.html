@@ -1,7 +1,9 @@
 {{ define "main" }}
 <article>
   <header class="article-header">
-    {{ $category_slug := index (.Params.categories | default (slice)) 0 }}
+    {{/* Normalize category to single slug whether front matter is string or list */}}
+    {{ $rawCat := .Params.categories }}
+    {{ $category_slug := cond (reflect.IsSlice $rawCat) (index ($rawCat | default (slice)) 0) $rawCat }}
     {{ if $category_slug }}
       {{ $category_page := site.GetPage (printf "categories/%s" $category_slug) }}
       <a href="{{ $category_page.RelPermalink }}" class="category-link">{{ $category_page.Title }}</a>
@@ -20,6 +22,13 @@
       <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
     </div>
   </header>
+
+  {{/* Opinion disclaimer when format includes "opinie" (string or list) */}}
+  {{ $rawFmt := .Params.formats }}
+  {{ $formats := cond (reflect.IsSlice $rawFmt) $rawFmt (slice $rawFmt) }}
+  {{ if in ($formats | default (slice)) "opinie" }}
+    {{ partial "opinion-disclaimer.html" . }}
+  {{ end }}
 
   {{ partial "cutia-ungheni.html" . }}
 
