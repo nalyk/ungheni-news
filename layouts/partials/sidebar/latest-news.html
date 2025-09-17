@@ -1,6 +1,10 @@
 {{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
-{{ $news_section := .Site.GetPage $lang_news_path }}
-{{ $latest := first 10 $news_section.RegularPages.ByDate.Reverse }}
+{{ $sec := .Site.GetPage $lang_news_path }}
+{{ $pages := cond (ne $sec nil) ($sec.RegularPages | default $sec.Pages) (slice) }}
+{{ if eq (len $pages) 0 }}
+  {{ $pages = where (where .Site.Pages "Type" "news") "Lang" .Site.Language.Lang }}
+{{ end }}
+{{ $latest := first 10 ($pages.ByDate.Reverse | default (slice)) }}
 
 <div class="widget widget-latest-news">
   <h3 class="widget-title">{{ i18n "latest_news" | default "Ultimele Știri" }}</h3>

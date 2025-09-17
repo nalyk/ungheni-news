@@ -3,8 +3,13 @@
 
 {{ $rawCat := $page.Params.categories }}
 {{ $category_slug := cond (reflect.IsSlice $rawCat) (index ($rawCat | default (slice)) 0) $rawCat }}
-{{ $category_page := site.GetPage (printf "categories/%s" $category_slug) }}
-{{ $category_name := $category_page.Title | default "General" }}
+{{ $category_name := "General" }}
+{{ $lang := site.Language.Lang }}
+{{ range site.Data.categories }}
+  {{ if eq .slug $category_slug }}
+    {{ $category_name = cond (eq $lang "ru") (.ru | default .ro) .ro }}
+  {{ end }}
+{{ end }}
 
 {{ $rawFmt := $page.Params.formats }}
 {{ $format_slug := cond (reflect.IsSlice $rawFmt) (index ($rawFmt | default (slice)) 0) $rawFmt }}

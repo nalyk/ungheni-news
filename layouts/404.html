@@ -1,8 +1,20 @@
 {{ define "main" }}
-<div class="card">
-  <h1>Pagina nu a fost găsită</h1>
-  <p class="meta">404 — The page you were looking for does not exist.</p>
-  <p><a href="{{ .Site.Home.RelPermalink }}">Înapoi la pagina principală</a></p>
-</div>
+<section class="not-found">
+  <h1>404</h1>
+  <p>
+    {{ if eq .Site.Language.Lang "ru" }}
+      Страница не найдена.
+    {{ else }}
+      Pagina nu a fost găsită.
+    {{ end }}
+  </p>
+  <p>
+    {{ if eq .Site.Language.Lang "ru" }}
+      Перейдите на <a href="/ru/">главную</a> или воспользуйтесь поиском.
+    {{ else }}
+      Mergi la <a href="/">pagina principală</a> sau folosește căutarea.
+    {{ end }}
+  </p>
+</section>
 {{ end }}
 

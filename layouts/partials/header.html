@@ -10,13 +10,13 @@
 
       <nav class="primary-nav" aria-label="{{ i18n "main_navigation" }}">
         <ul>
+          {{ $prefix := .Site.LanguagePrefix }}
+          {{ $lang := .Site.Language.Lang }}
           {{ $cats := site.Data.categories }}
           {{ range first 6 $cats }}
-            {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-            {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
-            {{ if $catPage }}
-              <li><a href="{{ $catPage.RelPermalink }}" {{ if eq $.RelPermalink $catPage.RelPermalink }}aria-current="page"{{ end }}>{{ $title }}</a></li>
-            {{ end }}
+            {{ $title := cond (eq $lang "ru") (.ru | default .ro) .ro }}
+            {{ $href := printf "%s/categories/%s/" $prefix .slug }}
+            <li><a href="{{ $href }}" {{ if eq $.RelPermalink $href }}aria-current="page"{{ end }}>{{ $title }}</a></li>
           {{ end }}
         </ul>
       </nav>
@@ -38,13 +38,13 @@
   <div id="mobile-nav" class="mobile-nav">
     <nav>
       <ul>
+        {{ $prefix := .Site.LanguagePrefix }}
+        {{ $lang := .Site.Language.Lang }}
         {{ $cats := site.Data.categories }}
         {{ range $cats }}
-          {{ $title := cond (eq $.Site.Language.Lang "ru") (.ru | default .ro) .ro }}
-          {{ $catPage := site.GetPage (printf "/categories/%s" .slug) }}
-          {{ if $catPage }}
-            <li><a href="{{ $catPage.RelPermalink }}">{{ $title }}</a></li>
-          {{ end }}
+          {{ $title := cond (eq $lang "ru") (.ru | default .ro) .ro }}
+          {{ $href := printf "%s/categories/%s/" $prefix .slug }}
+          <li><a href="{{ $href }}">{{ $title }}</a></li>
         {{ end }}
       </ul>
     </nav>

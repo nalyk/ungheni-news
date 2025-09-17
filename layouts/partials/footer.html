@@ -3,10 +3,14 @@
     <nav class="footer-nav" aria-label="Secondary">
       <ul>
         {{ $lang := .Site.Language.Lang }}
-        <li><a href="{{ (site.GetPage (printf "/%s/pages/despre-noi" $lang)).RelPermalink }}">{{ i18n "about_us" }}</a></li>
-        <li><a href="{{ (site.GetPage (printf "/%s/pages/contact" $lang)).RelPermalink }}">{{ i18n "contact" }}</a></li>
-        <li><a href="{{ (site.GetPage (printf "/%s/pages/termeni" $lang)).RelPermalink }}">{{ i18n "terms" }}</a></li>
-        <li><a href="{{ (site.GetPage (printf "/%s/pages/confidentialitate" $lang)).RelPermalink }}">{{ i18n "privacy" }}</a></li>
+        {{ $about := printf "/%s/pages/despre-noi/" $lang }}
+        {{ $contact := printf "/%s/pages/contact/" $lang }}
+        {{ $terms := printf "/%s/pages/termeni/" $lang }}
+        {{ $privacy := printf "/%s/pages/confidentialitate/" $lang }}
+        <li><a href="{{ $about }}">{{ i18n "about_us" }}</a></li>
+        <li><a href="{{ $contact }}">{{ i18n "contact" }}</a></li>
+        <li><a href="{{ $terms }}">{{ i18n "terms" }}</a></li>
+        <li><a href="{{ $privacy }}">{{ i18n "privacy" }}</a></li>
       </ul>
     </nav>
     <div class="footer-bottom">
@@ -14,4 +18,4 @@
     </div>
   </div>
 </footer>
-<script src="/js/news-filter.js"></script>
+<script src="/js/news-filter.js" defer></script>

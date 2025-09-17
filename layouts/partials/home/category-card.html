@@ -3,7 +3,17 @@
 
 <div class="category-card {{ $card_class }}">
   <a href="{{ $page.RelPermalink }}" class="card-link">
-    {{ $src := (or $page.Params.cover "img/placeholders/local.svg") | relURL }}
+    {{ $cover := $page.Params.cover }}
+    {{ $src := "" }}
+    {{ if $cover }}
+      {{ if or (hasPrefix $cover "http") (hasPrefix $cover "/") }}
+        {{ $src = ($cover | relURL) }}
+      {{ else }}
+        {{ $src = printf "%s%s" $page.RelPermalink $cover }}
+      {{ end }}
+    {{ else }}
+      {{ $src = ("img/placeholders/local.svg" | relURL) }}
+    {{ end }}
     <div class="card-image-wrapper">
       <img src="{{ $src }}" alt="{{ $page.Title }}" class="card-image" loading="lazy" decoding="async">
     </div>

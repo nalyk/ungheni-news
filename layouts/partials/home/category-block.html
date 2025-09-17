@@ -1,11 +1,15 @@
 {{ $category_slug := .category }}
 {{ $limit := .limit | default 4 }}
 {{ $lang_news_path := printf "/%s/news" .context.Site.Language.Lang }}
-{{ $news_section := .context.Site.GetPage $lang_news_path }}
+{{ $sec := .context.Site.GetPage $lang_news_path }}
+{{ $all := cond (ne $sec nil) ($sec.RegularPages | default $sec.Pages) (slice) }}
+{{ if eq (len $all) 0 }}
+  {{ $all = where (where .context.Site.Pages "Type" "news") "Lang" .context.Site.Language.Lang }}
+{{ end }}
 
 {{/* Build a robust page list where categories may be string or list */}}
 {{ $.Scratch.Set "_cat_pages" (slice) }}
-{{ range $p := $news_section.RegularPages }}
+{{ range $p := $all }}
   {{ $rc := $p.Params.categories }}
   {{ $pc := cond (reflect.IsSlice $rc) $rc (slice $rc) }}
   {{ if in ($pc | default (slice)) $category_slug }}
