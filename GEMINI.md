@@ -39,7 +39,6 @@ This document provides essential context for the Gemini CLI agent working on the
 - `make pagefind`: Indexes the content in the `public/` directory for search. **Must be run after `make build`**.
 - `make check`: Runs a strict build that fails on warnings. Use for validation.
 - `make validate`: Runs `scripts/validate_content.sh` to check for content errors (e.g., draft status vs. publish date).
-- `make setup`: Installs Git pre-commit hooks.
 
 **Build & Deploy Workflow**: The production deployment command is `make build && make pagefind`.
 

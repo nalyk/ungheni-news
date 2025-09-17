@@ -48,10 +48,11 @@ I have access to the following toolsets (MCPs):
 - Build command: `make build && make pagefind`
 
 ### Setup & Maintenance
-- `make setup` - Install pre-commit hooks
-- `make docs` - Auto-regenerate AGENTS.md documentation
+- No repo-specific `make` setup commands are required beyond the build and validation tasks above.
 - `scripts/cf_pages_setup.sh` - Automate Cloudflare Pages setup
 - `scripts/cf_access_setup.sh` - Configure admin panel protection
+
+Documentation updates are handled manually during feature work; coordinate with the team before changing shared docs.
 
 ## Architecture
 
@@ -115,7 +116,6 @@ I have access to the following toolsets (MCPs):
 ### Automation Features
 - **Scheduled builds**: Every 5 minutes via Cloudflare Worker
 - **Content validation**: Pre-commit hooks prevent invalid draft states
-- **Documentation**: Auto-generated AGENTS.md reflects current state
 - **Build optimization**: Hugo with garbage collection and minification
 
 ## Editorial Workflow

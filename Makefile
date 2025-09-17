@@ -1,4 +1,4 @@
-.PHONY: dev build pagefind check validate docs setup
+.PHONY: dev build pagefind check validate
 
 HUGO ?= hugo
 
@@ -25,11 +25,3 @@ check:
 
 validate:
 	bash scripts/validate_content.sh
-
-docs:
-	bash scripts/update_agents.sh
-
-setup:
-	mkdir -p .git/hooks scripts/hooks
-	cp -f scripts/hooks/pre-commit .git/hooks/pre-commit || true
-	chmod +x .git/hooks/pre-commit || true

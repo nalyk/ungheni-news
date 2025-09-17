@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-Note: This file is auto-generated. Edit source config/files; run `make docs` to refresh.
+Note: Maintain this file manually; keep it aligned with the repo configuration.
 
 ## Project Structure & Module Organization
 - Hugo newsroom with i18n and Decap CMS. Key paths:
@@ -18,9 +18,7 @@ Note: This file is auto-generated. Edit source config/files; run `make docs` to 
 - `make build`: Production build with GC and minify.
 - `make check`: Build with warnings surfaced (panic on warning).
 - `make dev`: Run Hugo locally with drafts.
-- `make docs`: Regenerate AGENTS.md from repo state.
 - `make pagefind`: Generate static search index from public/.
-- `make setup`: Install pre-commit hook to auto-update AGENTS.md.
 - `make validate`: Fail if publishDate conflicts with draft:true.
 - Cloudflare Pages: build with `make build && make pagefind`; output `public/`.
 
@@ -45,4 +43,4 @@ Note: This file is auto-generated. Edit source config/files; run `make docs` to 
 
 ## Agent-Specific Instructions
 - Use `apply_patch` for changes; keep diffs focused.
-- Update this file via `make docs`; CI guards divergence on PRs.
+- Keep this file current manually; CI no longer enforces updates.
