@@ -10,7 +10,7 @@ draft: false
 featured: true
 cover: cover.jpg
 authors:
-  - Ana Popescu
+  - Redacția
 ---
 
 Corpul articolului de analiză despre bugetul local. Aici vom detalia cum au fost împărțite fondurile, cine beneficiază și care sunt proiecțiile pe termen lung. Se vor folosi grafice și date concrete pentru a susține argumentația.
