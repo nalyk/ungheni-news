@@ -1,16 +1,14 @@
 {{ define "main" }}
 <section>
   <h1>{{ .Title }}</h1>
-  {{/* Language-scoped taxonomy listing using site pages to avoid cross-lang bleed */}}
+  {{/* Get pages from current language's news section to avoid cross-language content */}}
   {{ $lang := .Site.Language.Lang }}
-  {{ $.Scratch.Set "_tp" (slice) }}
-  {{ range .Pages }}
-    {{ $p := .Page }}
-    {{ if eq $p.Lang $lang }}
-      {{ $.Scratch.Add "_tp" (slice $p) }}
-    {{ end }}
-  {{ end }}
-  {{ $pages := $.Scratch.Get "_tp" }}
+  {{ $lang_news_path := printf "/%s/news" $lang }}
+  {{ $news_section := .Site.GetPage $lang_news_path }}
+  {{/* Get all pages from the language-specific section */}}
+  {{ $all_lang_pages := $news_section.Pages }}
+  {{/* Filter these pages by the current taxonomy term */}}
+  {{ $pages := where $all_lang_pages ".Params.categories" "intersect" (slice .Data.Term) }}
   {{ $p := .Paginate $pages }}
   <ul>
     {{ range $p.Pages }}
