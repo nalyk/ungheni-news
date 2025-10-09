@@ -1,16 +1,9 @@
 {{ define "main" }}
 <section>
   <h1>{{ .Title }}</h1>
-  {{/* Language-scoped taxonomy listing using site pages to avoid cross-lang bleed */}}
+  {{/* Filter pages by current language to avoid cross-language bleed */}}
   {{ $lang := .Site.Language.Lang }}
-  {{ $.Scratch.Set "_tp" (slice) }}
-  {{ range .Pages }}
-    {{ $p := .Page }}
-    {{ if eq $p.Lang $lang }}
-      {{ $.Scratch.Add "_tp" (slice $p) }}
-    {{ end }}
-  {{ end }}
-  {{ $pages := $.Scratch.Get "_tp" }}
+  {{ $pages := where .Pages "Lang" $lang }}
   {{ $p := .Paginate $pages }}
   <ul>
     {{ range $p.Pages }}
