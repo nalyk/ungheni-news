@@ -23,6 +23,9 @@
     </div>
   </header>
 
+  {{/* Fact-check rating box */}}
+  {{ partial "fact-check-rating.html" . }}
+
   {{/* Opinion disclaimer when format includes "opinie" (string or list) */}}
   {{ $rawFmt := .Params.formats }}
   {{ $formats := cond (reflect.IsSlice $rawFmt) $rawFmt (slice $rawFmt) }}
@@ -31,6 +34,9 @@
   {{ end }}
 
   {{ partial "cutia-ungheni.html" . }}
+
+  {{/* Verification box for sources and methodology */}}
+  {{ partial "verification-box.html" . }}
 
   <div class="article-content">
     {{ .Content }}

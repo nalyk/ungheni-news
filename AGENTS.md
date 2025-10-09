@@ -400,6 +400,82 @@ This protocol is my standard procedure for implementing and verifying any change
     *   If unsuccessful, I will analyze the errors (e.g., 404s in network requests, incorrect structure in the snapshot) and formulate a plan to fix the issue.
 6.  **Report and Handoff:** I will present a summary of my actions, the verification results (including screenshot paths), and my conclusion to you for final approval or further feedback.
 
+## Content Validation System
+
+### Two-Layer Validation Approach
+
+The system implements a two-layer validation approach to enforce the Triunghi.md philosophy:
+
+#### 1. Client-Side Validation (Immediate Feedback)
+- **Location**: `static/admin/index.html`
+- **Purpose**: Provides immediate feedback to reporters when they try to publish non-compliant content
+- **Features**:
+  - Pre-publish event listener that validates content before allowing publication
+  - Real-time validation showing warnings as reporters work
+  - Publish button disabling when requirements aren't met
+  - Clear error messages in Romanian explaining what needs to be fixed
+  - Validates Cutia Ungheni for national/UE articles
+  - Validates fact-check requirements (sources and rating)
+  - Validates opinion article requirements (author attribution)
+
+#### 2. Server-Side Validation (Authoritative Check)
+- **Location**: `scripts/validate_content.sh`
+- **Integration**: Runs automatically during build (`make build` calls `make validate`)
+- **Features**:
+  - Validates Cutia Ungheni for national/UE articles with both string and object formats
+  - Validates fact-check articles have required sources and rating
+  - Validates opinion articles have required authors
+  - Validates no draft/publishDate conflicts
+  - Checks both Romanian and Russian content
+  - Provides detailed error messages pointing to specific files
+
+### Validation Rules Enforced
+
+1. **Cutia Ungheni**: Articles in "national" or "ue-romania" categories must have complete Cutia Ungheni information
+2. **Fact-check Requirements**: Fact-check articles must have both sources and a rating
+3. **Opinion Article Requirements**: Opinion articles must have author attribution
+4. **Draft/PublishDate Conflicts**: Prevents contradictory draft and publish date settings
+
+### Language Support
+
+Both validation layers work for Romanian (ro) and Russian (ru) content:
+- Client-side validation works for both Decap CMS collections (news_ro and news_ru)
+- Server-side validation scans all content in the `content/` directory (both ro and ru)
+
+## Pagination Issue and Fix
+
+### Problem Encountered
+
+During site building, the following error occurred:
+```
+ERROR render of "/categories/local" failed: "/home/nalyk/gits/ungheni-news/layouts/_default/baseof.html:23:10": execute of template failed: template: _partials/pagination.html:23:10: executing "_internal/pagination.html" at <partial (printf "inline/pagination/%s.html" $format) $page>: error calling partial: template: _partials/pagination.html:34:30: executing "_partials/inline/pagination/default.html" at <.PageNumber>: can't evaluate field PageNumber in type *page.Paginator
+```
+
+### Solution Applied
+
+**File**: `layouts/_default/taxonomy.html`
+**Change**: In the line `{{ template "_internal/pagination.html" $p }}`, changed `$p` (the paginator object) to `.` (the current context/page) to match what Hugo's internal pagination template expects.
+
+**Before**:
+```html
+{{ $p := .Paginate $pages }}
+...
+<nav>
+  {{ template "_internal/pagination.html" $p }}
+</nav>
+```
+
+**After**:
+```html
+{{ $p := .Paginate $pages }}
+...
+<nav>
+  {{ template "_internal/pagination.html" . }}
+</nav>
+```
+
+This fix allows the internal pagination template to receive the proper context while still having access to the paginated pages through the paginator object.
+
 Final Instructions
 
 - **Prioritize `make`**: Always use the `Makefile` commands. Do not run `hugo` directly unless necessary.

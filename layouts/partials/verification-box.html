@@ -1,0 +1,57 @@
+{{ with .Params.verification }}
+<aside class="verification-box">
+  <h4>{{ if eq $.Site.Language.Lang "ru" }}Как мы проверяли{{ else }}Cum am verificat{{ end }}</h4>
+  
+  {{ with .methodology }}
+    <div class="methodology">
+      <strong>{{ if eq $.Site.Language.Lang "ru" }}Методология:{{ else }}Metodologie:{{ end }}</strong>
+      <p>{{ . | markdownify }}</p>
+    </div>
+  {{ end }}
+
+  {{ with .sources }}
+    <div class="sources">
+      <strong>{{ if eq $.Site.Language.Lang "ru" }}Источники:{{ else }}Surse documentate:{{ end }}</strong>
+      <ul>
+        {{ range . }}
+          <li>
+            {{ .name }} ({{ .type }})
+            {{ with .url }} - <a href="{{ . }}" target="_blank" rel="noopener noreferrer">{{ if eq $.Site.Language.Lang "ru" }}ссылка{{ else }}link{{ end }}</a>{{ end }}
+          </li>
+        {{ end }}
+      </ul>
+    </div>
+  {{ end }}
+
+</aside>
+{{ end }}
+
+<style>
+.verification-box {
+  border: 1px solid rgba(var(--color-accent-rgb), 0.4);
+  background: rgba(var(--color-accent-rgb), 0.05);
+  color: var(--muted);
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+}
+.verification-box h4 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-serif);
+  color: var(--color-accent);
+}
+.verification-box strong {
+  color: var(--text-main);
+}
+.verification-box ul {
+  padding-left: 1.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+.verification-box p {
+    margin-top: 0.25rem;
+}
+</style>

@@ -30,5 +30,183 @@
     
     <!-- Latest Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
+    
+    <!-- Triunghi.md Validation Logic -->
+    <script>
+      // Custom validation for Triunghi.md editorial requirements
+      CMS.registerEventListener({
+        name: 'prePublish',
+        handler: ({ entry, author, collection }) => {
+          const data = entry.get('data').toJS();
+          
+          // Validate Cutia Ungheni for National/UE articles
+          const categories = Array.isArray(data.categories) ? data.categories : [data.categories || ''];
+          const formats = Array.isArray(data.formats) ? data.formats : [data.formats || ''];
+          
+          if (categories.some(cat => ['national', 'ue-romania'].includes(cat))) {
+            // Check if cutia_ungheni is filled out with at least one field
+            if (!data.cutia_ungheni || 
+                (typeof data.cutia_ungheni === 'object' && 
+                 Object.values(data.cutia_ungheni).every(val => !val))) {
+              const errorMessage = '❌ Articolul din categoriile Național/UE România trebuie să aibă completată "Cutia Ungheni" cu: impact local, ce se schimbă pentru locuitori, termene importante și unde se aplică.';
+              alert(errorMessage);
+              throw new Error('Cutia Ungheni lipsește pentru articol național/UE');
+            }
+          }
+          
+          // Validate fact-check requirements
+          if (formats.includes('factcheck')) {
+            if (!data.verification?.sources || data.verification.sources.length === 0) {
+              const errorMessage = '❌ Articolul de tip fact-check trebuie să aibă surse documentate în secțiunea de verificare.';
+              alert(errorMessage);
+              throw new Error('Sursele lipsesc pentru fact-check');
+            }
+            if (!data.fact_check_rating) {
+              const errorMessage = '❌ Articolul de tip fact-check trebuie să aibă un rating (Adevărat/Fals/etc.).';
+              alert(errorMessage);
+              throw new Error('Ratingul lipsește pentru fact-check');
+            }
+          }
+          
+          // Validate opinion disclaimer
+          if (formats.includes('opinie')) {
+            if (!data.authors || data.authors.length === 0) {
+              const errorMessage = '❌ Articolul de opinie trebuie să aibă un autor definit.';
+              alert(errorMessage);
+              throw new Error('Autorul lipsește pentru articol de opinie');
+            }
+          }
+        }
+      });
+
+      // Real-time form validation
+      let validationTimeout;
+      CMS.registerEventListener({
+        name: 'change',
+        handler: ({ entry, collection }) => {
+          // Debounce validation to avoid excessive processing
+          clearTimeout(validationTimeout);
+          validationTimeout = setTimeout(() => {
+            performRealTimeValidation(entry);
+          }, 500);
+        }
+      });
+      
+      // Track validation state to control publish button
+      let validationPassed = true;
+      
+      function performRealTimeValidation(entry) {
+        const data = entry.get('data').toJS();
+        
+        // Clear previous error indicators
+        document.querySelectorAll('.triunghi-validation-error').forEach(el => el.remove());
+        
+        const categories = Array.isArray(data.categories) ? data.categories : [data.categories || ''];
+        const formats = Array.isArray(data.formats) ? data.formats : [data.formats || ''];
+        
+        // Check validation requirements
+        let hasValidationError = false;
+        
+        // Real-time validation
+        if (categories.some(cat => ['national', 'ue-romania'].includes(cat))) {
+          if (!data.cutia_ungheni || 
+              (typeof data.cutia_ungheni === 'object' && 
+               Object.values(data.cutia_ungheni).every(val => !val))) {
+            showValidationError('⚠️ Articolul din categoriile Național/UE România trebuie să aibă completată "Cutia Ungheni"');
+            hasValidationError = true;
+          }
+        }
+        
+        if (formats.includes('factcheck')) {
+          if (!data.verification?.sources || data.verification.sources.length === 0) {
+            showValidationError('⚠️ Fact-check: Sursele documentate sunt obligatorii');
+            hasValidationError = true;
+          }
+          if (!data.fact_check_rating) {
+            showValidationError('⚠️ Fact-check: Ratingul este obligatoriu (Adevărat/Fals/etc.)');
+            hasValidationError = true;
+          }
+        }
+        
+        if (formats.includes('opinie')) {
+          if (!data.authors || data.authors.length === 0) {
+            showValidationError('⚠️ Opinie: Autorul este obligatoriu');
+            hasValidationError = true;
+          }
+        }
+        
+        // Update validation state
+        validationPassed = !hasValidationError;
+        
+        // Control publish button
+        updatePublishButtonState();
+      }
+      
+      function updatePublishButtonState() {
+        // Try to find the publish button and enable/disable based on validation
+        setTimeout(() => {
+          const publishButton = findPublishButton();
+          if (publishButton) {
+            if (!validationPassed) {
+              publishButton.disabled = true;
+              publishButton.title = '⚠️ Completează câmpurile obligatorii conform filozofiei Triunghi.md';
+              publishButton.style.opacity = '0.6';
+              publishButton.style.cursor = 'not-allowed';
+            } else {
+              publishButton.disabled = false;
+              publishButton.title = '';
+              publishButton.style.opacity = '1';
+              publishButton.style.cursor = 'pointer';
+            }
+          }
+        }, 100); // Small delay to ensure DOM is updated
+      }
+      
+      function findPublishButton() {
+        // Look for the publish button in various possible selectors
+        return document.querySelector('button[data-testid="publish-button"]') ||
+               document.querySelector('button.nc-btn--primary') ||
+               document.querySelector('button[class*="publish" i]') ||
+               document.querySelector('button[type="submit"]') ||
+               Array.from(document.querySelectorAll('button')).find(btn => 
+                 btn.textContent.toLowerCase().includes('publish') || 
+                 btn.textContent.toLowerCase().includes('publică') ||
+                 btn.textContent.toLowerCase().includes('save') ||
+                 btn.textContent.toLowerCase().includes('salvează')
+               );
+      }
+      
+      function showValidationError(message) {
+        // Create error indicator
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'triunghi-validation-error';
+        errorDiv.style.cssText = `
+          background: #fff3cd;
+          border: 2px solid #ffc107;
+          color: #856404;
+          padding: 12px 15px;
+          margin: 10px 0;
+          border-radius: 4px;
+          font-weight: 500;
+          position: relative;
+          z-index: 9999;
+        `;
+        errorDiv.textContent = message;
+        
+        // Insert near the form
+        const formContainer = document.querySelector('.nc-root .nc-entity-title')?.parentElement || 
+                             document.querySelector('.nc-root .nc-entity-form-container') || 
+                             document.querySelector('.nc-root') || 
+                             document.body;
+        if (formContainer) {
+          const firstChild = formContainer.firstChild || formContainer.firstElementChild;
+          if (firstChild) {
+            formContainer.insertBefore(errorDiv, firstChild);
+          } else {
+            formContainer.appendChild(errorDiv);
+          }
+        }
+      }
+    </script>
   </body>
 </html>

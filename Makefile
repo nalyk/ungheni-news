@@ -5,7 +5,7 @@ HUGO ?= hugo
 dev:
 	$(HUGO) server -D
 
-build:
+build: validate
 	HUGO_ENV=production $(HUGO) --gc --minify
 
 PAGEFIND_NPM_CACHE ?= .cache/npm

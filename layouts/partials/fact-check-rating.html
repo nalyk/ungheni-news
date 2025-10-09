@@ -1,0 +1,77 @@
+{{ $is_factcheck := eq .Params.formats "factcheck" }}
+{{ if and $is_factcheck .Params.fact_check_rating }}
+
+{{ $rating := .Params.fact_check_rating }}
+{{ $rating_class := "is-partial" }}
+{{ if or (eq $rating "Adevărat") (eq $rating "În mare parte adevărat") }}{{ $rating_class = "is-true" }}{{ end }}
+{{ if or (eq $rating "Fals") (eq $rating "În mare parte fals") }}{{ $rating_class = "is-false" }}{{ end }}
+
+<aside class="factcheck-rating {{ $rating_class }}">
+  <div class="rating-icon">
+    {{ if eq $rating_class "is-true" }}✓
+    {{ else if eq $rating_class "is-false" }}✗
+    {{ else }}!
+    {{ end }}
+  </div>
+  <div class="rating-text">
+    <strong>{{ if eq .Site.Language.Lang "ru" }}Вердикт:{{ else }}Verdict:{{ end }}</strong>
+    <span>{{ $rating }}</span>
+  </div>
+</aside>
+{{ end }}
+
+<style>
+.factcheck-rating {
+  --fc-true: #2e7d32;
+  --fc-false: #c62828;
+  --fc-partial: #ff8f00;
+  
+  display: flex;
+  align-items: center;
+  border: 1px solid;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  font-family: var(--font-sans);
+}
+
+.factcheck-rating.is-true {
+  background-color: rgba(46, 125, 50, 0.08);
+  border-color: var(--fc-true);
+  color: var(--fc-true);
+}
+.factcheck-rating.is-false {
+  background-color: rgba(198, 40, 40, 0.08);
+  border-color: var(--fc-false);
+  color: var(--fc-false);
+}
+.factcheck-rating.is-partial {
+  background-color: rgba(255, 143, 0, 0.08);
+  border-color: var(--fc-partial);
+  color: var(--fc-partial);
+}
+
+.rating-icon {
+  font-size: 2rem;
+  font-weight: bold;
+  padding: 1rem 1.5rem;
+  border-right: 1px solid;
+  border-color: inherit;
+}
+
+.rating-text {
+  padding: 1rem 1.5rem;
+}
+
+.rating-text strong {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-main);
+}
+
+.rating-text span {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+</style>
