@@ -1,11 +1,16 @@
 {{ with .Params.cutia_ungheni }}
 <aside class="cutia-ungheni">
-  <h3 class="cutia-title">Impact Local: Ungheni</h3>
+  <h3 class="cutia-title">De ce contează pentru Ungheni</h3>
+  {{ if .title }}
+    <h2 class="cutia-custom-title">{{ .title }}</h2>
+  {{ end }}
   <div class="cutia-content">
     {{ if reflect.IsMap . }}
       <ul>
         {{ range $key, $value := . }}
-          <li><strong>{{ $key | humanize }}:</strong> {{ $value | markdownify }}</li>
+          {{ if ne $key "title" }}
+            <li><strong>{{ $key | humanize }}:</strong> {{ $value | markdownify }}</li>
+          {{ end }}
         {{ end }}
       </ul>
     {{ else }}

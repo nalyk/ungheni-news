@@ -95,6 +95,7 @@ collections:
         collapsed: true
         hint: "OBLIGATORIU pentru articole Naționale și UE/România. Explică ce înseamnă știrea pentru locuitorii din Ungheni."
         fields:
+          - { name: title, label: "Titlu secțiune Cutia", widget: string, required: false, hint: "Titlu personalizat pentru secțiunea Cutia Ungheni (ex: 'Unde se văd banii la Ungheni?', 'De ce contează la Ungheni?')" }
           - { name: impact_local, label: "Impact Local", widget: text, required: false, hint: "Cum afectează această știre comunitatea din Ungheni?" }
           - { name: ce_se_schimba, label: "Ce se schimbă pentru locuitori", widget: text, required: false, hint: "Schimbări concrete în viața de zi cu zi a unghenilor" }
           - { name: termene, label: "Termene importante", widget: text, required: false, hint: "Deadline-uri, date limită, calendare relevante" }
@@ -226,6 +227,7 @@ collections:
         collapsed: true
         hint: "ОБЯЗАТЕЛЬНО для национальных статей и ЕС/Румыния. Объясните, что означает новость для жителей Унгень."
         fields:
+          - { name: title, label: "Заголовок раздела Коробка", widget: string, required: false, hint: "Персонализированный заголовок для раздела Коробка Унгень (например: 'Где видны деньги в Унгень?', 'Почему это важно для Унгень?')" }
           - { name: impact_local, label: "Местное воздействие", widget: text, required: false, hint: "Как эта новость влияет на общину Унгень?" }
           - { name: ce_se_schimba, label: "Что изменится для жителей", widget: text, required: false, hint: "Конкретные изменения в повседневной жизни жителей Унгень" }
           - { name: termene, label: "Важные сроки", widget: text, required: false, hint: "Дедлайны, предельные даты, актуальные календари" }

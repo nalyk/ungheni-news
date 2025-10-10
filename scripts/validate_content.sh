@@ -80,8 +80,8 @@ while IFS= read -r -d '' f; do
       has_sources=true
     fi
     
-    # Check for fact_check_rating 
-    if echo "$fm" | grep -q "fact_check_rating:" && [ -n "$(echo "$fm" | grep "fact_check_rating:" | grep -v "fact_check_rating:\s*$")" ]; then
+    # Check for fact_check_rating (nested under verification)
+    if echo "$fm" | sed -n '/^verification:/,/^\([a-zA-Z_][a-zA-Z0-9_-]*:\|---\)/p' | grep -q "fact_check_rating:" && [ -n "$(echo "$fm" | sed -n '/^verification:/,/^\([a-zA-Z_][a-zA-Z0-9_-]*:\|---\)/p' | grep "fact_check_rating:" | grep -v "fact_check_rating:\s*$")" ]; then
       has_rating=true
     fi
     

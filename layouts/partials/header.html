@@ -13,7 +13,7 @@
           {{ $prefix := .Site.LanguagePrefix }}
           {{ $lang := .Site.Language.Lang }}
           {{ $cats := site.Data.categories }}
-          {{ range first 6 $cats }}
+          {{ range first 7 $cats }}
             {{ $title := cond (eq $lang "ru") (.ru | default .ro) .ro }}
             {{ $href := printf "%s/categories/%s/" $prefix .slug }}
             <li><a href="{{ $href }}" {{ if eq $.RelPermalink $href }}aria-current="page"{{ end }}>{{ $title }}</a></li>

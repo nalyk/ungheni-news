@@ -19,6 +19,14 @@ Totul livrat cu design curat, etichete clare de format și zero bullshit.
 
 The architecture combines static site generation with headless CMS editorial workflow, deployed on Cloudflare Pages with automated builds.
 
+## **CRITICAL MANDATORY RULES**
+
+⚠️ **NEVER COMMIT OR PUSH CHANGES WITHOUT EXPLICIT USER APPROVAL**. 
+- Any code modification, configuration change, or content update requires explicit authorization before git operations
+- Always ask: "Can I commit and push these changes?" before doing so
+- If uncertain about any change, seek approval first
+- Violation of this rule can cause site-wide issues affecting multilingual content and deployment
+
 ## Essential Commands
 
 ### Development
@@ -171,6 +179,47 @@ This project leverages specialized Claude Code subagents in `.claude/agents/` fo
 - **ui-designer** (BLUE): Use PROACTIVELY after any visual changes to optimize design and UX
 - **code-reviewer** (GREEN): Use AUTOMATICALLY after writing/modifying code for quality assurance
 - **debugger** (YELLOW): Use INSTANTLY when encountering build errors, test failures, or unexpected behavior
+
+## Critical Rules
+
+### **MANDATORY APPROVAL REQUIRED**
+⚠️ **CRITICAL**: **NEVER COMMIT OR PUSH CHANGES WITHOUT EXPLICIT USER APPROVAL**. 
+- Any code modification, configuration change, or content update requires explicit authorization before git operations
+- Always ask: "Can I commit and push these changes?" before doing so
+- If uncertain about any change, seek approval first
+- Violation of this rule can cause site-wide issues affecting multilingual content and deployment
+
+## Hugo Multilingual Taxonomy Issue & Solution
+
+### The Problem
+Hugo's default global taxonomy behavior includes content from ALL languages in taxonomy pages, regardless of the current language context:
+- `/categories/local/` shows both RO and RU articles
+- `/ru/categories/local/` shows no articles
+- The taxonomy `.Pages` collection includes content from all languages by default
+
+### The Solution
+Instead of filtering the taxonomy's `.Pages` collection, get language-specific content from the appropriate section:
+
+**INCORRECT:**
+```go
+{{ $pages := where .Pages "Lang" .Site.Language.Lang }}
+```
+
+**CORRECT:**
+```go
+{{ $lang_news_path := printf "/%s/news" .Site.Language.Lang }}
+{{ $news_section := .Site.GetPage $lang_news_path }}
+{{ $all_lang_pages := $news_section.Pages }}
+{{ $pages := where $all_lang_pages ".Params.categories" "intersect" (slice .Data.Term) }}
+```
+
+### Implementation Example
+For taxonomy templates (`layouts/_default/taxonomy.html`), use:
+1. Get the language-specific news section path
+2. Access the section using `.Site.GetPage`
+3. Filter the language-specific pages by the taxonomy term
+
+This ensures proper language isolation while maintaining taxonomy functionality.
 
 ### Orchestration Patterns (2025 Best Practices)
 **ULTRATHINK**: For complex multi-step tasks, Claude should "ultrathink" to allocate maximum reasoning budget before delegating.
