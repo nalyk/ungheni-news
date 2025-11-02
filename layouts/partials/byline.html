@@ -1,0 +1,223 @@
+{{/*
+  Professional Byline Partial - Triunghi.md
+
+  Displays article attribution with roles, avatars, and links
+  Supports both legacy (authors list) and modern (contributors with roles)
+
+  Usage: {{ partial "byline.html" . }}
+*/}}
+
+{{ $lang := .Site.Language.Lang }}
+{{ $hasContributors := and .Params.contributors (gt (len .Params.contributors) 0) }}
+
+<div class="article-byline">
+  {{/* Modern format: Contributors with roles */}}
+  {{ if $hasContributors }}
+    {{ range $index, $contributor := .Params.contributors }}
+      {{ $authorSlug := $contributor.author }}
+      {{ $role := $contributor.role }}
+
+      {{/* Get author page in current language */}}
+      {{ $authorPath := printf "authors/%s" $authorSlug }}
+      {{ with site.GetPage $authorPath }}
+        <div class="contributor" {{ if gt $index 0 }}style="margin-top: 0.75rem;"{{ end }}>
+          <div class="contributor-main">
+            {{ with .Params.avatar }}
+              <img src="{{ . | relURL }}" alt="{{ $.Title }}" class="contributor-avatar" loading="lazy">
+            {{ end }}
+            <div class="contributor-info">
+              <div class="contributor-header">
+                <a href="{{ .RelPermalink }}" class="contributor-name">{{ .Title }}</a>
+                {{ if $role }}
+                  <span class="contributor-role">
+                    {{ if eq $role "jurnalist" }}{{ if eq $lang "ro" }}Jurnalist{{ else }}Журналист{{ end }}
+                    {{ else if eq $role "redactor" }}{{ if eq $lang "ro" }}Redactor{{ else }}Редактор{{ end }}
+                    {{ else if eq $role "fotograf" }}{{ if eq $lang "ro" }}Fotograf{{ else }}Фотограф{{ end }}
+                    {{ else if eq $role "cameraman" }}{{ if eq $lang "ro" }}Cameraman{{ else }}Оператор{{ end }}
+                    {{ else if eq $role "traducator" }}{{ if eq $lang "ro" }}Traducător{{ else }}Переводчик{{ end }}
+                    {{ else if eq $role "editor" }}{{ if eq $lang "ro" }}Editor{{ else }}Главный редактор{{ end }}
+                    {{ else if eq $role "grafician" }}{{ if eq $lang "ro" }}Grafician{{ else }}Дизайнер{{ end }}
+                    {{ else if eq $role "analist" }}{{ if eq $lang "ro" }}Analist de date{{ else }}Аналитик данных{{ end }}
+                    {{ else if eq $role "corespondent" }}{{ if eq $lang "ro" }}Corespondent{{ else }}Корреспондент{{ end }}
+                    {{ else }}{{ $role }}{{ end }}
+                  </span>
+                {{ end }}
+              </div>
+              {{ with .Params.bio }}
+                <p class="contributor-bio">{{ . | truncate 120 }}</p>
+              {{ end }}
+              {{ if or .Params.email .Params.twitter .Params.facebook }}
+                <div class="contributor-social">
+                  {{ with .Params.email }}
+                    <a href="mailto:{{ . }}" class="contributor-contact" title="Email">
+                      <svg width="16" height="16" fill="currentColor"><use href="#icon-email"/></svg>
+                    </a>
+                  {{ end }}
+                  {{ with .Params.twitter }}
+                    <a href="https://twitter.com/{{ . }}" class="contributor-contact" title="Twitter" target="_blank" rel="noopener">
+                      <svg width="16" height="16" fill="currentColor"><use href="#icon-twitter"/></svg>
+                    </a>
+                  {{ end }}
+                  {{ with .Params.facebook }}
+                    <a href="{{ . }}" class="contributor-contact" title="Facebook" target="_blank" rel="noopener">
+                      <svg width="16" height="16" fill="currentColor"><use href="#icon-facebook"/></svg>
+                    </a>
+                  {{ end }}
+                </div>
+              {{ end }}
+            </div>
+          </div>
+        </div>
+      {{ end }}
+    {{ end }}
+
+  {{/* Legacy format: Simple authors list (backward compatibility) */}}
+  {{ else if .Params.authors }}
+    <div class="byline-legacy">
+      <span class="byline-prefix">{{ if eq $lang "ro" }}De{{ else }}От{{ end }}</span>
+      {{ range $index, $authorSlug := .Params.authors }}
+        {{ $authorPath := printf "authors/%s" $authorSlug }}
+        {{ with site.GetPage $authorPath }}
+          {{ if gt $index 0 }}, {{ end }}
+          <a href="{{ .RelPermalink }}" class="author-link">{{ .Title }}</a>
+        {{ else }}
+          {{/* Fallback if author page doesn't exist */}}
+          {{ if gt $index 0 }}, {{ end }}
+          <span class="author-name">{{ $authorSlug }}</span>
+        {{ end }}
+      {{ end }}
+    </div>
+
+  {{/* No attribution */}}
+  {{ else }}
+    <div class="byline-anonymous">
+      <span class="byline-prefix">{{ if eq $lang "ro" }}Redacția{{ else }}Редакция{{ end }}</span>
+    </div>
+  {{ end }}
+</div>
+
+<style>
+/* Byline Styles - Professional journalism layout */
+.article-byline {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-left: 4px solid #2563eb;
+  border-radius: 4px;
+}
+
+.contributor {
+  display: flex;
+  gap: 1rem;
+}
+
+.contributor-main {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.contributor-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.contributor-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.contributor-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+
+.contributor-name {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #111827;
+  text-decoration: none;
+}
+
+.contributor-name:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.contributor-role {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.contributor-bio {
+  font-size: 0.9375rem;
+  color: #4b5563;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+.contributor-social {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.contributor-contact {
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+.contributor-contact:hover {
+  color: #2563eb;
+}
+
+/* Legacy byline */
+.byline-legacy {
+  font-size: 1rem;
+  color: #374151;
+}
+
+.byline-prefix {
+  color: #6b7280;
+  margin-right: 0.25rem;
+}
+
+.author-link {
+  color: #111827;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.author-link:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.author-name {
+  font-weight: 500;
+}
+
+.byline-anonymous {
+  font-size: 1rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+@media (max-width: 48rem) {
+  .contributor-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .contributor-name {
+    font-size: 1rem;
+  }
+}
+</style>

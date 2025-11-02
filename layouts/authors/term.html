@@ -1,0 +1,364 @@
+{{ define "main" }}
+{{/* Author Archive Page - Shows all articles by this author */}}
+
+{{ $lang := .Site.Language.Lang }}
+{{ $authorPage := . }}
+
+<div class="author-archive">
+  <header class="author-header">
+    {{/* Language switcher for this author */}}
+    {{ if .Translations }}
+      <div class="language-switcher">
+        <span class="lang-label">{{ if eq $lang "ro" }}Limbă{{ else }}Язык{{ end }}:</span>
+        <a href="{{ .RelPermalink }}" class="lang-link lang-active">
+          {{ if eq $lang "ro" }}🇷🇴 RO{{ else }}🇷🇺 RU{{ end }}
+        </a>
+        {{ range .Translations }}
+          <a href="{{ .RelPermalink }}" class="lang-link">
+            {{ if eq .Language.Lang "ro" }}🇷🇴 RO{{ else }}🇷🇺 RU{{ end }}
+          </a>
+        {{ end }}
+      </div>
+    {{ end }}
+
+    <div class="author-profile">
+      {{ with .Params.avatar }}
+        <img src="{{ . | relURL }}" alt="{{ $authorPage.Title }}" class="author-avatar-large">
+      {{ end }}
+
+      <div class="author-details">
+        <h1 class="author-name">{{ .Title }}</h1>
+
+        {{ with .Params.position }}
+          <p class="author-position">{{ . }}</p>
+        {{ end }}
+
+        {{ with .Params.bio }}
+          <p class="author-bio">{{ . }}</p>
+        {{ end }}
+
+        {{ if or .Params.email .Params.twitter .Params.facebook }}
+          <div class="author-social">
+            {{ with .Params.email }}
+              <a href="mailto:{{ . }}" class="social-link" title="Email">
+                📧 {{ if eq $lang "ro" }}Email{{ else }}Эл. почта{{ end }}
+              </a>
+            {{ end }}
+            {{ with .Params.twitter }}
+              <a href="https://twitter.com/{{ . }}" class="social-link" title="Twitter" target="_blank" rel="noopener">
+                🐦 Twitter
+              </a>
+            {{ end }}
+            {{ with .Params.facebook }}
+              <a href="{{ . }}" class="social-link" title="Facebook" target="_blank" rel="noopener">
+                👤 Facebook
+              </a>
+            {{ end }}
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  </header>
+
+  <section class="author-articles">
+    <h2 class="section-title">
+      {{ if eq $lang "ro" }}
+        Articole de {{ .Title }} ({{ .Data.Terms.Count }})
+      {{ else }}
+        Статьи от {{ .Title }} ({{ .Data.Terms.Count }})
+      {{ end }}
+    </h2>
+
+    {{/* Get articles from current language's news section */}}
+    {{ $lang_news_path := printf "/%s/news" $lang }}
+    {{ $news_section := .Site.GetPage $lang_news_path }}
+    {{ $all_lang_pages := $news_section.Pages }}
+
+    {{/* Filter by this author (check both authors field and contributors) */}}
+    {{ $authorSlug := .Params.slug | default .Data.Term }}
+    {{ $articles := slice }}
+
+    {{ range $all_lang_pages }}
+      {{ $matched := false }}
+
+      {{/* Check legacy authors field */}}
+      {{ if in (.Params.authors | default slice) $authorSlug }}
+        {{ $matched = true }}
+      {{ end }}
+
+      {{/* Check contributors field */}}
+      {{ range .Params.contributors }}
+        {{ if eq .author $authorSlug }}
+          {{ $matched = true }}
+        {{ end }}
+      {{ end }}
+
+      {{ if $matched }}
+        {{ $articles = $articles | append . }}
+      {{ end }}
+    {{ end }}
+
+    {{ if gt (len $articles) 0 }}
+      <div class="articles-grid">
+        {{ range $articles }}
+          <article class="article-card">
+            {{ with .Params.cover }}
+              <a href="{{ $.RelPermalink }}" class="article-image">
+                <img src="{{ . | relURL }}" alt="{{ $.Title }}" loading="lazy">
+              </a>
+            {{ end }}
+
+            <div class="article-content">
+              {{ $rawCat := .Params.categories }}
+              {{ $category_slug := cond (reflect.IsSlice $rawCat) (index ($rawCat | default slice) 0) $rawCat }}
+              {{ if $category_slug }}
+                {{ $category_page := site.GetPage (printf "categories/%s" $category_slug) }}
+                <a href="{{ $category_page.RelPermalink }}" class="article-category">{{ $category_page.Title }}</a>
+              {{ end }}
+
+              <h3 class="article-title">
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+              </h3>
+
+              {{ with .Params.summary }}
+                <p class="article-summary">{{ . | truncate 150 }}</p>
+              {{ end }}
+
+              <time class="article-date" datetime="{{ .Date.Format "2006-01-02" }}">
+                {{ .Date.Format "2 January 2006" }}
+              </time>
+            </div>
+          </article>
+        {{ end }}
+      </div>
+    {{ else }}
+      <p class="no-articles">
+        {{ if eq $lang "ro" }}
+          Niciun articol publicat încă.
+        {{ else }}
+          Статей пока нет.
+        {{ end }}
+      </p>
+    {{ end }}
+  </section>
+</div>
+
+<style>
+/* Author Archive Styles */
+.author-archive {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.lang-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.lang-link {
+  padding: 0.375rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: #374151;
+  background: white;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s;
+}
+
+.lang-link:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.lang-active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.author-header {
+  margin-bottom: 3rem;
+}
+
+.author-profile {
+  display: flex;
+  gap: 2rem;
+  align-items: start;
+}
+
+.author-avatar-large {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.author-details {
+  flex: 1;
+}
+
+.author-name {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: #111827;
+}
+
+.author-position {
+  font-size: 1.125rem;
+  color: #2563eb;
+  font-weight: 500;
+  margin: 0 0 1rem 0;
+}
+
+.author-bio {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin: 1rem 0;
+}
+
+.author-social {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.social-link {
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  border-radius: 6px;
+  color: #374151;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.social-link:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid #e5e7eb;
+  color: #111827;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.article-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.article-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.article-image img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.article-content {
+  padding: 1.5rem;
+}
+
+.article-category {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+}
+
+.article-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+.article-title a {
+  color: #111827;
+  text-decoration: none;
+}
+
+.article-title a:hover {
+  color: #2563eb;
+}
+
+.article-summary {
+  color: #6b7280;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin: 0.75rem 0;
+}
+
+.article-date {
+  display: block;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-top: 0.75rem;
+}
+
+.no-articles {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.125rem;
+  padding: 3rem 0;
+}
+
+@media (max-width: 48rem) {
+  .author-profile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .author-avatar-large {
+    width: 120px;
+    height: 120px;
+  }
+
+  .author-name {
+    font-size: 2rem;
+  }
+
+  .articles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+{{ end }}

@@ -1,4 +1,0 @@
----
-title: Redacția
-slug: redactia
----

@@ -22,36 +22,35 @@ public_folder: "/uploads"
 #     api_key: "your-api-key"
 
 collections:
-  # Multilingual Author Collections (separate RO/RU for translated bios)
-  - name: "authors_ro"
-    label: "Autori (RO)"
-    label_singular: "Autor (RO)"
-    folder: "content/ro/authors"
+  # Authors Collection - Multilingual Taxonomy (Hugo's built-in i18n)
+  # Each author has language-specific variants: _index.ro.md and _index.ru.md
+  - name: "authors"
+    label: "Autori / Авторы"
+    label_singular: "Autor / Автор"
+    folder: "content/authors"
     create: true
     slug: "{{slug}}"
-    path: "{{slug}}/_index"
+    identifier_field: "slug"
+    extension: "md"
+    format: "frontmatter"
     fields:
-      - { name: title, label: "Nume Autor", widget: "string", hint: "Numele complet al autorului" }
-      - { name: slug, label: "Slug (ID unic)", widget: "string", required: true, hint: "ID-ul autorului folosit în articole (ex: 'redactia', 'ion-popescu'). Doar litere mici, numere, cratimă. IMPORTANT: Folosește același slug în varianta RU!" }
-      - { name: bio, label: "Biografie (RO)", widget: "text", required: false, hint: "Biografie în limba română" }
-      - { name: avatar, label: "Avatar", widget: "image", required: false, hint: "Fotografie autor (recomandare: 300x300px)" }
-      - { name: email, label: "Email contact", widget: "string", required: false, pattern: ['^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', 'Adresă email validă'] }
-      - { name: twitter, label: "Twitter handle", widget: "string", required: false, hint: "Fără @ (ex: 'username')" }
-
-  - name: "authors_ru"
-    label: "Авторы (RU)"
-    label_singular: "Автор (RU)"
-    folder: "content/ru/authors"
-    create: true
-    slug: "{{slug}}"
-    path: "{{slug}}/_index"
-    fields:
-      - { name: title, label: "Имя автора", widget: "string", hint: "Полное имя автора" }
-      - { name: slug, label: "Slug (уникальный ID)", widget: "string", required: true, hint: "ID автора, используемый в статьях (например: 'redactia', 'ion-popescu'). Только строчные буквы, цифры, дефис. ВАЖНО: Используйте тот же slug, что и в RO версии!" }
-      - { name: bio, label: "Биография (RU)", widget: "text", required: false, hint: "Биография на русском языке" }
-      - { name: avatar, label: "Аватар", widget: "image", required: false, hint: "Фотография автора (рекомендация: 300x300px)" }
-      - { name: email, label: "Email контакт", widget: "string", required: false, pattern: ['^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', 'Валидный email адрес'] }
-      - { name: twitter, label: "Twitter handle", widget: "string", required: false, hint: "Без @ (например: 'username')" }
+      - name: language
+        label: "Limbă / Язык"
+        widget: "select"
+        options:
+          - { label: "🇷🇴 Română", value: "ro" }
+          - { label: "🇷🇺 Русский", value: "ru" }
+        hint: "Selectează limba pentru această variantă a profilului autorului. IMPORTANT: Creează ambele variante (RO și RU) pentru fiecare autor folosind ACELAȘI slug!"
+      - { name: title, label: "Nume complet / Полное имя", widget: "string", hint: "Numele autorului în limba selectată" }
+      - { name: slug, label: "Slug (ID unic / уникальный ID)", widget: "string", required: true, hint: "Identificator unic pentru autor (ex: 'ion-popescu'). Folosește ACELAȘI slug pentru ambele variante lingvistice! Doar litere latine mici, numere, cratimă." }
+      - { name: bio, label: "Biografie / Биография", widget: "text", required: false, hint: "Biografie în limba selectată" }
+      - { name: position, label: "Funcție / Должность", widget: "string", required: false, hint: "Funcția principală (ex: 'Redactor-șef', 'Fotograf', 'Jurnalist')" }
+      - { name: avatar, label: "Avatar / Аватар", widget: "image", required: false, hint: "Fotografie autor (recomandare: 300x300px, format pătrat)" }
+      - { name: email, label: "Email", widget: "string", required: false, pattern: ['^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', 'Adresă email validă / Валидный email'] }
+      - { name: twitter, label: "Twitter", widget: "string", required: false, hint: "Fără @ (ex: 'username')" }
+      - { name: facebook, label: "Facebook", widget: "string", required: false, hint: "URL profil Facebook" }
+    # Generate filename based on language: slug/_index.ro.md or slug/_index.ru.md
+    path: "{{slug}}/_index.{{language}}"
 
   - name: "section_settings"
     label: "Setări Secțiuni"
@@ -154,15 +153,47 @@ collections:
         
       # Attribution & Metadata
       - name: authors
-        label: "Autori"
+        label: "Autori (compatibilitate)"
         widget: "relation"
-        collection: "authors_ro"
+        collection: "authors"
         search_fields: ["title", "slug"]
         value_field: "slug"
         display_fields: ["title", "slug"]
         multiple: true
         required: false
-        hint: "Lista autorilor care au contribuit la articol"
+        hint: "Câmp legacy pentru compatibilitate. Folosește 'Contributori' pentru atribuire detaliată cu roluri."
+
+      # Contributors with roles (professional journalism attribution)
+      - name: contributors
+        label: "👥 Contributori (cu roluri)"
+        widget: "list"
+        required: false
+        collapsed: false
+        hint: "Atribuire profesională cu roluri specifice (jurnalist, fotograf, cameraman, etc.). Afișează rolul fiecărei persoane în articol."
+        fields:
+          - name: author
+            label: "Persoană"
+            widget: "relation"
+            collection: "authors"
+            search_fields: ["title", "slug"]
+            value_field: "slug"
+            display_fields: ["title"]
+            hint: "Selectează autorul din baza de date"
+          - name: role
+            label: "Rol"
+            widget: "select"
+            options:
+              - { label: "✍️ Jurnalist / Reporter", value: "jurnalist" }
+              - { label: "📝 Redactor", value: "redactor" }
+              - { label: "📷 Fotograf", value: "fotograf" }
+              - { label: "🎥 Cameraman / Videograf", value: "cameraman" }
+              - { label: "🌐 Traducător", value: "traducator" }
+              - { label: "✏️ Editor", value: "editor" }
+              - { label: "🎨 Grafician / Designer", value: "grafician" }
+              - { label: "📊 Analist de date", value: "analist" }
+              - { label: "🎤 Corespondent", value: "corespondent" }
+            hint: "Selectează rolul persoanei în realizarea acestui articol"
+
       - name: tags
         label: "Etichete"
         widget: "list"
@@ -292,15 +323,47 @@ collections:
         
       # Attribution & Metadata
       - name: authors
-        label: "Авторы"
+        label: "Авторы (совместимость)"
         widget: "relation"
-        collection: "authors_ru"
+        collection: "authors"
         search_fields: ["title", "slug"]
         value_field: "slug"
         display_fields: ["title", "slug"]
         multiple: true
         required: false
-        hint: "Список авторов, которые внесли вклад в статью"
+        hint: "Устаревшее поле для совместимости. Используйте 'Участники' для детальной атрибуции с ролями."
+
+      # Contributors with roles (professional journalism attribution)
+      - name: contributors
+        label: "👥 Участники (с ролями)"
+        widget: "list"
+        required: false
+        collapsed: false
+        hint: "Профессиональная атрибуция с конкретными ролями (журналист, фотограф, оператор, и т.д.). Отображает роль каждого человека в статье."
+        fields:
+          - name: author
+            label: "Человек"
+            widget: "relation"
+            collection: "authors"
+            search_fields: ["title", "slug"]
+            value_field: "slug"
+            display_fields: ["title"]
+            hint: "Выберите автора из базы данных"
+          - name: role
+            label: "Роль"
+            widget: "select"
+            options:
+              - { label: "✍️ Журналист / Репортёр", value: "jurnalist" }
+              - { label: "📝 Редактор", value: "redactor" }
+              - { label: "📷 Фотограф", value: "fotograf" }
+              - { label: "🎥 Оператор / Видеограф", value: "cameraman" }
+              - { label: "🌐 Переводчик", value: "traducator" }
+              - { label: "✏️ Главный редактор", value: "editor" }
+              - { label: "🎨 Дизайнер", value: "grafician" }
+              - { label: "📊 Аналитик данных", value: "analist" }
+              - { label: "🎤 Корреспондент", value: "corespondent" }
+            hint: "Выберите роль человека в создании этой статьи"
+
       - name: tags
         label: "Теги"
         widget: "list"

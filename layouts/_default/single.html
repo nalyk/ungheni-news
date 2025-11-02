@@ -16,12 +16,12 @@
     {{ end }}
 
     <div class="article-meta">
-      {{ with .Params.authors }}
-        <span>By {{ delimit . ", " " and " }}</span>
-      {{ end }}
       <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
     </div>
   </header>
+
+  {{/* Professional byline with roles and avatars */}}
+  {{ partial "byline.html" . }}
 
   {{/* Fact-check rating box */}}
   {{ partial "fact-check-rating.html" . }}
