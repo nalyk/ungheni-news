@@ -1,0 +1,312 @@
+/**
+ * Decap CMS Preview Styles for Triunghi.md
+ * Matches Hugo site design for accurate editorial preview
+ */
+
+.triunghi-preview {
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  line-height: 1.6;
+  color: #1a1a1a;
+}
+
+/* ============================================
+   Validation Warnings
+   ============================================ */
+.validation-warning {
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.validation-error {
+  background: #fef2f2;
+  border-left: 4px solid #dc2626;
+}
+
+.validation-warning .warning-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.validation-warning .warning-content strong {
+  display: block;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+  color: #991b1b;
+}
+
+.validation-warning .warning-content p {
+  margin: 0.5rem 0;
+  color: #7f1d1d;
+}
+
+/* ============================================
+   Article Metadata (Badges)
+   ============================================ */
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.format-badge,
+.category-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* Format-specific colors */
+.format-stire {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.format-analiza {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.format-explainer {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.format-opinie {
+  background: #fce7f3;
+  color: #9f1239;
+}
+
+.format-factcheck {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+/* Category-specific colors */
+.category-local {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.category-national,
+.category-ue-romania {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 2px solid #dc2626;
+}
+
+.article-date {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* ============================================
+   Article Header
+   ============================================ */
+.article-header {
+  margin-bottom: 2rem;
+}
+
+.article-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+  color: #111827;
+}
+
+.article-summary {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: #4b5563;
+  margin: 0 0 1rem 0;
+}
+
+.article-authors {
+  font-size: 0.95rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.author-name {
+  color: #111827;
+  font-weight: 500;
+}
+
+/* ============================================
+   Cover Image
+   ============================================ */
+.article-cover {
+  margin: 2rem 0;
+}
+
+.article-cover img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}
+
+/* ============================================
+   Article Body
+   ============================================ */
+.article-body {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.article-body h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem 0;
+  color: #111827;
+}
+
+.article-body h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem 0;
+  color: #374151;
+}
+
+.article-body p {
+  margin: 1rem 0;
+}
+
+.article-body ul,
+.article-body ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.article-body li {
+  margin: 0.5rem 0;
+}
+
+.article-body blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.article-body a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.article-body code {
+  background: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 3px;
+  font-size: 0.95em;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ============================================
+   Cutia Ungheni (Local Impact Box)
+   ============================================ */
+.cutia-ungheni {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 3px solid #f59e0b;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 3rem 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.cutia-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  color: #92400e;
+  border-bottom: 2px solid #f59e0b;
+  padding-bottom: 0.5rem;
+}
+
+.cutia-section {
+  margin-bottom: 1.5rem;
+}
+
+.cutia-section:last-child {
+  margin-bottom: 0;
+}
+
+.cutia-section h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #78350f;
+}
+
+.cutia-section p {
+  margin: 0;
+  color: #451a03;
+  line-height: 1.6;
+}
+
+/* ============================================
+   Preview Info Footer
+   ============================================ */
+.preview-info {
+  margin-top: 3rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.preview-info p {
+  margin: 0;
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+@media (max-width: 48rem) {
+  .triunghi-preview {
+    padding: 1rem 0.75rem;
+  }
+
+  .article-title {
+    font-size: 1.75rem;
+  }
+
+  .article-summary {
+    font-size: 1.125rem;
+  }
+
+  .article-body {
+    font-size: 1rem;
+  }
+
+  .cutia-ungheni {
+    padding: 1.5rem;
+  }
+}
