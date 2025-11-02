@@ -67,6 +67,9 @@ collections:
       - name: categories
         label: "Categorie"
         widget: "select"
+        multiple: true
+        min: 1
+        max: 1
         options:
           - { label: "🏛️ Local Ungheni", value: "local" }
           - { label: "🚂 Frontieră & Transport", value: "frontiera-transport" }
@@ -80,6 +83,9 @@ collections:
       - name: formats
         label: "Format Editorial"
         widget: "select"
+        multiple: true
+        min: 1
+        max: 1
         options:
           - { label: "📰 Știre (300-800 cuvinte) - Cine, ce, când, unde, cum", value: "stire" }
           - { label: "📊 Analiză (800-1500 cuvinte) - Context și interpretare", value: "analiza" }
@@ -199,6 +205,9 @@ collections:
       - name: categories
         label: "Категория"
         widget: "select"
+        multiple: true
+        min: 1
+        max: 1
         options:
           - { label: "🏛️ Местные Унгень", value: "local" }
           - { label: "🚂 Граница и транспорт", value: "frontiera-transport" }
@@ -212,6 +221,9 @@ collections:
       - name: formats
         label: "Формат редакции"
         widget: "select"
+        multiple: true
+        min: 1
+        max: 1
         options:
           - { label: "📰 Новость (300-800 слов) - Кто, что, когда, где, как", value: "stire" }
           - { label: "📊 Аналитика (800-1500 слов) - Контекст и интерпретация", value: "analiza" }

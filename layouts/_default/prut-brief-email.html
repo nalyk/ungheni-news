@@ -1,0 +1,131 @@
+{{/*
+  Prut Brief Email Template
+
+  This template generates the daily Prut Brief newsletter content
+  in Markdown format for Buttondown email service.
+
+  Usage:
+    1. Create a page bundle for daily brief: content/ro/prut-brief/2025-01-15.md
+    2. Front matter should include:
+       - date: 2025-01-15
+       - local_stories: [list of page paths or slugs]
+       - national_stories: [list of page paths]
+       - international_stories: [list of page paths]
+    3. Render this template to get email content
+
+  Output: Markdown-formatted email for Buttondown API
+*/}}
+
+{{- $date := .Date -}}
+{{- $dateFormatted := $date.Format "2 January 2006" -}}
+
+# Prut Brief - {{ $dateFormatted }}
+
+Bună dimineața! Cele mai importante știri pentru Ungheni de ieri și ce urmează astăzi.
+
+---
+
+## 📍 Local (Ungheni)
+
+{{- with .Params.local_stories }}
+  {{- range . }}
+    {{- $story := site.GetPage . }}
+    {{- if $story }}
+
+### {{ $story.Title }}
+
+{{ $story.Summary }}
+
+[Citește mai mult →]({{ $story.Permalink }})
+
+    {{- end }}
+  {{- end }}
+{{- else }}
+
+*Nu sunt știri locale în acest moment.*
+
+{{- end }}
+
+---
+
+## 🇲🇩 Național (cu impact la Ungheni)
+
+{{- with .Params.national_stories }}
+  {{- range . }}
+    {{- $story := site.GetPage . }}
+    {{- if $story }}
+
+### {{ $story.Title }}
+
+{{ $story.Summary }}
+
+{{- with $story.Params.cutia_ungheni }}
+{{- with .impact_local }}
+
+**📦 Impact la Ungheni:** {{ . }}
+{{- end }}
+{{- end }}
+
+[Citește mai mult →]({{ $story.Permalink }})
+
+    {{- end }}
+  {{- end }}
+{{- else }}
+
+*Nu sunt știri naționale relevante pentru Ungheni.*
+
+{{- end }}
+
+---
+
+## 🌍 Internațional (dacă afectează Ungheni)
+
+{{- with .Params.international_stories }}
+  {{- range . }}
+    {{- $story := site.GetPage . }}
+    {{- if $story }}
+
+### {{ $story.Title }}
+
+{{ $story.Summary }}
+
+{{- with $story.Params.cutia_ungheni }}
+{{- with .impact_local }}
+
+**📦 De ce contează:** {{ . }}
+{{- end }}
+{{- end }}
+
+[Citește mai mult →]({{ $story.Permalink }})
+
+    {{- end }}
+  {{- end }}
+{{- else }}
+
+*Nu sunt știri internaționale relevante astăzi.*
+
+{{- end }}
+
+---
+
+## 📅 Astăzi în Ungheni
+
+{{- with .Params.today_events }}
+  {{- range . }}
+- {{ .time }} - {{ .title }}{{ with .location }} ({{ . }}){{ end }}
+  {{- end }}
+{{- else }}
+*Nu sunt evenimente speciale programate.*
+{{- end }}
+
+---
+
+**Mulțumim că citiți Prut Brief!**
+
+*Triunghi.md - Local. Național. Internațional. În această ordine.*
+
+[Vizitați site-ul](https://triunghi.md) · [Toate știrile](https://triunghi.md/ro/news/) · [Dezabonare]({{ "{{ unsubscribe_url }}" }})
+
+---
+
+<small>Primiți acest email pentru că v-ați abonat la Prut Brief de la Triunghi.md. Nu este spam.</small>

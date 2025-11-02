@@ -6,9 +6,6 @@ summary: "Primăria municipiului Ungheni a găzduit conferința de lansare a pro
 categories: ["local"]
 formats: ["stire"]
 authors: ["redactia"]
-cutia_ungheni:
-  title: "De ce contează pentru oraș?"
-  impact_local: "Acest proiect, finanțat de UE, va permite Primăriei Ungheni să creeze un plan concret pentru a gestiona efectele caniculei, secetei sau inundațiilor. Pe termen lung, asta înseamnă o mai bună protecție pentru culturile agricole din preajma orașului, o infrastructură urbană mai rezistentă și o strategie clară pentru a asigura siguranța cetățenilor în fața fenomenelor meteo extreme."
 ---
 
 **UNGHENI, 6 octombrie 2025** – Municipiul Ungheni face pași concreți în direcția combaterii efectelor schimbărilor climatice. Astăzi, la sediul primăriei, a avut loc conferința de lansare a proiectului „Dezvoltarea capacităților pentru adaptarea și reziliența la schimbările climatice”.

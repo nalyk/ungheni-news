@@ -7,12 +7,7 @@
       <p>{{ i18n "prut_brief_description" | default "Cele mai importante știri locale, zilnic la 18:00" }}</p>
     </div>
     
-    <div class="newsletter-stats">
-      <div class="subscriber-count">
-        <span class="count-number">2.847</span>
-        <span class="count-label">{{ i18n "subscribers" | default "abonați" }}</span>
-      </div>
-    </div>
+    {{/* Subscriber count removed - using real backend now */}}
     
     <form class="newsletter-form" action="#" method="post" id="newsletter-signup">
       <div class="form-group">
@@ -55,64 +50,86 @@
   const emailInput = document.getElementById('newsletter-email');
   const errorDiv = document.getElementById('email-error');
   const statusDiv = document.querySelector('.form-status');
-  
+
   if (!form) return;
-  
-  form.addEventListener('submit', function(e) {
+
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
-    
+
     // Clear previous messages
     clearMessages();
-    
+
     const email = emailInput.value.trim();
-    
+
     // Client-side validation
     if (!validateEmail(email)) {
       showError('{{ i18n "invalid_email" | default "Vă rugăm să introduceți o adresă de email validă" }}');
       return;
     }
-    
+
     // Show loading state
-    showStatus('{{ i18n "subscribing" | default "Se înregistrează..." }}');
+    showStatus('{{ i18n "subscribing" | default "Se înregistrează..." }}', 'loading');
     const submitButton = form.querySelector('.submit-button');
     submitButton.disabled = true;
-    
-    // Simulate API call (replace with actual implementation)
-    setTimeout(() => {
-      showStatus('{{ i18n "subscription_success" | default "Mulțumim! Veți primi primul newsletter astăzi la 18:00." }}', 'success');
-      emailInput.value = '';
-      submitButton.disabled = false;
-      
-      // Update subscriber count (demo)
-      const countElement = document.querySelector('.count-number');
-      if (countElement) {
-        const currentCount = parseInt(countElement.textContent.replace(',', ''));
-        countElement.textContent = (currentCount + 1).toLocaleString();
+
+    try {
+      // Call Buttondown API via Cloudflare Function
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Success - show confirmation message
+        showStatus(
+          data.message || '{{ i18n "subscription_success" | default "Mulțumim! Veți primi primul newsletter astăzi la 18:00." }}',
+          'success'
+        );
+        emailInput.value = '';
+
+        // Keep button disabled for 3 seconds to prevent double submission
+        setTimeout(() => {
+          submitButton.disabled = false;
+        }, 3000);
+      } else {
+        // Error from API
+        showError(data.error || '{{ i18n "subscription_error" | default "A apărut o eroare. Încercați din nou." }}');
+        submitButton.disabled = false;
       }
-    }, 1500);
+    } catch (error) {
+      // Network or other error
+      console.error('Newsletter signup error:', error);
+      showError('{{ i18n "network_error" | default "Eroare de conexiune. Verificați internetul și încercați din nou." }}');
+      submitButton.disabled = false;
+    }
   });
-  
+
   emailInput.addEventListener('input', function() {
     clearMessages();
   });
-  
+
   function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
-  
+
   function showError(message) {
     errorDiv.textContent = message;
     errorDiv.style.display = 'block';
     emailInput.setAttribute('aria-invalid', 'true');
   }
-  
+
   function showStatus(message, type = 'info') {
     statusDiv.textContent = message;
     statusDiv.className = 'form-status ' + type;
     statusDiv.style.display = 'block';
   }
-  
+
   function clearMessages() {
     errorDiv.style.display = 'none';
     errorDiv.textContent = '';

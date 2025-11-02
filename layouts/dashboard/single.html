@@ -1,0 +1,616 @@
+{{ define "main" }}
+<div class="editorial-dashboard">
+  <header class="dashboard-header">
+    <h1>{{ .Title }}</h1>
+    <p class="dashboard-subtitle">Monitorizare conformitate editorială &middot; Triunghi.md</p>
+
+    <div class="dashboard-controls">
+      <div class="time-range-selector">
+        <label for="time-range">Perioadă:</label>
+        <select id="time-range">
+          <option value="7">Ultimele 7 zile</option>
+          <option value="30" selected>Ultimele 30 zile</option>
+          <option value="90">Ultimele 90 zile</option>
+          <option value="all">Tot timpul</option>
+        </select>
+      </div>
+
+      <button id="refresh-data" class="btn-secondary">↻ Reîmprospătează</button>
+    </div>
+  </header>
+
+  {{/* Generate JSON index of all articles for client-side processing */}}
+  {{ $articles := slice }}
+  {{ range where .Site.RegularPages "Type" "news" }}
+    {{ $publishDate := "" }}
+    {{ with .PublishDate }}
+      {{ $publishDate = .Format "2006-01-02" }}
+    {{ end }}
+    {{ $articles = $articles | append (dict
+      "title" .Title
+      "date" (.Date.Format "2006-01-02")
+      "publishDate" $publishDate
+      "categories" .Params.categories
+      "formats" .Params.formats
+      "draft" .Draft
+      "lang" .Lang
+      "cutiaUngheni" .Params.cutia_ungheni
+      "url" .RelPermalink
+      "summary" .Summary
+      "authors" .Params.authors
+    ) }}
+  {{ end }}
+
+  <script id="articles-data" type="application/json">
+    {{ $articles | jsonify }}
+  </script>
+
+  <div class="dashboard-grid">
+    {{/* 60/30/10 Ratio Tracker */}}
+    <section class="dashboard-card ratio-tracker">
+      <h2>📊 Raportul 60/30/10</h2>
+      <p class="card-description">Distribuția Local / Național / Internațional</p>
+
+      <div class="ratio-visualization">
+        <div class="ratio-bars" id="ratio-bars">
+          <div class="ratio-bar" data-category="local">
+            <div class="ratio-bar-fill" data-target="60"></div>
+            <div class="ratio-bar-label">
+              <span class="ratio-bar-name">🏛️ Local</span>
+              <span class="ratio-bar-value"><span id="local-percent">0</span>%</span>
+            </div>
+            <div class="ratio-bar-target">Țintă: 60%</div>
+          </div>
+
+          <div class="ratio-bar" data-category="national">
+            <div class="ratio-bar-fill" data-target="30"></div>
+            <div class="ratio-bar-label">
+              <span class="ratio-bar-name">🇲🇩 Național</span>
+              <span class="ratio-bar-value"><span id="national-percent">0</span>%</span>
+            </div>
+            <div class="ratio-bar-target">Țintă: 30%</div>
+          </div>
+
+          <div class="ratio-bar" data-category="international">
+            <div class="ratio-bar-fill" data-target="10"></div>
+            <div class="ratio-bar-label">
+              <span class="ratio-bar-name">🌍 Internațional</span>
+              <span class="ratio-bar-value"><span id="intl-percent">0</span>%</span>
+            </div>
+            <div class="ratio-bar-target">Țintă: 10%</div>
+          </div>
+        </div>
+
+        <div class="ratio-status" id="ratio-status">
+          <div class="status-indicator">⏳ Se calculează...</div>
+        </div>
+      </div>
+
+      <div class="ratio-details">
+        <div class="stat">
+          <span class="stat-label">Total articole</span>
+          <span class="stat-value" id="total-articles">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Locale</span>
+          <span class="stat-value" id="local-count">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Naționale</span>
+          <span class="stat-value" id="national-count">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Internaționale</span>
+          <span class="stat-value" id="intl-count">0</span>
+        </div>
+      </div>
+    </section>
+
+    {{/* Cutia Ungheni Compliance */}}
+    <section class="dashboard-card cutia-compliance">
+      <h2>📦 Conformitate Cutia Ungheni</h2>
+      <p class="card-description">Articole non-locale cu impact local documentat</p>
+
+      <div class="compliance-score" id="cutia-score">
+        <div class="score-circle">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" class="score-circle-bg"></circle>
+            <circle cx="50" cy="50" r="45" class="score-circle-fill" id="cutia-circle"></circle>
+          </svg>
+          <div class="score-text">
+            <span class="score-number" id="cutia-percent">0</span>
+            <span class="score-unit">%</span>
+          </div>
+        </div>
+        <div class="score-label">Conformitate</div>
+      </div>
+
+      <div class="compliance-details">
+        <div class="compliance-stat compliance-stat-good">
+          <span class="stat-icon">✓</span>
+          <span class="stat-label">Cu Cutia Ungheni</span>
+          <span class="stat-value" id="cutia-with">0</span>
+        </div>
+        <div class="compliance-stat compliance-stat-bad">
+          <span class="stat-icon">✗</span>
+          <span class="stat-label">Fără Cutia Ungheni</span>
+          <span class="stat-value" id="cutia-without">0</span>
+        </div>
+      </div>
+
+      <div class="missing-cutia-list" id="missing-cutia">
+        <h3>Articole care necesită Cutia Ungheni:</h3>
+        <ul id="missing-cutia-items"></ul>
+      </div>
+    </section>
+
+    {{/* Format Distribution */}}
+    <section class="dashboard-card format-distribution">
+      <h2>📝 Distribuție formate</h2>
+      <p class="card-description">Tipuri de conținut publicat</p>
+
+      <div class="format-chart" id="format-chart">
+        <div class="format-item" data-format="stire">
+          <span class="format-icon">📰</span>
+          <span class="format-name">Știri</span>
+          <span class="format-count" id="format-stire">0</span>
+          <div class="format-bar"><div class="format-bar-fill"></div></div>
+        </div>
+        <div class="format-item" data-format="analiza">
+          <span class="format-icon">📊</span>
+          <span class="format-name">Analize</span>
+          <span class="format-count" id="format-analiza">0</span>
+          <div class="format-bar"><div class="format-bar-fill"></div></div>
+        </div>
+        <div class="format-item" data-format="explainer">
+          <span class="format-icon">❓</span>
+          <span class="format-name">Explainere</span>
+          <span class="format-count" id="format-explainer">0</span>
+          <div class="format-bar"><div class="format-bar-fill"></div></div>
+        </div>
+        <div class="format-item" data-format="opinie">
+          <span class="format-icon">💭</span>
+          <span class="format-name">Opinii</span>
+          <span class="format-count" id="format-opinie">0</span>
+          <div class="format-bar"><div class="format-bar-fill"></div></div>
+        </div>
+        <div class="format-item" data-format="factcheck">
+          <span class="format-icon">✅</span>
+          <span class="format-name">Fact-check</span>
+          <span class="format-count" id="format-factcheck">0</span>
+          <div class="format-bar"><div class="format-bar-fill"></div></div>
+        </div>
+      </div>
+    </section>
+
+    {{/* Scheduled Content Calendar */}}
+    <section class="dashboard-card scheduled-content">
+      <h2>📅 Conținut programat</h2>
+      <p class="card-description">Articole cu publishDate în viitor</p>
+
+      <div class="scheduled-list" id="scheduled-list">
+        <div class="empty-state">
+          <p>Niciun articol programat</p>
+        </div>
+      </div>
+    </section>
+
+    {{/* Recent Activity */}}
+    <section class="dashboard-card recent-activity">
+      <h2>🕒 Activitate recentă</h2>
+      <p class="card-description">Ultimele 10 articole publicate</p>
+
+      <div class="activity-list" id="activity-list">
+        <div class="loading">Se încarcă...</div>
+      </div>
+    </section>
+
+    {{/* Editorial Health Score */}}
+    <section class="dashboard-card health-score">
+      <h2>💚 Scor sănătate editorială</h2>
+      <p class="card-description">Conformitate cu principiile Triunghi</p>
+
+      <div class="health-metrics">
+        <div class="health-metric">
+          <span class="metric-name">Raport 60/30/10</span>
+          <span class="metric-score" id="health-ratio">-</span>
+          <span class="metric-status" id="health-ratio-status">⏳</span>
+        </div>
+        <div class="health-metric">
+          <span class="metric-name">Cutia Ungheni</span>
+          <span class="metric-score" id="health-cutia">-</span>
+          <span class="metric-status" id="health-cutia-status">⏳</span>
+        </div>
+        <div class="health-metric">
+          <span class="metric-name">Diversitate formate</span>
+          <span class="metric-score" id="health-formats">-</span>
+          <span class="metric-status" id="health-formats-status">⏳</span>
+        </div>
+        <div class="health-metric">
+          <span class="metric-name">Frecvență publicare</span>
+          <span class="metric-score" id="health-frequency">-</span>
+          <span class="metric-status" id="health-frequency-status">⏳</span>
+        </div>
+      </div>
+
+      <div class="overall-score">
+        <div class="score-display" id="overall-score">
+          <span class="score-number">0</span>
+          <span class="score-max">/100</span>
+        </div>
+        <div class="score-grade" id="score-grade">F</div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<style>
+/* Dashboard Styles */
+.editorial-dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--color-border, #e5e7eb);
+  padding-bottom: 1.5rem;
+}
+
+.dashboard-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+}
+
+.dashboard-subtitle {
+  color: var(--color-muted, #6b7280);
+  margin: 0;
+}
+
+.dashboard-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.time-range-selector select {
+  padding: 0.5rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.dashboard-card {
+  background: white;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.dashboard-card h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+}
+
+.card-description {
+  color: var(--color-muted, #6b7280);
+  font-size: 0.875rem;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Ratio Tracker */
+.ratio-bars {
+  margin-bottom: 1.5rem;
+}
+
+.ratio-bar {
+  margin-bottom: 1.5rem;
+}
+
+.ratio-bar-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.ratio-bar-fill {
+  height: 24px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+.ratio-bar-target {
+  font-size: 0.75rem;
+  color: var(--color-muted, #6b7280);
+  margin-top: 0.25rem;
+}
+
+.ratio-details {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-muted, #6b7280);
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Compliance Score */
+.compliance-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+.score-circle {
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.score-circle svg {
+  transform: rotate(-90deg);
+}
+
+.score-circle-bg {
+  fill: none;
+  stroke: #e5e7eb;
+  stroke-width: 10;
+}
+
+.score-circle-fill {
+  fill: none;
+  stroke: #10b981;
+  stroke-width: 10;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  transition: stroke-dashoffset 1s ease;
+}
+
+.score-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.score-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.score-unit {
+  font-size: 1.5rem;
+  color: var(--color-muted, #6b7280);
+}
+
+.compliance-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.compliance-stat {
+  padding: 1rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.compliance-stat-good {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.compliance-stat-bad {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.missing-cutia-list {
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  padding-top: 1rem;
+}
+
+.missing-cutia-list h3 {
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.missing-cutia-list ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.missing-cutia-list li {
+  margin-bottom: 0.5rem;
+}
+
+/* Format Distribution */
+.format-item {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.format-bar {
+  grid-column: 1 / -1;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.format-bar-fill {
+  height: 100%;
+  background: #6366f1;
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+/* Scheduled Content */
+.scheduled-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--color-muted, #6b7280);
+}
+
+.scheduled-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.scheduled-item:last-child {
+  border-bottom: none;
+}
+
+.scheduled-date {
+  font-size: 0.875rem;
+  color: var(--color-muted, #6b7280);
+  margin-bottom: 0.25rem;
+}
+
+.scheduled-title {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.scheduled-meta {
+  font-size: 0.75rem;
+  color: var(--color-muted, #6b7280);
+}
+
+/* Recent Activity */
+.activity-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-time {
+  font-size: 0.75rem;
+  color: var(--color-muted, #6b7280);
+  margin-bottom: 0.25rem;
+}
+
+.activity-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.activity-meta {
+  font-size: 0.75rem;
+  color: var(--color-muted, #6b7280);
+}
+
+/* Health Score */
+.health-metrics {
+  margin-bottom: 1.5rem;
+}
+
+.health-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.health-metric:last-child {
+  border-bottom: none;
+}
+
+.metric-score {
+  font-weight: bold;
+  margin: 0 0.5rem;
+}
+
+.overall-score {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.score-display {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.score-max {
+  font-size: 1.5rem;
+  color: var(--color-muted, #6b7280);
+}
+
+.score-grade {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #10b981;
+}
+</style>
+
+<script src="/js/dashboard.js"></script>
+{{ end }}

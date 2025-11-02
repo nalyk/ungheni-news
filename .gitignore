@@ -19,3 +19,8 @@ node_modules/
 .gemini/
 .playwright-mcp/
 .mcp.json
+
+# Claude Code artifacts
+.archive/
+dev_screens/
+.claude/settings.local.json
