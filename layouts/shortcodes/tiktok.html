@@ -1,0 +1,20 @@
+{{/*
+  TikTok Embed
+
+  Usage: {{< tiktok "VIDEO_ID" >}}
+  Example: {{< tiktok "7234567890123456789" >}}
+
+  Note: Get ID from URL like tiktok.com/@user/video/7234567890123456789
+*/}}
+{{ $id := .Get 0 }}
+<div class="embed-responsive embed-responsive-9x16 embed-tiktok">
+  <blockquote class="tiktok-embed"
+    cite="https://www.tiktok.com/@placeholder/video/{{ $id }}"
+    data-video-id="{{ $id }}"
+    style="max-width: 605px; min-width: 325px;">
+    <section>
+      <a target="_blank" href="https://www.tiktok.com/@placeholder/video/{{ $id }}">TikTok</a>
+    </section>
+  </blockquote>
+  <script async src="https://www.tiktok.com/embed.js"></script>
+</div>

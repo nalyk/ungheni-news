@@ -5,9 +5,17 @@
       <div class="list-description">{{ . }}</div>
     {{ end }}
   </header>
+
   <div class="newspaper-grid">
     {{ range .Paginator.Pages }}
       {{ partial "card.html" (dict "page" . "card_class" "card-standard") }}
     {{ end }}
   </div>
+
+  {{/* Pagination Navigation */}}
+  {{ if gt .Paginator.TotalPages 1 }}
+    <nav class="pagination" role="navigation" aria-label="{{ i18n "pagination" }}">
+      {{ template "_internal/pagination.html" . }}
+    </nav>
+  {{ end }}
 {{ end }}

@@ -1,0 +1,31 @@
+{{ define "main" }}
+  <header class="list-header">
+    <h1 class="list-title">{{ .Title }}</h1>
+    {{ with .Content }}
+      <div class="list-description">{{ . }}</div>
+    {{ end }}
+  </header>
+
+  {{/* Get pages from current language's news section to avoid cross-language content */}}
+  {{ $lang := .Site.Language.Lang }}
+  {{ $lang_news_path := printf "/%s/news" $lang }}
+  {{ $news_section := .Site.GetPage $lang_news_path }}
+  {{/* Get all pages from the language-specific section */}}
+  {{ $all_lang_pages := $news_section.Pages }}
+  {{/* Filter these pages by the current taxonomy term */}}
+  {{ $pages := where $all_lang_pages ".Params.formats" "intersect" (slice .Data.Term) }}
+  {{ $p := .Paginate $pages }}
+
+  <div class="newspaper-grid">
+    {{ range $p.Pages }}
+      {{ partial "card.html" (dict "page" . "card_class" "card-standard") }}
+    {{ end }}
+  </div>
+
+  {{/* Pagination Navigation */}}
+  {{ if gt .Paginator.TotalPages 1 }}
+    <nav class="pagination" role="navigation" aria-label="{{ i18n "pagination" }}">
+      {{ template "_internal/pagination.html" . }}
+    </nav>
+  {{ end }}
+{{ end }}

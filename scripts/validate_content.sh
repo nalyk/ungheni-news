@@ -39,10 +39,17 @@ while IFS= read -r -d '' f; do
       fi
     fi
     
-    # If not found as string, check for structured object format (with sub-fields)
+    # If not found as string, check for structured object format (with content field)
     if [ "$has_cutia_field" = false ]; then
-      if echo "$fm" | sed -n '/^cutia_ungheni:/,/^\([a-zA-Z_][a-zA-Z0-9_-]*:\|---\)/p' | grep -E "^\s*(impact_local|ce_se_schimba|termene|unde_aplici):" | grep -v -E ":\s*$" | grep -q .; then
+      # Check for new format: cutia_ungheni.content (markdown field)
+      if echo "$fm" | sed -n '/^cutia_ungheni:/,/^\([a-zA-Z_][a-zA-Z0-9_-]*:\|---\)/p' | grep -E "^\s*content:" | grep -v -E ":\s*$" | grep -q .; then
         has_cutia_field=true
+      fi
+      # Also check for old format fields for backward compatibility
+      if [ "$has_cutia_field" = false ]; then
+        if echo "$fm" | sed -n '/^cutia_ungheni:/,/^\([a-zA-Z_][a-zA-Z0-9_-]*:\|---\)/p' | grep -E "^\s*(impact_local|ce_se_schimba|termene|unde_aplici):" | grep -v -E ":\s*$" | grep -q .; then
+          has_cutia_field=true
+        fi
       fi
     fi
     

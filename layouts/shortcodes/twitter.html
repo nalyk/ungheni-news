@@ -1,0 +1,18 @@
+{{/*
+  Twitter/X Embed
+
+  Usage: {{< twitter "USERNAME" "TWEET_ID" >}}
+  Example: {{< twitter "elonmusk" "1234567890123456789" >}}
+
+  Note: Get from URL like twitter.com/elonmusk/status/1234567890123456789
+*/}}
+{{ $user := .Get 0 }}
+{{ $id := .Get 1 }}
+<div class="embed-responsive embed-twitter">
+  <blockquote class="twitter-tweet" data-lang="en" data-dnt="true">
+    <p lang="en" dir="ltr">
+      <a href="https://twitter.com/{{ $user }}/status/{{ $id }}">View tweet</a>
+    </p>
+  </blockquote>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>

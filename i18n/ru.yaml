@@ -221,3 +221,40 @@
   translation: "Условия использования"
 - id: privacy
   translation: "Политика конфиденциальности"
+# Series / Collections
+- id: series
+  translation: "Серии"
+- id: part
+  translation: "Часть"
+- id: of
+  translation: "из"
+- id: parts
+  translation: "частей"
+- id: previous_part
+  translation: "Предыдущая часть"
+- id: next_part
+  translation: "Следующая часть"
+- id: coming_soon
+  translation: "Скоро"
+- id: coming_on
+  translation: "Выходит"
+- id: view_all_parts
+  translation: "Все части"
+- id: all_parts
+  translation: "Все части"
+- id: parts_published
+  translation: "Опубликовано частей"
+- id: total_planned
+  translation: "Всего запланировано"
+- id: complete
+  translation: "завершено"
+- id: completed_on
+  translation: "Завершено"
+- id: investigative_series
+  translation: "Расследования"
+- id: latest_part
+  translation: "Последняя часть"
+- id: series_navigation
+  translation: "Навигация по серии"
+- id: pagination
+  translation: "Навигация по страницам"

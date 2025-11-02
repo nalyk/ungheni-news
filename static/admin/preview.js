@@ -27,7 +27,9 @@ const NewsPreview = createClass({
       categories.includes('ue-romania')
     );
 
+    // Check for new simplified structure (content field) or old structure (backward compatible)
     const cutiaIsFilled = cutiaUngheni && (
+      cutiaUngheni.get('content') ||
       cutiaUngheni.get('impact_local') ||
       cutiaUngheni.get('ce_se_schimba') ||
       cutiaUngheni.get('termene')
@@ -111,24 +113,32 @@ const NewsPreview = createClass({
       // Cutia Ungheni (if present)
       cutiaIsFilled && h('aside', {className: 'cutia-ungheni'},
         h('h2', {className: 'cutia-title'},
-          cutiaUngheni.get('title') || '📦 Cutia Ungheni'
+          cutiaUngheni.get('title') || 'De ce contează pentru Ungheni'
         ),
-        cutiaUngheni.get('impact_local') && h('div', {className: 'cutia-section'},
-          h('h3', {}, 'Impact Local'),
-          h('p', {}, cutiaUngheni.get('impact_local'))
-        ),
-        cutiaUngheni.get('ce_se_schimba') && h('div', {className: 'cutia-section'},
-          h('h3', {}, 'Ce se schimbă pentru locuitori'),
-          h('p', {}, cutiaUngheni.get('ce_se_schimba'))
-        ),
-        cutiaUngheni.get('termene') && h('div', {className: 'cutia-section'},
-          h('h3', {}, 'Termene importante'),
-          h('p', {}, cutiaUngheni.get('termene'))
-        ),
-        cutiaUngheni.get('unde_aplici') && h('div', {className: 'cutia-section'},
-          h('h3', {}, 'Unde aplici / Informații'),
-          h('p', {}, cutiaUngheni.get('unde_aplici'))
-        )
+        // New simplified structure: single rich content field
+        cutiaUngheni.get('content') && h('div', {
+          className: 'cutia-content',
+          dangerouslySetInnerHTML: {__html: cutiaUngheni.get('content')}
+        }),
+        // Backward compatibility: old multi-field structure
+        !cutiaUngheni.get('content') && [
+          cutiaUngheni.get('impact_local') && h('div', {className: 'cutia-section'},
+            h('h3', {}, 'Impact Local'),
+            h('p', {}, cutiaUngheni.get('impact_local'))
+          ),
+          cutiaUngheni.get('ce_se_schimba') && h('div', {className: 'cutia-section'},
+            h('h3', {}, 'Ce se schimbă pentru locuitori'),
+            h('p', {}, cutiaUngheni.get('ce_se_schimba'))
+          ),
+          cutiaUngheni.get('termene') && h('div', {className: 'cutia-section'},
+            h('h3', {}, 'Termene importante'),
+            h('p', {}, cutiaUngheni.get('termene'))
+          ),
+          cutiaUngheni.get('unde_aplici') && h('div', {className: 'cutia-section'},
+            h('h3', {}, 'Unde aplici / Informații'),
+            h('p', {}, cutiaUngheni.get('unde_aplici'))
+          )
+        ]
       ),
 
       // Additional validation info footer

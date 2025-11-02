@@ -1,0 +1,163 @@
+{{ define "main" }}
+{{/*
+  Series Landing Page
+
+  Reporter perspective: "Show all parts of my investigation in order"
+  Reader perspective: "Let me binge-read this whole series"
+*/}}
+
+{{ $seriesSlug := .Data.Term }}
+{{ $seriesData := index (where .Site.Data.series "slug" $seriesSlug) 0 }}
+{{ $lang := .Site.Language.Lang }}
+
+<article class="series-landing">
+  <header class="series-hero">
+    {{ if $seriesData }}
+      {{ $langData := index $seriesData $lang }}
+
+      {{/* Cover image if available */}}
+      {{ with $langData.cover }}
+        <div class="series-cover">
+          <img src="{{ . | relURL }}" alt="{{ $langData.title }}" loading="eager">
+        </div>
+      {{ end }}
+
+      <div class="series-header-content">
+        {{/* Status badge */}}
+        <div class="series-meta">
+          {{ if eq $seriesData.status "ongoing" }}
+            <span class="series-status series-status--ongoing">
+              {{ if eq $lang "ro" }}🟢 Serie activă{{ else }}🟢 Активная серия{{ end }}
+            </span>
+          {{ else if eq $seriesData.status "completed" }}
+            <span class="series-status series-status--completed">
+              {{ if eq $lang "ro" }}✅ Serie finalizată{{ else }}✅ Завершенная серия{{ end }}
+            </span>
+          {{ else if eq $seriesData.status "paused" }}
+            <span class="series-status series-status--paused">
+              {{ if eq $lang "ro" }}⏸️ În pauză{{ else }}⏸️ На паузе{{ end }}
+            </span>
+          {{ end }}
+
+          {{ with $seriesData.started }}
+            <time datetime="{{ . }}">{{ . | time.Format "January 2006" }}</time>
+          {{ end }}
+        </div>
+
+        <h1 class="series-title">{{ $langData.title | default .Title }}</h1>
+
+        {{ with $langData.lead }}
+          <p class="series-lead">{{ . }}</p>
+        {{ end }}
+
+        {{ with $langData.description }}
+          <div class="series-description">
+            {{ . | markdownify }}
+          </div>
+        {{ end }}
+
+        {{/* Series progress stats */}}
+        {{ $lang_news_path := printf "/%s/news" $lang }}
+        {{ $news_section := .Site.GetPage $lang_news_path }}
+        {{ $all_lang_pages := $news_section.Pages }}
+        {{ $seriesPages := where $all_lang_pages ".Params.series" "intersect" (slice $seriesSlug) }}
+        {{ $publishedParts := len $seriesPages }}
+
+        <div class="series-stats">
+          <div class="stat">
+            <span class="stat-number">{{ $publishedParts }}</span>
+            <span class="stat-label">{{ i18n "parts_published" }}</span>
+          </div>
+
+          {{ if $seriesData.expected_parts }}
+            <div class="stat">
+              <span class="stat-number">{{ $seriesData.expected_parts }}</span>
+              <span class="stat-label">{{ i18n "total_planned" }}</span>
+            </div>
+
+            {{ if eq $seriesData.status "ongoing" }}
+              {{ $progress := mul (div (float $publishedParts) (float $seriesData.expected_parts)) 100 }}
+              <div class="series-progress-bar">
+                <div class="progress-fill" style="width: {{ $progress }}%"></div>
+              </div>
+            {{ end }}
+          {{ end }}
+        </div>
+      </div>
+    {{ else }}
+      {{/* Fallback if no data file */}}
+      <div class="series-header-content">
+        <h1 class="series-title">{{ .Title }}</h1>
+      </div>
+    {{ end }}
+  </header>
+
+  {{/* All articles in series */}}
+  <div class="series-articles">
+    <h2 class="section-title">{{ i18n "all_parts" }}</h2>
+
+    {{ $lang_news_path := printf "/%s/news" $lang }}
+    {{ $news_section := .Site.GetPage $lang_news_path }}
+    {{ $all_lang_pages := $news_section.Pages }}
+    {{ $seriesPages := where $all_lang_pages ".Params.series" "intersect" (slice $seriesSlug) }}
+
+    {{/* Sort by series_part if available, otherwise by date */}}
+    {{ $sortedPages := $seriesPages }}
+    {{ if and (gt (len $seriesPages) 0) (isset (index $seriesPages 0).Params "series_part") }}
+      {{ $sortedPages = sort $seriesPages ".Params.series_part" }}
+    {{ else }}
+      {{ $sortedPages = sort $seriesPages "Date" }}
+    {{ end }}
+
+    <div class="series-list">
+      {{ range $index, $page := $sortedPages }}
+        <article class="series-article-card">
+          <div class="card-header">
+            {{ with $page.Params.series_part }}
+              <span class="part-number">{{ i18n "part" }} {{ . }}{{ with $page.Params.series_total }} {{ i18n "of" }} {{ . }}{{ end }}</span>
+            {{ else }}
+              <span class="part-number">{{ i18n "part" }} {{ add $index 1 }}</span>
+            {{ end }}
+
+            <time datetime="{{ $page.Date.Format "2006-01-02" }}">
+              {{ $page.Date.Format "2 January 2006" }}
+            </time>
+          </div>
+
+          <div class="card-content">
+            {{ with $page.Params.series_subtitle }}
+              <span class="part-subtitle">{{ . }}</span>
+            {{ end }}
+
+            <h3 class="article-title">
+              <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+            </h3>
+
+            {{ with $page.Summary }}
+              <p class="article-summary">{{ . | plainify | truncate 180 }}</p>
+            {{ end }}
+
+            <div class="card-meta">
+              {{ $rawFmt := $page.Params.formats }}
+              {{ $format_slug := cond (reflect.IsSlice $rawFmt) (index ($rawFmt | default slice) 0) $rawFmt }}
+              {{ if $format_slug }}
+                {{ $formatData := index (where $.Site.Data.formats.formats "slug" $format_slug) 0 }}
+                {{ if $formatData }}
+                  {{ $formatLang := index $formatData $lang }}
+                  <span class="format-badge">{{ $formatLang.name }}</span>
+                {{ end }}
+              {{ end }}
+            </div>
+          </div>
+
+          {{ with $page.Params.cover }}
+            <div class="card-image">
+              <img src="{{ . | relURL }}" alt="{{ $page.Title }}" loading="lazy">
+            </div>
+          {{ end }}
+        </article>
+      {{ end }}
+    </div>
+  </div>
+</article>
+{{ end }}

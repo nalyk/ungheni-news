@@ -1,0 +1,24 @@
+{{/*
+  Datawrapper Chart Embed
+
+  Usage: {{< datawrapper "CHART_ID" "HEIGHT" >}}
+  Example: {{< datawrapper "abc123" "600" >}}
+
+  Note: Get chart ID from Datawrapper publish panel
+*/}}
+{{ $id := .Get 0 }}
+{{ $height := .Get 1 | default "400" }}
+<div class="embed-responsive embed-datawrapper">
+  <iframe
+    title="Datawrapper Chart"
+    aria-label="Chart"
+    id="datawrapper-chart-{{ $id }}"
+    src="https://datawrapper.dwcdn.net/{{ $id }}/"
+    scrolling="no"
+    frameborder="0"
+    style="width: 0; min-width: 100% !important; border: none;"
+    height="{{ $height }}"
+    data-external="1">
+  </iframe>
+  <script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r=0;r<e.length;r++)if(e[r].contentWindow===a.source){var i=a.data["datawrapper-height"][t]+"px";e[r].style.height=i}}}))}();</script>
+</div>

@@ -20,6 +20,9 @@ removePathAccents = true
 
 [outputs]
   home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+  taxonomy = ["HTML", "RSS"]
+  term = ["HTML", "RSS"]
 
 [params]
   theme_palette = "modern"
@@ -45,3 +48,26 @@ removePathAccents = true
   author = "authors"
   category = "categories"
   format = "formats"
+  series = "series"
+
+# Related Content Algorithm
+# Automatically suggests similar articles based on tags, categories, and date
+[related]
+  threshold = 40  # Minimum similarity score (0-100). 40 = balanced quality
+  includeNewer = true  # Show articles published after current one
+  toLower = true  # Case-insensitive matching
+
+  [[related.indices]]
+    name = "tags"
+    weight = 80  # Primary matching: shared topics/keywords
+    includeNewer = true
+
+  [[related.indices]]
+    name = "categories"
+    weight = 50  # Secondary matching: same news beat
+    includeNewer = true
+
+  [[related.indices]]
+    name = "date"
+    weight = 10  # Tertiary: slight recency preference
+

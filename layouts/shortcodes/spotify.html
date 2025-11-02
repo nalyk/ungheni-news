@@ -1,0 +1,26 @@
+{{/*
+  Spotify Embed (tracks, albums, playlists, episodes, shows)
+
+  Usage: {{< spotify "TYPE" "ID" >}}
+  Examples:
+    {{< spotify "track" "3n3Ppam7vgaVa1iaRUc9Lp" >}}
+    {{< spotify "episode" "7makk4oTQel546B0PZlDM5" >}}
+    {{< spotify "show" "4rOoJ6Egrf8K2IrywzwOMk" >}}
+
+  Types: track, album, playlist, episode (podcast), show (podcast)
+*/}}
+{{ $type := .Get 0 }}
+{{ $id := .Get 1 }}
+{{ $height := cond (or (eq $type "track") (eq $type "episode")) "152" "352" }}
+<div class="embed-responsive embed-spotify">
+  <iframe
+    style="border-radius:12px"
+    src="https://open.spotify.com/embed/{{ $type }}/{{ $id }}?utm_source=generator"
+    width="100%"
+    height="{{ $height }}"
+    frameBorder="0"
+    allowfullscreen=""
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+    loading="lazy">
+  </iframe>
+</div>

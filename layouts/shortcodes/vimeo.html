@@ -1,0 +1,16 @@
+{{/*
+  Vimeo Embed
+
+  Usage: {{< vimeo "VIDEO_ID" >}}
+  Example: {{< vimeo "123456789" >}}
+*/}}
+{{ $id := .Get 0 }}
+<div class="embed-responsive embed-responsive-16x9">
+  <iframe
+    src="https://player.vimeo.com/video/{{ $id }}?dnt=1"
+    frameborder="0"
+    allow="autoplay; fullscreen; picture-in-picture"
+    allowfullscreen
+    loading="lazy">
+  </iframe>
+</div>

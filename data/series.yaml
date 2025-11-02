@@ -1,0 +1,47 @@
+# Article Series Metadata
+# For investigative journalism and multi-part stories
+
+- slug: "dosarul-fez-ungheni"
+  status: "ongoing"
+  featured: true
+  weight: 1
+  started: "2025-11-01"
+  expected_parts: 5
+  ro:
+    title: "Dosarul FEZ Ungheni: Promisiuni și Realitate"
+    description: "O investigație în cinci părți despre evoluția Zonei Economice Libere Ungheni-Business, de la inaugurare până în prezent. Analizăm promisiunile făcute, investițiile realizate și impactul real asupra economiei locale."
+    lead: "Investigația noastră relevă o prăpastie între promisiunile oficiale și realitatea de pe teren."
+  ru:
+    title: "Дело СЭЗ Унгены: Обещания и реальность"
+    description: "Расследование в пяти частях об эволюции Свободной экономической зоны Унгены-Бизнес, от открытия до наших дней. Анализируем данные обещания, реализованные инвестиции и реальное влияние на местную экономику."
+    lead: "Наше расследование выявляет пропасть между официальными обещаниями и реальностью на местах."
+
+- slug: "frontiera-24h"
+  status: "completed"
+  featured: false
+  weight: 2
+  started: "2025-10-15"
+  expected_parts: 3
+  ro:
+    title: "24 de ore la frontieră: Viața în Albița"
+    description: "Un reportaj în trei părți despre o zi normală la punctul de frontieră Albița-Leușeni. De la primele ore ale dimineții până târziu în noapte, urmărim vameșii, șoferii și localnicii."
+    lead: "O zi la frontieră înseamnă 1000 de povești, 500 de mașini și zero plictiseală."
+  ru:
+    title: "24 часа на границе: Жизнь в Албице"
+    description: "Репортаж в трех частях об обычном дне на пограничном пункте Албица-Леушень. С раннего утра до поздней ночи следим за таможенниками, водителями и местными жителями."
+    lead: "Один день на границе означает 1000 историй, 500 машин и нулевую скуку."
+
+- slug: "bugetul-explicat"
+  status: "paused"
+  featured: false
+  weight: 3
+  started: "2025-09-01"
+  expected_parts: 12
+  ro:
+    title: "Bugetul Ungheni Explicat"
+    description: "Serie lunară despre bugetul orașului Ungheni. Unde se duc banii, cine decide, ce proiecte primesc finanțare. Explicații simple pentru cetățeni."
+    lead: "Fiecare leu din buget este banii tăi. Merită să știi unde se duc."
+  ru:
+    title: "Бюджет Унгень Объяснен"
+    description: "Ежемесячная серия о бюджете города Унгень. Куда идут деньги, кто решает, какие проекты получают финансирование. Простые объяснения для жителей."
+    lead: "Каждый лей из бюджета — ваши деньги. Стоит знать, куда они идут."

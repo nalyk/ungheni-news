@@ -1,0 +1,12 @@
+{{/*
+  Generic Embed - For any platform not covered by specific shortcodes
+
+  Usage: {{< embed "FULL_IFRAME_CODE" >}}
+  Example: {{< embed `<iframe src="https://..." width="600" height="400"></iframe>` >}}
+
+  IMPORTANT: Use backticks (`) for the parameter, not quotes
+*/}}
+{{ $code := .Get 0 }}
+<div class="embed-responsive embed-generic">
+  {{ $code | safeHTML }}
+</div>

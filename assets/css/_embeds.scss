@@ -1,0 +1,354 @@
+/**
+ * MULTIMEDIA EMBEDS - Responsive containers for all platforms
+ *
+ * Supports: YouTube, TikTok, Instagram, Facebook, Twitter/X, Telegram,
+ * Spotify, SoundCloud, Vimeo, Datawrapper, Flourish, Google Maps
+ *
+ * Usage: Automatically applied by Hugo shortcodes in layouts/shortcodes/
+ */
+
+/* ===============================================
+   BASE RESPONSIVE EMBED CONTAINER
+   =============================================== */
+
+.embed-responsive {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: var(--space-8) auto;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.embed-responsive iframe,
+.embed-responsive object,
+.embed-responsive embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ===============================================
+   ASPECT RATIO VARIANTS
+   =============================================== */
+
+/* 16:9 - Standard video (YouTube, Vimeo, most videos) */
+.embed-responsive-16x9 {
+  padding-top: 56.25%; /* 9/16 = 0.5625 */
+}
+
+.embed-responsive-16x9::before {
+  display: block;
+  content: "";
+}
+
+/* 4:3 - Maps and older videos */
+.embed-responsive-4x3 {
+  padding-top: 75%; /* 3/4 = 0.75 */
+}
+
+/* 9:16 - Vertical video (TikTok, Instagram Reels, Stories) */
+.embed-responsive-9x16 {
+  padding-top: 177.78%; /* 16/9 = 1.7778 */
+  max-width: 605px; /* TikTok recommended max width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===============================================
+   PLATFORM-SPECIFIC STYLES
+   =============================================== */
+
+/* YouTube - Privacy-enhanced */
+.embed-youtube {
+  background: #000;
+}
+
+/* TikTok - Vertical video, centered */
+.embed-tiktok {
+  background: transparent;
+  padding-top: 0 !important; /* TikTok embeds handle their own sizing */
+  position: relative;
+}
+
+.embed-tiktok blockquote {
+  margin: 0 auto;
+  min-width: 325px;
+  max-width: 605px;
+}
+
+/* Instagram - Centered, native sizing */
+.embed-instagram {
+  padding-top: 0 !important;
+  text-align: center;
+}
+
+.embed-instagram blockquote {
+  margin: 0 auto !important;
+  min-width: 326px;
+  max-width: 540px;
+}
+
+/* Facebook - Multiple content types */
+
+/* Facebook Posts - Native height, centered */
+.embed-facebook-post {
+  padding-top: 0 !important;
+  text-align: center;
+}
+
+.embed-facebook-post iframe {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 500px;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Facebook Horizontal Video - 16:9 responsive */
+.embed-facebook-video {
+  background: #000;
+}
+
+.embed-facebook-video iframe {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Facebook Vertical Video/Reels - 9:16 responsive */
+.embed-facebook-video-vertical {
+  background: #000;
+}
+
+.embed-facebook-video-vertical iframe {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Twitter/X - Centered, native sizing */
+.embed-twitter {
+  padding-top: 0 !important;
+  text-align: center;
+}
+
+.embed-twitter blockquote {
+  margin: 0 auto;
+}
+
+/* Telegram - Native sizing */
+.embed-telegram {
+  padding-top: 0 !important;
+  text-align: center;
+}
+
+/* Spotify - Fixed height based on type */
+.embed-spotify {
+  padding-top: 0 !important;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.embed-spotify iframe {
+  position: relative !important;
+  display: block;
+}
+
+/* SoundCloud - Fixed height */
+.embed-soundcloud {
+  padding-top: 0 !important;
+}
+
+.embed-soundcloud iframe {
+  position: relative !important;
+  display: block;
+}
+
+/* Datawrapper - Responsive height with script */
+.embed-datawrapper {
+  padding-top: 0 !important;
+}
+
+.embed-datawrapper iframe {
+  position: relative !important;
+  display: block;
+  width: 100% !important;
+  min-width: 100% !important;
+  border: none;
+}
+
+/* Flourish - Native responsive sizing */
+.embed-flourish {
+  padding-top: 0 !important;
+}
+
+.embed-flourish .flourish-embed {
+  margin: 0 auto;
+}
+
+/* Google Maps */
+.embed-maps {
+  background: #f0f0f0;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+/* Generic embed fallback */
+.embed-generic {
+  padding-top: 0 !important;
+}
+
+.embed-generic iframe {
+  position: relative !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ===============================================
+   ACCESSIBILITY & LOADING STATES
+   =============================================== */
+
+/* Loading placeholder */
+.embed-responsive::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  animation: embed-spinner 0.8s linear infinite;
+  z-index: -1;
+}
+
+@keyframes embed-spinner {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Hide spinner once iframe loads */
+.embed-responsive iframe[src] ~ ::before {
+  display: none;
+}
+
+/* ===============================================
+   RESPONSIVE ADJUSTMENTS
+   =============================================== */
+
+/* Mobile: Full width with spacing */
+@media (max-width: 640px) {
+  .embed-responsive {
+    margin: var(--space-6) calc(-1 * var(--space-4));
+    width: calc(100% + (2 * var(--space-4)));
+    max-width: none;
+  }
+
+  /* TikTok mobile optimization */
+  .embed-tiktok {
+    margin: var(--space-6) auto;
+    width: 100%;
+  }
+
+  /* Instagram mobile optimization */
+  .embed-instagram blockquote {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* Tablet: Constrained width */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .embed-responsive {
+    max-width: 90%;
+  }
+}
+
+/* Desktop: Optimal reading width */
+@media (min-width: 1025px) {
+  .embed-responsive {
+    max-width: 800px;
+  }
+
+  /* TikTok stays narrower on desktop (vertical video) */
+  .embed-tiktok {
+    max-width: 450px;
+  }
+}
+
+/* ===============================================
+   PRINT STYLES
+   =============================================== */
+
+@media print {
+  .embed-responsive {
+    display: none; /* Don't print embeds - show URL in article */
+  }
+
+  .embed-responsive::after {
+    display: block;
+    content: "[Multimedia content - see online version]";
+    padding: var(--space-4);
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-style: italic;
+  }
+}
+
+/* ===============================================
+   DARK MODE SUPPORT (future-proof)
+   =============================================== */
+
+@media (prefers-color-scheme: dark) {
+  .embed-responsive::before {
+    border-color: rgba(255, 255, 255, 0.2);
+    border-top-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .embed-maps {
+    background: #1a1a1a;
+    border-color: #333;
+  }
+}
+
+/* ===============================================
+   CONTENT SECURITY & PRIVACY
+   =============================================== */
+
+/* Ensure embeds are sandboxed for security */
+.embed-responsive iframe {
+  /* CSP-compliant attributes handled in shortcode templates */
+  /* loading="lazy" for performance */
+  /* referrerpolicy for privacy */
+}
+
+/* ===============================================
+   ACCESSIBILITY ENHANCEMENTS
+   =============================================== */
+
+/* Skip link for keyboard users */
+.embed-responsive:focus-within {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+/* Screen reader text for context */
+.embed-responsive[aria-label]::before {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

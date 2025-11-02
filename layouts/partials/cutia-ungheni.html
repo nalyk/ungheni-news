@@ -1,21 +1,45 @@
 {{ with .Params.cutia_ungheni }}
 <aside class="cutia-ungheni">
-  <h3 class="cutia-title">De ce contează pentru Ungheni</h3>
+  {{/* Title: custom or default */}}
   {{ if .title }}
-    <h2 class="cutia-custom-title">{{ .title }}</h2>
+    <h2 class="cutia-title">{{ .title }}</h2>
+  {{ else }}
+    <h2 class="cutia-title">De ce contează pentru Ungheni</h2>
   {{ end }}
-  <div class="cutia-content">
-    {{ if reflect.IsMap . }}
-      <ul>
-        {{ range $key, $value := . }}
-          {{ if ne $key "title" }}
-            <li><strong>{{ $key | humanize }}:</strong> {{ $value | markdownify }}</li>
-          {{ end }}
-        {{ end }}
-      </ul>
-    {{ else }}
-      <p>{{ . | markdownify }}</p>
-    {{ end }}
-  </div>
+
+  {{/* New simplified structure: single rich content field */}}
+  {{ if .content }}
+    <div class="cutia-content">
+      {{ .content | markdownify }}
+    </div>
+  {{ else }}
+    {{/* Backward compatibility: old multi-field structure */}}
+    <div class="cutia-content">
+      {{ with .impact_local }}
+        <div class="cutia-section">
+          <h3>Impact Local</h3>
+          <p>{{ . | markdownify }}</p>
+        </div>
+      {{ end }}
+      {{ with .ce_se_schimba }}
+        <div class="cutia-section">
+          <h3>Ce se schimbă pentru locuitori</h3>
+          <p>{{ . | markdownify }}</p>
+        </div>
+      {{ end }}
+      {{ with .termene }}
+        <div class="cutia-section">
+          <h3>Termene importante</h3>
+          <p>{{ . | markdownify }}</p>
+        </div>
+      {{ end }}
+      {{ with .unde_aplici }}
+        <div class="cutia-section">
+          <h3>Unde aplici / Informații</h3>
+          <p>{{ . | markdownify }}</p>
+        </div>
+      {{ end }}
+    </div>
+  {{ end }}
 </aside>
 {{ end }}

@@ -38,9 +38,15 @@
   {{/* Verification box for sources and methodology */}}
   {{ partial "verification-box.html" . }}
 
+  {{/* Series navigation - shows when article is part of a multi-part series */}}
+  {{ partial "series-navigation.html" . }}
+
   <div class="article-content">
     {{ .Content }}
   </div>
+
+  {{/* Related articles section - helps readers discover similar content */}}
+  {{ partial "related-articles.html" . }}
 
 </article>
 {{ end }}

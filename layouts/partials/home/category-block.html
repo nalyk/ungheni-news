@@ -1,13 +1,13 @@
 {{ $category_slug := .category }}
 {{ $limit := .limit | default 4 }}
-{{ $lang_news_path := printf "/%s/news" .context.Site.Language.Lang }}
-{{ $sec := .context.Site.GetPage $lang_news_path }}
+{{/* WORKAROUND: Extract language from URL since .Site.Language.Lang returns default lang */}}
+{{ $url_parts := split .context.RelPermalink "/" }}
+{{ $lang := index $url_parts 1 }}
+{{ if not $lang }}{{ $lang = .context.Site.Language.Lang }}{{ end }}
+{{/* WORKAROUND: .Site.GetPage doesn't work for non-default language sections, use AllPages filter */}}
+{{ $lang_news_path := printf "/%s/news/" $lang }}
+{{ $sec := index (where .context.Site.AllPages "RelPermalink" $lang_news_path) 0 }}
 {{ $all := cond (ne $sec nil) ($sec.RegularPages | default $sec.Pages) (slice) }}
-{{ if eq (len $all) 0 }}
-  {{ $lang_news_path := printf "/%s/news" .context.Site.Language.Lang }}
-  {{ $sec := .context.Site.GetPage $lang_news_path }}
-  {{ $all = cond (ne $sec nil) ($sec.RegularPages | default $sec.Pages) (slice) }}
-{{ end }}
 
 {{/* Build a robust page list where categories may be string or list */}}
 {{ $.Scratch.Set "_cat_pages" (slice) }}

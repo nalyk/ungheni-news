@@ -1,0 +1,61 @@
+{{/*
+  Facebook Post/Video Embed - Responsive for all content types
+
+  Usage: {{< facebook "URL" "TYPE" >}}
+
+  Types:
+    - "post" (default) - Text posts, photos, mixed content (native height)
+    - "video" - Horizontal video (16:9 responsive)
+    - "video-vertical" - Vertical video/Reels (9:16 responsive)
+
+  Examples:
+    {{< facebook "https://www.facebook.com/user/posts/123" >}}
+    {{< facebook "https://www.facebook.com/user/posts/123" "post" >}}
+    {{< facebook "https://www.facebook.com/user/videos/456" "video" >}}
+    {{< facebook "https://www.facebook.com/user/videos/789" "video-vertical" >}}
+*/}}
+{{ $url := .Get 0 }}
+{{ $type := .Get 1 | default "post" }}
+
+{{ if eq $type "video" }}
+  {{/* Horizontal video - 16:9 responsive container */}}
+  <div class="embed-responsive embed-responsive-16x9 embed-facebook embed-facebook-video">
+    <iframe
+      src="https://www.facebook.com/plugins/video.php?href={{ $url | urlize }}&show_text=false&width=560"
+      style="border:none;overflow:hidden"
+      scrolling="no"
+      frameborder="0"
+      allowfullscreen="true"
+      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+      loading="lazy">
+    </iframe>
+  </div>
+{{ else if eq $type "video-vertical" }}
+  {{/* Vertical video/Reels - 9:16 responsive container */}}
+  <div class="embed-responsive embed-responsive-9x16 embed-facebook embed-facebook-video-vertical">
+    <iframe
+      src="https://www.facebook.com/plugins/video.php?href={{ $url | urlize }}&show_text=false"
+      style="border:none;overflow:hidden"
+      scrolling="no"
+      frameborder="0"
+      allowfullscreen="true"
+      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+      loading="lazy">
+    </iframe>
+  </div>
+{{ else }}
+  {{/* Default: Post/Photo - Native height */}}
+  <div class="embed-responsive embed-facebook embed-facebook-post">
+    <iframe
+      src="https://www.facebook.com/plugins/post.php?href={{ $url | urlize }}&show_text=true&width=500"
+      width="500"
+      height="auto"
+      style="border:none;overflow:hidden"
+      scrolling="no"
+      frameborder="0"
+      allowfullscreen="true"
+      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+      loading="lazy">
+    </iframe>
+  </div>
+{{ end }}

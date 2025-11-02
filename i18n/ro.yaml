@@ -223,3 +223,40 @@
   translation: "Termeni și condiții"
 - id: privacy
   translation: "Politica de confidențialitate"
+# Series / Collections
+- id: series
+  translation: "Serii"
+- id: part
+  translation: "Partea"
+- id: of
+  translation: "din"
+- id: parts
+  translation: "părți"
+- id: previous_part
+  translation: "Partea anterioară"
+- id: next_part
+  translation: "Partea următoare"
+- id: coming_soon
+  translation: "În curând"
+- id: coming_on
+  translation: "Apare pe"
+- id: view_all_parts
+  translation: "Vezi toate părțile"
+- id: all_parts
+  translation: "Toate părțile"
+- id: parts_published
+  translation: "Părți publicate"
+- id: total_planned
+  translation: "Total planificat"
+- id: complete
+  translation: "completat"
+- id: completed_on
+  translation: "Finalizat pe"
+- id: investigative_series
+  translation: "Serii investigative"
+- id: latest_part
+  translation: "Ultima parte"
+- id: series_navigation
+  translation: "Navigare serie"
+- id: pagination
+  translation: "Navigare pagini"

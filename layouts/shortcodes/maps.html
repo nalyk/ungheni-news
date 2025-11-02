@@ -1,0 +1,20 @@
+{{/*
+  Google Maps Embed
+
+  Usage: {{< maps "EMBED_URL_OR_PLACE_ID" >}}
+  Example: {{< maps "https://www.google.com/maps/embed?pb=..." >}}
+
+  Note: Get embed URL from Google Maps > Share > Embed a map
+*/}}
+{{ $url := .Get 0 }}
+<div class="embed-responsive embed-responsive-4x3 embed-maps">
+  <iframe
+    src="{{ if hasPrefix $url "http" }}{{ $url }}{{ else }}https://www.google.com/maps/embed?pb={{ $url }}{{ end }}"
+    width="600"
+    height="450"
+    style="border:0;"
+    allowfullscreen=""
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade">
+  </iframe>
+</div>

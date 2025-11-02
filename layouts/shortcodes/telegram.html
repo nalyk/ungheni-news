@@ -1,0 +1,16 @@
+{{/*
+  Telegram Post Embed
+
+  Usage: {{< telegram "CHANNEL_NAME" "MESSAGE_ID" >}}
+  Example: {{< telegram "durov" "123" >}}
+
+  Note: Get from URL like t.me/durov/123
+*/}}
+{{ $channel := .Get 0 }}
+{{ $id := .Get 1 }}
+<div class="embed-responsive embed-telegram">
+  <script async src="https://telegram.org/js/telegram-widget.js?22"
+    data-telegram-post="{{ $channel }}/{{ $id }}"
+    data-width="100%">
+  </script>
+</div>

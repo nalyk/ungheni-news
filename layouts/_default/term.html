@@ -1,0 +1,44 @@
+{{ define "main" }}
+  <header class="list-header">
+    <h1 class="list-title">{{ .Title }}</h1>
+    {{ with .Content }}
+      <div class="list-description">{{ . }}</div>
+    {{ end }}
+  </header>
+
+  {{/* Get pages from current language's news section to avoid cross-language content */}}
+  {{ $lang := .Site.Language.Lang }}
+  {{ $lang_news_path := printf "/%s/news" $lang }}
+  {{ $news_section := .Site.GetPage $lang_news_path }}
+  {{/* Get all pages from the language-specific section */}}
+  {{ $all_lang_pages := $news_section.Pages }}
+
+  {{/* Filter by current taxonomy type (categories, formats, tags, series, authors) */}}
+  {{ $taxonomy_type := .Data.Plural }}
+  {{ $pages := slice }}
+  {{ if eq $taxonomy_type "categories" }}
+    {{ $pages = where $all_lang_pages ".Params.categories" "intersect" (slice .Data.Term) }}
+  {{ else if eq $taxonomy_type "formats" }}
+    {{ $pages = where $all_lang_pages ".Params.formats" "intersect" (slice .Data.Term) }}
+  {{ else if eq $taxonomy_type "tags" }}
+    {{ $pages = where $all_lang_pages ".Params.tags" "intersect" (slice .Data.Term) }}
+  {{ else if eq $taxonomy_type "series" }}
+    {{ $pages = where $all_lang_pages ".Params.series" "intersect" (slice .Data.Term) }}
+  {{ else if eq $taxonomy_type "authors" }}
+    {{ $pages = where $all_lang_pages ".Params.authors" "intersect" (slice .Data.Term) }}
+  {{ end }}
+  {{ $p := .Paginate $pages }}
+
+  <div class="newspaper-grid">
+    {{ range $p.Pages }}
+      {{ partial "card.html" (dict "page" . "card_class" "card-standard") }}
+    {{ end }}
+  </div>
+
+  {{/* Pagination Navigation */}}
+  {{ if gt .Paginator.TotalPages 1 }}
+    <nav class="pagination" role="navigation" aria-label="{{ i18n "pagination" }}">
+      {{ template "_internal/pagination.html" . }}
+    </nav>
+  {{ end }}
+{{ end }}

@@ -1,0 +1,74 @@
+{{ define "main" }}
+  <header class="list-header">
+    <h1 class="list-title">{{ .Title }}</h1>
+  </header>
+
+  {{/* Get all pages from current language's news section */}}
+  {{ $lang := .Site.Language.Lang }}
+  {{ $lang_news_path := printf "/%s/news" $lang }}
+  {{ $news_section := .Site.GetPage $lang_news_path }}
+  {{ $all_pages := $news_section.Pages }}
+
+  {{/* Filter by taxonomy term from front matter */}}
+  {{ $taxonomy := .Params.taxonomy }}
+  {{ $term := .Params.term }}
+  {{ $filtered := slice }}
+
+  {{ if eq $taxonomy "categories" }}
+    {{ $filtered = where $all_pages ".Params.categories" "intersect" (slice $term) }}
+  {{ else if eq $taxonomy "formats" }}
+    {{ $filtered = where $all_pages ".Params.formats" "intersect" (slice $term) }}
+  {{ else if eq $taxonomy "tags" }}
+    {{ $filtered = where $all_pages ".Params.tags" "intersect" (slice $term) }}
+  {{ else if eq $taxonomy "series" }}
+    {{ $filtered = where $all_pages ".Params.series" "intersect" (slice $term) }}
+  {{ else if eq $taxonomy "authors" }}
+    {{ $filtered = where $all_pages ".Params.authors" "intersect" (slice $term) }}
+  {{ end }}
+
+  {{/* Manual pagination since .Paginate doesn't work for single pages */}}
+  {{ $pagerSize := 12 }}
+  {{ $currentPage := 1 }}
+  {{ with .Params.page }}{{ $currentPage = . }}{{ end }}
+
+  {{ $totalPages := div (add (len $filtered) (sub $pagerSize 1)) $pagerSize }}
+  {{ $start := mul (sub $currentPage 1) $pagerSize }}
+  {{ $end := add $start $pagerSize }}
+  {{ if gt $end (len $filtered) }}{{ $end = len $filtered }}{{ end }}
+
+  {{ $paginated := slice }}
+  {{ range $i, $p := $filtered }}
+    {{ if and (ge $i $start) (lt $i $end) }}
+      {{ $paginated = $paginated | append $p }}
+    {{ end }}
+  {{ end }}
+
+  <div class="newspaper-grid">
+    {{ range $paginated }}
+      {{ partial "card.html" (dict "page" . "card_class" "card-standard") }}
+    {{ end }}
+  </div>
+
+  {{/* Manual pagination navigation */}}
+  {{ if gt $totalPages 1 }}
+    <nav class="pagination" role="navigation" aria-label="{{ i18n "pagination" }}">
+      <ul class="pagination-list">
+        {{ if gt $currentPage 1 }}
+          <li><a href="{{ if eq $currentPage 2 }}{{ .RelPermalink }}{{ else }}{{ .RelPermalink }}page/{{ sub $currentPage 1 }}/{{ end }}" class="pagination-link">← {{ i18n "previous" }}</a></li>
+        {{ end }}
+
+        {{ range seq $totalPages }}
+          {{ if eq . $currentPage }}
+            <li><span class="pagination-link current">{{ . }}</span></li>
+          {{ else }}
+            <li><a href="{{ if eq . 1 }}{{ $.RelPermalink }}{{ else }}{{ $.RelPermalink }}page/{{ . }}/{{ end }}" class="pagination-link">{{ . }}</a></li>
+          {{ end }}
+        {{ end }}
+
+        {{ if lt $currentPage $totalPages }}
+          <li><a href="{{ .RelPermalink }}page/{{ add $currentPage 1 }}/" class="pagination-link">{{ i18n "next" }} →</a></li>
+        {{ end }}
+      </ul>
+    </nav>
+  {{ end }}
+{{ end }}

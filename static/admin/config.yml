@@ -105,11 +105,19 @@ collections:
         collapsed: false
         hint: "⚠️ OBLIGATORIU pentru articole cu categoriile 'Național' și 'UE & România'. Lasă gol pentru articole locale. Explică CONCRET ce înseamnă știrea pentru locuitorii din Ungheni."
         fields:
-          - { name: title, label: "Titlu secțiune Cutia", widget: string, required: false, hint: "Titlu personalizat pentru secțiunea Cutia Ungheni (ex: 'Unde se văd banii la Ungheni?', 'De ce contează la Ungheni?')" }
-          - { name: impact_local, label: "Impact Local", widget: text, required: false, hint: "Cum afectează această știre comunitatea din Ungheni? Fie SPECIFIC!" }
-          - { name: ce_se_schimba, label: "Ce se schimbă pentru locuitori", widget: text, required: false, hint: "Schimbări concrete în viața de zi cu zi a unghenilor" }
-          - { name: termene, label: "Termene importante", widget: text, required: false, hint: "Deadline-uri, date limită, calendare relevante pentru Ungheni" }
-          - { name: unde_aplici, label: "Unde aplici/informații", widget: text, required: false, hint: "Instituții locale din Ungheni, contacte, proceduri" }
+          - name: title
+            label: "Titlu secțiune (opțional)"
+            widget: "string"
+            required: false
+            hint: "Titlu personalizat pentru secțiunea Cutia (ex: 'Unde se văd banii la Ungheni?', 'De ce contează?'). Dacă lași gol, se va folosi titlul standard."
+          - name: content
+            label: "Conținut"
+            widget: "markdown"
+            required: false
+            hint: "Explică impactul local concret: cum afectează locuitorii din Ungheni, ce se schimbă, termene importante, unde pot aplica/obține informații. Folosește formatare: **bold**, _italic_, [link](url), liste, etc."
+            buttons: ["bold", "italic", "link", "heading-three", "quote", "bulleted-list", "numbered-list"]
+            editor_components: []
+            modes: ["rich_text", "raw"]
 
       - name: formats
         label: "Format Editorial"
@@ -199,7 +207,60 @@ collections:
         widget: "list"
         required: false
         hint: "Cuvinte cheie pentru căutare și clasificare (3-7 etichete recomandate)"
-        
+
+      # Related Articles (for cross-referencing)
+      - name: related_articles
+        label: "🔗 Articole similare recomandate"
+        widget: "relation"
+        collection: "news_ro"
+        search_fields: ["title", "summary", "slug"]
+        value_field: "{{slug}}"
+        display_fields: ["title", "date"]
+        multiple: true
+        required: false
+        min: 0
+        max: 5
+        hint: "OPȚIONAL: Selectează manual 3-5 articole similare pentru cititori. Dacă lași gol, sistemul le va selecta automat pe baza etichetelor și categoriilor. Folosește pentru articole importante sau investigații cu mai multe părți."
+
+      # Series (for multi-part investigative journalism)
+      - name: series
+        label: "📚 Parte dintr-o Serie"
+        widget: "list"
+        required: false
+        max: 1
+        collapsed: true
+        hint: "OPȚIONAL: Dacă acest articol face parte dintr-o investigație în mai multe părți, introdu slug-ul seriei (ex: 'dosarul-fez-ungheni'). Consultă secțiunea 'Serii Investigative' pentru lista de serii disponibile."
+        field: { name: series_slug, label: "Slug Serie", widget: string }
+
+      - name: series_part
+        label: "Număr Parte"
+        widget: "number"
+        required: false
+        min: 1
+        hint: "Dacă articolul este parte dintr-o serie: ce parte este (ex: 1, 2, 3)?"
+
+      - name: series_total
+        label: "Total Părți Planificate"
+        widget: "number"
+        required: false
+        min: 1
+        hint: "OPȚIONAL: Câte părți în total sunt planificate pentru serie (ex: 5 pentru 'Partea 2 din 5')"
+
+      - name: series_subtitle
+        label: "Subtitlu Parte Serie"
+        widget: "string"
+        required: false
+        hint: "OPȚIONAL: Un subtitlu descriptiv pentru această parte (ex: 'Promisiunile inițiale', 'Bilanțul după 3 ani')"
+
+      - name: series_next_date
+        label: "Data Următoarei Părți"
+        widget: "datetime"
+        required: false
+        format: "YYYY-MM-DD"
+        date_format: "DD.MM.YYYY"
+        time_format: false
+        hint: "OPȚIONAL: Pentru seria activă, când apare următoarea parte? (se afișează în navigarea seriei)"
+
       # SEO & Social
       - name: seo
         label: "🔍 SEO & Social Sharing"
@@ -275,11 +336,19 @@ collections:
         collapsed: false
         hint: "⚠️ ОБЯЗАТЕЛЬНО для статей с категориями 'Национальные' и 'ЕС и Румыния'. Оставьте пустым для местных статей. Объясните КОНКРЕТНО, что означает новость для жителей Унгень."
         fields:
-          - { name: title, label: "Заголовок раздела Коробка", widget: string, required: false, hint: "Персонализированный заголовок для раздела Коробка Унгень (например: 'Где видны деньги в Унгень?', 'Почему это важно для Унгень?')" }
-          - { name: impact_local, label: "Местное воздействие", widget: text, required: false, hint: "Как эта новость влияет на общину Унгень? Будьте КОНКРЕТНЫ!" }
-          - { name: ce_se_schimba, label: "Что изменится для жителей", widget: text, required: false, hint: "Конкретные изменения в повседневной жизни жителей Унгень" }
-          - { name: termene, label: "Важные сроки", widget: text, required: false, hint: "Дедлайны, предельные даты, актуальные календари для Унгень" }
-          - { name: unde_aplici, label: "Где подавать/информация", widget: text, required: false, hint: "Местные учреждения Унгень, контакты, процедуры" }
+          - name: title
+            label: "Заголовок раздела (необязательно)"
+            widget: "string"
+            required: false
+            hint: "Персонализированный заголовок для раздела Коробка (например: 'Где видны деньги в Унгень?', 'Почему это важно?'). Если пусто, будет использован стандартный заголовок."
+          - name: content
+            label: "Содержание"
+            widget: "markdown"
+            required: false
+            hint: "Объясните конкретное местное воздействие: как это влияет на жителей Унгень, что изменится, важные сроки, где можно подать заявку/получить информацию. Используйте форматирование: **жирный**, _курсив_, [ссылка](url), списки, и т.д."
+            buttons: ["bold", "italic", "link", "heading-three", "quote", "bulleted-list", "numbered-list"]
+            editor_components: []
+            modes: ["rich_text", "raw"]
 
       - name: formats
         label: "Формат редакции"
@@ -369,7 +438,60 @@ collections:
         widget: "list"
         required: false
         hint: "Ключевые слова для поиска и классификации (рекомендуется 3-7 тегов)"
-        
+
+      # Related Articles (for cross-referencing)
+      - name: related_articles
+        label: "🔗 Рекомендуемые похожие материалы"
+        widget: "relation"
+        collection: "news_ru"
+        search_fields: ["title", "summary", "slug"]
+        value_field: "{{slug}}"
+        display_fields: ["title", "date"]
+        multiple: true
+        required: false
+        min: 0
+        max: 5
+        hint: "НЕОБЯЗАТЕЛЬНО: Выберите вручную 3-5 похожих статей для читателей. Если оставить пустым, система автоматически подберет их на основе тегов и категорий. Используйте для важных статей или расследований из нескольких частей."
+
+      # Series (for multi-part investigative journalism)
+      - name: series
+        label: "📚 Часть Серии"
+        widget: "list"
+        required: false
+        max: 1
+        collapsed: true
+        hint: "НЕОБЯЗАТЕЛЬНО: Если эта статья является частью расследования из нескольких частей, введите слаг серии (например: 'dosarul-fez-ungheni'). Смотрите раздел 'Серии Расследования' для списка доступных серий."
+        field: { name: series_slug, label: "Слаг Серии", widget: string }
+
+      - name: series_part
+        label: "Номер Части"
+        widget: "number"
+        required: false
+        min: 1
+        hint: "Если статья является частью серии: какая это часть (например: 1, 2, 3)?"
+
+      - name: series_total
+        label: "Всего Частей Запланировано"
+        widget: "number"
+        required: false
+        min: 1
+        hint: "НЕОБЯЗАТЕЛЬНО: Сколько всего частей запланировано для серии (например: 5 для 'Часть 2 из 5')"
+
+      - name: series_subtitle
+        label: "Подзаголовок Части Серии"
+        widget: "string"
+        required: false
+        hint: "НЕОБЯЗАТЕЛЬНО: Описательный подзаголовок для этой части (например: 'Первоначальные обещания', 'Итоги спустя 3 года')"
+
+      - name: series_next_date
+        label: "Дата Следующей Части"
+        widget: "datetime"
+        required: false
+        format: "YYYY-MM-DD"
+        date_format: "DD.MM.YYYY"
+        time_format: false
+        hint: "НЕОБЯЗАТЕЛЬНО: Для активной серии, когда выйдет следующая часть? (отображается в навигации серии)"
+
       # SEO & Social
       - name: seo
         label: "🔍 SEO и социальные сети"
@@ -433,3 +555,118 @@ collections:
       - { name: title, label: "Название Страницы" }
       - { name: slug, label: "URL Слаг", required: false }
       - { name: body, label: "Содержание", widget: markdown }
+
+  # Series Data File Collection
+  # Manages data/series.yaml for investigative journalism and multi-part stories
+  - name: "series_data"
+    label: "📚 Serii Investigative / Серии Расследования"
+    files:
+      - name: "series"
+        label: "Gestionare Serii / Управление Сериями"
+        file: "data/series.yaml"
+        fields:
+          - name: series_list
+            label: "Lista Seriilor / Список Серий"
+            label_singular: "Serie / Серия"
+            widget: "list"
+            fields:
+              # Unique identifier and status
+              - name: slug
+                label: "Slug (ID unic)"
+                widget: "string"
+                hint: "Identificator unic pentru serie (ex: 'dosarul-fez-ungheni'). Doar litere latine mici, numere, cratimă."
+
+              - name: status
+                label: "Status / Статус"
+                widget: "select"
+                options:
+                  - { label: "🟢 În desfășurare / В процессе", value: "ongoing" }
+                  - { label: "✅ Finalizată / Завершена", value: "completed" }
+                  - { label: "⏸️ În pauză / На паузе", value: "paused" }
+                hint: "Starea curentă a seriei"
+
+              - name: featured
+                label: "Promovează pe homepage / Продвигать на главной"
+                widget: "boolean"
+                default: false
+                required: false
+                hint: "Afișează seria pe prima pagină în secțiunea de serii investigative"
+
+              - name: weight
+                label: "Prioritate (1 = cel mai sus)"
+                widget: "number"
+                required: false
+                min: 1
+                hint: "Ordinea de afișare pe homepage (mai mic = mai sus)"
+
+              - name: started
+                label: "Data începerii"
+                widget: "datetime"
+                required: false
+                format: "YYYY-MM-DD"
+                date_format: "DD.MM.YYYY"
+                time_format: false
+                hint: "Când a început seria (prima publicare)"
+
+              - name: expected_parts
+                label: "Număr de părți planificate"
+                widget: "number"
+                required: false
+                min: 1
+                hint: "Câte articole sunt planificate în total pentru această serie"
+
+              # Romanian metadata
+              - name: ro
+                label: "🇷🇴 Metadate Română"
+                widget: "object"
+                fields:
+                  - name: title
+                    label: "Titlu Serie"
+                    widget: "string"
+                    hint: "Titlul complet al seriei (ex: 'Dosarul FEZ Ungheni: Promisiuni și Realitate')"
+
+                  - name: description
+                    label: "Descriere"
+                    widget: "markdown"
+                    required: false
+                    hint: "Descriere detaliată a seriei (ce investighează, de ce este importantă)"
+
+                  - name: lead
+                    label: "Lead (scurt)"
+                    widget: "text"
+                    required: false
+                    hint: "O propoziție care rezumă esența investigației"
+
+                  - name: cover
+                    label: "Imagine cover"
+                    widget: "image"
+                    required: false
+                    hint: "Imagine principală pentru pagina seriei (recomandare: 1200x630px)"
+
+              # Russian metadata
+              - name: ru
+                label: "🇷🇺 Метаданные на русском"
+                widget: "object"
+                fields:
+                  - name: title
+                    label: "Название Серии"
+                    widget: "string"
+                    hint: "Полное название серии (например: 'Дело СЭЗ Унгены: Обещания и реальность')"
+
+                  - name: description
+                    label: "Описание"
+                    widget: "markdown"
+                    required: false
+                    hint: "Детальное описание серии (что расследуется, почему это важно)"
+
+                  - name: lead
+                    label: "Лид (краткий)"
+                    widget: "text"
+                    required: false
+                    hint: "Одно предложение, резюмирующее суть расследования"
+
+                  - name: cover
+                    label: "Обложка"
+                    widget: "image"
+                    required: false
+                    hint: "Главное изображение для страницы серии (рекомендуется: 1200x630px)"

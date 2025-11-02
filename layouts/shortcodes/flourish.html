@@ -1,0 +1,14 @@
+{{/*
+  Flourish Visualization Embed
+
+  Usage: {{< flourish "VISUALIZATION_ID" >}}
+  Example: {{< flourish "12345678" >}}
+
+  Note: Get visualization ID from Flourish publish panel
+*/}}
+{{ $id := .Get 0 }}
+<div class="embed-responsive embed-flourish">
+  <div class="flourish-embed flourish-chart" data-src="visualisation/{{ $id }}">
+    <script src="https://public.flourish.studio/resources/embed.js"></script>
+  </div>
+</div>
