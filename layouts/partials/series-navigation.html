@@ -1,0 +1,111 @@
+{{/*
+  Series Navigation Widget
+
+  Shows in articles that are part of a series
+  Reporter perspective: "Readers should easily navigate my multi-part investigation"
+  Reader perspective: "Where's the next part?"
+*/}}
+
+{{ $currentPage := . }}
+{{ $series := index ($currentPage.Params.series | default slice) 0 }}
+
+{{ if $series }}
+  {{/* WORKAROUND: Extract language from URL since .Site.Language.Lang returns default lang */}}
+  {{ $url_parts := split .RelPermalink "/" }}
+  {{ $lang := index $url_parts 1 }}
+  {{ if not (or (eq $lang "ro") (eq $lang "ru")) }}{{ $lang = .Site.Language.Lang }}{{ end }}
+  {{ $seriesData := index (where .Site.Data.series "slug" $series) 0 }}
+
+  {{/* Get all articles in this series */}}
+  {{/* WORKAROUND: .Site.GetPage doesn't work for non-default language sections, use AllPages filter */}}
+  {{ $lang_news_path := printf "/%s/news/" $lang }}
+  {{ $news_section := index (where .Site.AllPages "RelPermalink" $lang_news_path) 0 }}
+  {{ $all_lang_pages := cond (ne $news_section nil) ($news_section.RegularPages | default $news_section.Pages) (slice) }}
+  {{ $seriesPages := where $all_lang_pages ".Params.series" "intersect" (slice $series) }}
+
+  {{/* Sort by series_part */}}
+  {{ $sortedPages := sort $seriesPages ".Params.series_part" }}
+
+  {{/* Find current position */}}
+  {{ $currentIndex := 0 }}
+  {{ range $index, $page := $sortedPages }}
+    {{ if eq $page.RelPermalink $currentPage.RelPermalink }}
+      {{ $currentIndex = $index }}
+    {{ end }}
+  {{ end }}
+
+  <aside class="series-navigation" role="navigation" aria-label="{{ i18n "series_navigation" }}">
+    <div class="series-nav-header">
+      {{ if $seriesData }}
+        {{ $langData := index $seriesData $lang }}
+        <h3 class="series-nav-title">
+          <a href="{{ printf "/%s/series/%s/" $lang $series | relURL }}">
+            {{ $langData.title | default $series }}
+          </a>
+        </h3>
+      {{ else }}
+        <h3 class="series-nav-title">
+          <a href="{{ printf "/%s/series/%s/" $lang $series | relURL }}">{{ $series | humanize }}</a>
+        </h3>
+      {{ end }}
+
+      {{ with $currentPage.Params.series_part }}
+        <span class="current-part">{{ i18n "part" }} {{ . }}{{ with $currentPage.Params.series_total }} {{ i18n "of" }} {{ . }}{{ end }}</span>
+      {{ end }}
+    </div>
+
+    {{/* Prev/Next buttons */}}
+    <nav class="series-prev-next">
+      {{ if gt $currentIndex 0 }}
+        {{ $prevPage := index $sortedPages (sub $currentIndex 1) }}
+        <a href="{{ $prevPage.RelPermalink }}" class="series-nav-link series-nav-prev">
+          <span class="nav-arrow">←</span>
+          <span class="nav-content">
+            <span class="nav-label">{{ i18n "previous_part" }}</span>
+            <span class="nav-title">{{ $prevPage.Title | truncate 50 }}</span>
+          </span>
+        </a>
+      {{ end }}
+
+      {{ if lt $currentIndex (sub (len $sortedPages) 1) }}
+        {{ $nextPage := index $sortedPages (add $currentIndex 1) }}
+        <a href="{{ $nextPage.RelPermalink }}" class="series-nav-link series-nav-next">
+          <span class="nav-content">
+            <span class="nav-label">{{ i18n "next_part" }}</span>
+            <span class="nav-title">{{ $nextPage.Title | truncate 50 }}</span>
+          </span>
+          <span class="nav-arrow">→</span>
+        </a>
+      {{ else if and $seriesData (eq $seriesData.status "ongoing") }}
+        <div class="series-nav-upcoming">
+          <span class="nav-label">{{ i18n "next_part" }} →</span>
+          {{ with $currentPage.Params.series_next_date }}
+            <span class="upcoming-date">{{ i18n "coming_on" }} {{ . | time.Format "2 January" }}</span>
+          {{ else }}
+            <span class="upcoming-date">{{ i18n "coming_soon" }}</span>
+          {{ end }}
+        </div>
+      {{ end }}
+    </nav>
+
+    {{/* All parts dropdown */}}
+    <details class="series-all-parts">
+      <summary>{{ i18n "view_all_parts" }} ({{ len $sortedPages }})</summary>
+      <ol class="series-parts-list">
+        {{ range $index, $page := $sortedPages }}
+          <li class="series-part-item{{ if eq $page.RelPermalink $currentPage.RelPermalink }} is-current{{ end }}">
+            {{ if eq $page.RelPermalink $currentPage.RelPermalink }}
+              <span class="part-current">
+                <strong>{{ i18n "part" }} {{ add $index 1 }}:</strong> {{ $page.Title }}
+              </span>
+            {{ else }}
+              <a href="{{ $page.RelPermalink }}">
+                <strong>{{ i18n "part" }} {{ add $index 1 }}:</strong> {{ $page.Title }}
+              </a>
+            {{ end }}
+          </li>
+        {{ end }}
+      </ol>
+    </details>
+  </aside>
+{{ end }}

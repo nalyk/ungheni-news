@@ -1,8 +1,14 @@
 <header class="site-header">
   <div class="container">
     <div class="header-content">
+      {{/* WORKAROUND: Extract language from URL since .Site.Language.Lang returns default lang */}}
+      {{ $url_parts := split .RelPermalink "/" }}
+      {{ $lang := index $url_parts 1 }}
+      {{ if not (or (eq $lang "ro") (eq $lang "ru")) }}{{ $lang = .Site.Language.Lang }}{{ end }}
+      {{ $prefix := cond (eq $lang "ro") "" (printf "/%s" $lang) }}
+
       <div class="masthead">
-        <a href="{{ .Site.Home.RelPermalink }}" class="masthead-link">
+        <a href="{{ $prefix }}/" class="masthead-link">
           <img src="{{ "img/logo.svg" | relURL }}" alt="{{ .Site.Title }} logo" class="masthead-logo" />
           <h1 class="site-title">{{ .Site.Title }}</h1>
         </a>
@@ -10,8 +16,6 @@
 
       <nav class="primary-nav" aria-label="{{ i18n "main_navigation" }}">
         <ul>
-          {{ $prefix := .Site.LanguagePrefix }}
-          {{ $lang := .Site.Language.Lang }}
           {{ $cats := site.Data.categories }}
           {{ range first 7 $cats }}
             {{ $title := cond (eq $lang "ru") (.ru | default .ro) .ro }}
@@ -23,9 +27,18 @@
 
       <div class="header-actions">
         <div class="lang-picker">
-          {{ range $.Sites }}
-            {{ if ne .Language.Lang $.Site.Language.Lang }}
-              <a href="{{ .Home.RelPermalink }}" class="lang-option">{{ .Language.Lang | upper }}</a>
+          {{/* Smart language switcher: respects parity for all page types */}}
+          {{ if .IsTranslated }}
+            {{/* If current page has translation (article, author, category, etc.) - link to it */}}
+            {{ range .Translations }}
+              <a href="{{ .RelPermalink }}" class="lang-option">{{ .Language.Lang | upper }}</a>
+            {{ end }}
+          {{ else }}
+            {{/* No translation available - link to homepage of other language */}}
+            {{ range $.Sites }}
+              {{ if ne .Language.Lang $.Site.Language.Lang }}
+                <a href="{{ .Home.RelPermalink }}" class="lang-option">{{ .Language.Lang | upper }}</a>
+              {{ end }}
             {{ end }}
           {{ end }}
         </div>
@@ -38,8 +51,11 @@
   <div id="mobile-nav" class="mobile-nav">
     <nav>
       <ul>
-        {{ $prefix := .Site.LanguagePrefix }}
-        {{ $lang := .Site.Language.Lang }}
+        {{/* Reuse language detection from above (same workaround pattern) */}}
+        {{ $url_parts := split .RelPermalink "/" }}
+        {{ $lang := index $url_parts 1 }}
+        {{ if not (or (eq $lang "ro") (eq $lang "ru")) }}{{ $lang = .Site.Language.Lang }}{{ end }}
+        {{ $prefix := cond (eq $lang "ro") "" (printf "/%s" $lang) }}
         {{ $cats := site.Data.categories }}
         {{ range $cats }}
           {{ $title := cond (eq $lang "ru") (.ru | default .ro) .ro }}

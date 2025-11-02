@@ -7,7 +7,10 @@
   Usage: {{ partial "byline.html" . }}
 */}}
 
-{{ $lang := .Site.Language.Lang }}
+{{/* WORKAROUND: Extract language from URL since .Site.Language.Lang returns default lang */}}
+{{ $url_parts := split .RelPermalink "/" }}
+{{ $lang := index $url_parts 1 }}
+{{ if not (or (eq $lang "ro") (eq $lang "ru")) }}{{ $lang = .Site.Language.Lang }}{{ end }}
 {{ $hasContributors := and .Params.contributors (gt (len .Params.contributors) 0) }}
 
 <div class="article-byline">
@@ -17,9 +20,10 @@
       {{ $authorSlug := $contributor.author }}
       {{ $role := $contributor.role }}
 
-      {{/* Get author page in current language */}}
-      {{ $authorPath := printf "authors/%s" $authorSlug }}
-      {{ with site.GetPage $authorPath }}
+      {{/* Get author page in current language - use AllPages filtering due to Hugo bug */}}
+      {{ $authorPermalink := cond (eq $lang "ro") (printf "/authors/%s/" $authorSlug) (printf "/%s/authors/%s/" $lang $authorSlug) }}
+      {{ $authorPage := index (where site.AllPages "RelPermalink" $authorPermalink) 0 }}
+      {{ with $authorPage }}
         <div class="contributor" {{ if gt $index 0 }}style="margin-top: 0.75rem;"{{ end }}>
           <div class="contributor-main">
             {{ with .Params.avatar }}
@@ -76,8 +80,10 @@
     <div class="byline-legacy">
       <span class="byline-prefix">{{ if eq $lang "ro" }}De{{ else }}От{{ end }}</span>
       {{ range $index, $authorSlug := .Params.authors }}
-        {{ $authorPath := printf "authors/%s" $authorSlug }}
-        {{ with site.GetPage $authorPath }}
+        {{/* Use AllPages filtering due to Hugo bug with .GetPage */}}
+        {{ $authorPermalink := cond (eq $lang "ro") (printf "/authors/%s/" $authorSlug) (printf "/%s/authors/%s/" $lang $authorSlug) }}
+        {{ $authorPage := index (where site.AllPages "RelPermalink" $authorPermalink) 0 }}
+        {{ with $authorPage }}
           {{ if gt $index 0 }}, {{ end }}
           <a href="{{ .RelPermalink }}" class="author-link">{{ .Title }}</a>
         {{ else }}

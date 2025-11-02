@@ -1,25 +1,49 @@
 {{ define "main" }}
-<section>
-  <h1>{{ .Title }}</h1>
-  {{/* Get pages from current language's news section to avoid cross-language content */}}
-  {{ $lang := .Site.Language.Lang }}
-  {{ $lang_news_path := printf "/%s/news" $lang }}
-  {{ $news_section := .Site.GetPage $lang_news_path }}
-  {{/* Get all pages from the language-specific section */}}
-  {{ $all_lang_pages := $news_section.Pages }}
-  {{/* Filter these pages by the current taxonomy term */}}
-  {{ $pages := where $all_lang_pages ".Params.categories" "intersect" (slice .Data.Term) }}
-  {{ $p := .Paginate $pages }}
-  <ul>
-    {{ range $p.Pages }}
-      <li>
-        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-        <small> · {{ .Date.Format "2006-01-02" }}</small>
-      </li>
+  <header class="list-header">
+    <h1 class="list-title">{{ .Title }}</h1>
+    {{ with .Content }}
+      <div class="list-description">{{ . }}</div>
     {{ end }}
-  </ul>
-  <nav>
-    {{ template "_internal/pagination.html" . }}
-  </nav>
-</section>
+  </header>
+
+  {{/* Get pages from current language's news section to avoid cross-language content */}}
+  {{/* WORKAROUND: Extract language from URL since .Site.Language.Lang returns default lang */}}
+  {{ $url_parts := split .RelPermalink "/" }}
+  {{ $lang := index $url_parts 1 }}
+  {{ if not (or (eq $lang "ro") (eq $lang "ru")) }}{{ $lang = .Site.Language.Lang }}{{ end }}
+
+  {{/* WORKAROUND: .Site.GetPage doesn't work for non-default language sections, use AllPages filter */}}
+  {{ $lang_news_path := printf "/%s/news/" $lang }}
+  {{ $news_section := index (where .Site.AllPages "RelPermalink" $lang_news_path) 0 }}
+  {{/* Get all pages from the language-specific section */}}
+  {{ $all_lang_pages := cond (ne $news_section nil) ($news_section.RegularPages | default $news_section.Pages) (slice) }}
+
+  {{/* Filter by current taxonomy type (categories, formats, tags, series, authors) */}}
+  {{ $taxonomy_type := .Data.Plural }}
+  {{ $pages := slice }}
+  {{ if eq $taxonomy_type "categories" }}
+    {{ $pages = where $all_lang_pages ".Params.categories" "intersect" (slice .Data.Term) }}
+  {{ else if eq $taxonomy_type "formats" }}
+    {{ $pages = where $all_lang_pages ".Params.formats" "intersect" (slice .Data.Term) }}
+  {{ else if eq $taxonomy_type "tags" }}
+    {{ $pages = where $all_lang_pages ".Params.tags" "intersect" (slice .Data.Term) }}
+  {{ else if eq $taxonomy_type "series" }}
+    {{ $pages = where $all_lang_pages ".Params.series" "intersect" (slice .Data.Term) }}
+  {{ else if eq $taxonomy_type "authors" }}
+    {{ $pages = where $all_lang_pages ".Params.authors" "intersect" (slice .Data.Term) }}
+  {{ end }}
+  {{ $p := .Paginate $pages }}
+
+  <div class="newspaper-grid">
+    {{ range $p.Pages }}
+      {{ partial "card.html" (dict "page" . "card_class" "card-standard") }}
+    {{ end }}
+  </div>
+
+  {{/* Pagination Navigation */}}
+  {{ if gt .Paginator.TotalPages 1 }}
+    <nav class="pagination" role="navigation" aria-label="{{ i18n "pagination" }}">
+      {{ template "_internal/pagination.html" . }}
+    </nav>
+  {{ end }}
 {{ end }}

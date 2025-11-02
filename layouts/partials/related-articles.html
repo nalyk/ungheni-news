@@ -1,0 +1,129 @@
+{{/*
+  Related Articles Component
+
+  Smart hybrid approach:
+  1. Manual selection (if editor curated)
+  2. Automatic algorithm (Hugo's .Related)
+  3. Language-safe (RO→RO only, RU→RU only)
+
+  Reporter perspective: "I want readers to discover my other work"
+  Editor perspective: "Control when needed, automation when not"
+*/}}
+
+{{ $related := slice }}
+{{ $manualSlugs := .Params.related_articles | default slice }}
+{{ $minCount := 3 }}
+{{ $maxCount := 5 }}
+{{/* WORKAROUND: Extract language from URL since .Site.Language.Lang returns default lang */}}
+{{ $url_parts := split .RelPermalink "/" }}
+{{ $currentLang := index $url_parts 1 }}
+{{ if not $currentLang }}{{ $currentLang = .Site.Language.Lang }}{{ end }}
+
+{{/* Step 1: Fetch manually selected articles (if any) */}}
+{{ if gt (len $manualSlugs) 0 }}
+  {{/* WORKAROUND: .Site.GetPage doesn't work for non-default language sections, use AllPages filter */}}
+  {{ $lang_news_path := printf "/%s/news/" $currentLang }}
+  {{ $news_section := index (where .Site.AllPages "RelPermalink" $lang_news_path) 0 }}
+  {{ $all_pages := cond (ne $news_section nil) ($news_section.RegularPages | default $news_section.Pages) (slice) }}
+
+  {{ range $manualSlugs }}
+    {{ $slug := . }}
+    {{/* Find article by filename in the language-specific pages */}}
+    {{ $article := where $all_pages "File.ContentBaseName" $slug | first 1 }}
+    {{ if $article }}
+      {{ $related = $related | append $article }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{/* Step 2: Fill remaining slots with automatic recommendations */}}
+{{ if lt (len $related) $minCount }}
+  {{ $autoRelated := .Site.RegularPages.Related . | first 10 }}
+
+  {{ range $autoRelated }}
+    {{/* Extract language from this article's URL (workaround for Hugo bug) */}}
+    {{ $article_url_parts := split .RelPermalink "/" }}
+    {{ $article_lang := index $article_url_parts 1 }}
+    {{ if not (or (eq $article_lang "ro") (eq $article_lang "ru")) }}{{ $article_lang = "ro" }}{{ end }}
+
+    {{/* Ensure same language and not current page */}}
+    {{ if and (eq $article_lang $currentLang) (ne .RelPermalink $.RelPermalink) }}
+      {{/* Check if already included from manual selection */}}
+      {{ $alreadyIncluded := false }}
+      {{ range $related }}
+        {{ if eq .RelPermalink $.RelPermalink }}
+          {{ $alreadyIncluded = true }}
+        {{ end }}
+      {{ end }}
+
+      {{ if not $alreadyIncluded }}
+        {{ $related = $related | append . }}
+      {{ end }}
+
+      {{/* Stop when we reach max count */}}
+      {{ if ge (len $related) $maxCount }}
+        {{ break }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{/* Step 3: Display if we have at least minimum count */}}
+{{ if ge (len $related) $minCount }}
+<aside class="related-articles" role="complementary" aria-labelledby="related-heading">
+  <h2 id="related-heading" class="related-articles__title">
+    {{ if eq $currentLang "ro" }}
+      Articole similare
+    {{ else }}
+      Похожие материалы
+    {{ end }}
+  </h2>
+
+  <div class="related-articles__grid">
+    {{ range first $maxCount $related }}
+      <article class="related-card">
+        {{/* Category badge */}}
+        {{ $rawCat := .Params.categories }}
+        {{ $category_slug := cond (reflect.IsSlice $rawCat) (index ($rawCat | default slice) 0) $rawCat }}
+        {{ if $category_slug }}
+          {{ $category_page := site.GetPage (printf "categories/%s" $category_slug) }}
+          {{ if $category_page }}
+            <a href="{{ $category_page.RelPermalink }}" class="related-card__category">
+              {{ $category_page.Title }}
+            </a>
+          {{ end }}
+        {{ end }}
+
+        {{/* Article title and link */}}
+        <h3 class="related-card__title">
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        </h3>
+
+        {{/* Summary */}}
+        {{ with .Params.summary }}
+          <p class="related-card__summary">{{ . | truncate 120 }}</p>
+        {{ end }}
+
+        {{/* Metadata: format + date */}}
+        <div class="related-card__meta">
+          {{ $rawFmt := .Params.formats }}
+          {{ $format_slug := cond (reflect.IsSlice $rawFmt) (index ($rawFmt | default slice) 0) $rawFmt }}
+          {{ if $format_slug }}
+            {{ $formatData := index (where $.Site.Data.formats.formats "slug" $format_slug) 0 }}
+            {{ if $formatData }}
+              {{ $formatLang := index $formatData $currentLang }}
+              <span class="related-card__format" data-format="{{ $format_slug }}">
+                {{ $formatData.icon }} {{ $formatLang.name }}
+              </span>
+            {{ end }}
+          {{ end }}
+
+          <time class="related-card__date" datetime="{{ .Date.Format "2006-01-02" }}">
+            {{ .Date.Format "2 January 2006" }}
+          </time>
+        </div>
+      </article>
+    {{ end }}
+  </div>
+</aside>
+{{ end }}

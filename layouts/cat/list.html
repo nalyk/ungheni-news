@@ -1,0 +1,47 @@
+{{ define "main" }}
+  <header class="list-header">
+    <h1 class="list-title">{{ .Title }}</h1>
+  </header>
+
+  {{/* Get taxonomy filter params */}}
+  {{ $taxonomy_type := .Params.taxonomy_filter.type }}
+  {{ $term := .Params.taxonomy_filter.term }}
+
+  {{/* Get all articles from news section */}}
+  {{/* WORKAROUND: Extract language from URL since .Language.Lang returns default lang for custom sections */}}
+  {{ $url_parts := split .RelPermalink "/" }}
+  {{ $lang := index $url_parts 1 }}
+  {{ $lang_news_path := printf "/%s/news" $lang }}
+  {{ $news_section := .Site.GetPage $lang_news_path }}
+  {{ $all_articles := $news_section.Pages }}
+
+  {{/* Filter articles by taxonomy term */}}
+  {{ $filtered := slice }}
+  {{ if eq $taxonomy_type "categories" }}
+    {{ $filtered = where $all_articles ".Params.categories" "intersect" (slice $term) }}
+  {{ else if eq $taxonomy_type "formats" }}
+    {{ $filtered = where $all_articles ".Params.formats" "intersect" (slice $term) }}
+  {{ else if eq $taxonomy_type "tags" }}
+    {{ $filtered = where $all_articles ".Params.tags" "intersect" (slice $term) }}
+  {{ else if eq $taxonomy_type "series" }}
+    {{ $filtered = where $all_articles ".Params.series" "intersect" (slice $term) }}
+  {{ else if eq $taxonomy_type "authors" }}
+    {{ $filtered = where $all_articles ".Params.authors" "intersect" (slice $term) }}
+  {{ end }}
+
+  {{/* Paginate filtered results */}}
+  {{ $paginator := .Paginate $filtered }}
+
+  <div class="newspaper-grid">
+    {{ range $paginator.Pages }}
+      {{ partial "card.html" (dict "page" . "card_class" "card-standard") }}
+    {{ end }}
+  </div>
+
+  {{/* Pagination */}}
+  {{ if gt $paginator.TotalPages 1 }}
+    <nav class="pagination" role="navigation" aria-label="{{ i18n "pagination" }}">
+      {{ template "_internal/pagination.html" . }}
+    </nav>
+  {{ end }}
+{{ end }}

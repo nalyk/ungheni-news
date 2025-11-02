@@ -1,26 +1,14 @@
 {{ define "main" }}
 {{/* Author Archive Page - Shows all articles by this author */}}
 
-{{ $lang := .Site.Language.Lang }}
+{{/* WORKAROUND: Extract language from URL since .Site.Language.Lang returns default lang */}}
+{{ $url_parts := split .RelPermalink "/" }}
+{{ $lang := index $url_parts 1 }}
+{{ if not (or (eq $lang "ro") (eq $lang "ru")) }}{{ $lang = .Site.Language.Lang }}{{ end }}
 {{ $authorPage := . }}
 
 <div class="author-archive">
   <header class="author-header">
-    {{/* Language switcher for this author */}}
-    {{ if .Translations }}
-      <div class="language-switcher">
-        <span class="lang-label">{{ if eq $lang "ro" }}Limbă{{ else }}Язык{{ end }}:</span>
-        <a href="{{ .RelPermalink }}" class="lang-link lang-active">
-          {{ if eq $lang "ro" }}🇷🇴 RO{{ else }}🇷🇺 RU{{ end }}
-        </a>
-        {{ range .Translations }}
-          <a href="{{ .RelPermalink }}" class="lang-link">
-            {{ if eq .Language.Lang "ro" }}🇷🇴 RO{{ else }}🇷🇺 RU{{ end }}
-          </a>
-        {{ end }}
-      </div>
-    {{ end }}
-
     <div class="author-profile">
       {{ with .Params.avatar }}
         <img src="{{ . | relURL }}" alt="{{ $authorPage.Title }}" class="author-avatar-large">
@@ -70,9 +58,10 @@
     </h2>
 
     {{/* Get articles from current language's news section */}}
-    {{ $lang_news_path := printf "/%s/news" $lang }}
-    {{ $news_section := .Site.GetPage $lang_news_path }}
-    {{ $all_lang_pages := $news_section.Pages }}
+    {{/* WORKAROUND: .Site.GetPage doesn't work for non-default language sections, use AllPages filter */}}
+    {{ $lang_news_path := printf "/%s/news/" $lang }}
+    {{ $news_section := index (where .Site.AllPages "RelPermalink" $lang_news_path) 0 }}
+    {{ $all_lang_pages := cond (ne $news_section nil) ($news_section.RegularPages | default $news_section.Pages) (slice) }}
 
     {{/* Filter by this author (check both authors field and contributors) */}}
     {{ $authorSlug := .Params.slug | default .Data.Term }}
@@ -149,45 +138,6 @@
   max-width: 64rem;
   margin: 0 auto;
   padding: 2rem 1rem;
-}
-
-.language-switcher {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  padding: 0.75rem;
-  background: #f3f4f6;
-  border-radius: 8px;
-}
-
-.lang-label {
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.lang-link {
-  padding: 0.375rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-decoration: none;
-  color: #374151;
-  background: white;
-  border: 1px solid #d1d5db;
-  transition: all 0.2s;
-}
-
-.lang-link:hover {
-  background: #e5e7eb;
-  border-color: #9ca3af;
-}
-
-.lang-active {
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
 }
 
 .author-header {

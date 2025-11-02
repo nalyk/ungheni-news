@@ -2,11 +2,15 @@
   <div class="container">
     <nav class="footer-nav" aria-label="Secondary">
       <ul>
-        {{ $lang := .Site.Language.Lang }}
-        {{ $about := printf "/%s/pages/despre-noi/" $lang }}
-        {{ $contact := printf "/%s/pages/contact/" $lang }}
-        {{ $terms := printf "/%s/pages/termeni/" $lang }}
-        {{ $privacy := printf "/%s/pages/confidentialitate/" $lang }}
+        {{/* WORKAROUND: Extract language from URL since .Site.Language.Lang returns default lang */}}
+        {{ $url_parts := split .RelPermalink "/" }}
+        {{ $lang := index $url_parts 1 }}
+        {{ if not (or (eq $lang "ro") (eq $lang "ru")) }}{{ $lang = .Site.Language.Lang }}{{ end }}
+        {{ $prefix := cond (eq $lang "ro") "" (printf "/%s" $lang) }}
+        {{ $about := printf "%s/pages/despre-noi/" $prefix }}
+        {{ $contact := printf "%s/pages/contact/" $prefix }}
+        {{ $terms := printf "%s/pages/termeni/" $prefix }}
+        {{ $privacy := printf "%s/pages/confidentialitate/" $prefix }}
         <li><a href="{{ $about }}">{{ i18n "about_us" }}</a></li>
         <li><a href="{{ $contact }}">{{ i18n "contact" }}</a></li>
         <li><a href="{{ $terms }}">{{ i18n "terms" }}</a></li>
