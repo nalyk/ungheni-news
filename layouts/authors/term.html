@@ -48,44 +48,44 @@
     </div>
   </header>
 
+  {{/* Get articles from current language's news section BEFORE displaying count */}}
+  {{/* WORKAROUND: .Site.GetPage doesn't work for non-default language sections, use AllPages filter */}}
+  {{ $lang_news_path := printf "/%s/news/" $lang }}
+  {{ $news_section := index (where .Site.AllPages "RelPermalink" $lang_news_path) 0 }}
+  {{ $all_lang_pages := cond (ne $news_section nil) ($news_section.RegularPages | default $news_section.Pages) (slice) }}
+
+  {{/* Filter by this author (check both authors field and contributors) */}}
+  {{ $authorSlug := .Params.slug | default .Data.Term }}
+  {{ $articles := slice }}
+
+  {{ range $all_lang_pages }}
+    {{ $matched := false }}
+
+    {{/* Check legacy authors field */}}
+    {{ if in (.Params.authors | default slice) $authorSlug }}
+      {{ $matched = true }}
+    {{ end }}
+
+    {{/* Check contributors field */}}
+    {{ range .Params.contributors }}
+      {{ if eq .author $authorSlug }}
+        {{ $matched = true }}
+      {{ end }}
+    {{ end }}
+
+    {{ if $matched }}
+      {{ $articles = $articles | append . }}
+    {{ end }}
+  {{ end }}
+
   <section class="author-articles">
     <h2 class="section-title">
       {{ if eq $lang "ro" }}
-        Articole de {{ .Title }} ({{ .Data.Terms.Count }})
+        Articole de {{ .Title }} ({{ len $articles }})
       {{ else }}
-        Статьи от {{ .Title }} ({{ .Data.Terms.Count }})
+        Статьи от {{ .Title }} ({{ len $articles }})
       {{ end }}
     </h2>
-
-    {{/* Get articles from current language's news section */}}
-    {{/* WORKAROUND: .Site.GetPage doesn't work for non-default language sections, use AllPages filter */}}
-    {{ $lang_news_path := printf "/%s/news/" $lang }}
-    {{ $news_section := index (where .Site.AllPages "RelPermalink" $lang_news_path) 0 }}
-    {{ $all_lang_pages := cond (ne $news_section nil) ($news_section.RegularPages | default $news_section.Pages) (slice) }}
-
-    {{/* Filter by this author (check both authors field and contributors) */}}
-    {{ $authorSlug := .Params.slug | default .Data.Term }}
-    {{ $articles := slice }}
-
-    {{ range $all_lang_pages }}
-      {{ $matched := false }}
-
-      {{/* Check legacy authors field */}}
-      {{ if in (.Params.authors | default slice) $authorSlug }}
-        {{ $matched = true }}
-      {{ end }}
-
-      {{/* Check contributors field */}}
-      {{ range .Params.contributors }}
-        {{ if eq .author $authorSlug }}
-          {{ $matched = true }}
-        {{ end }}
-      {{ end }}
-
-      {{ if $matched }}
-        {{ $articles = $articles | append . }}
-      {{ end }}
-    {{ end }}
 
     {{ if gt (len $articles) 0 }}
       <div class="articles-grid">
