@@ -27,63 +27,83 @@
 
       <div class="header-actions">
         <div class="lang-picker">
-          {{/* INTELLIGENT LANGUAGE SWITCHER: Respects content parity globally */}}
-          {{/* Determines target language and URL based on current page type and content availability */}}
+          {{/* UNIVERSAL LANGUAGE SWITCHER: 100% URL-based detection (no Hugo properties) */}}
+          {{/* Uses URL path analysis to find translated content across all page types */}}
 
-          {{/* Step 1: Detect current language from URL */}}
+          {{/* Detect current and target language from URL */}}
           {{ $current_lang := $lang }}
           {{ $target_lang := cond (eq $current_lang "ro") "ru" "ro" }}
           {{ $target_url := "" }}
 
-          {{/* Step 2: Determine target URL based on page type */}}
-          {{ if eq .Section "news" }}
-            {{/* NEWS ARTICLES: Check for translation using numeric prefix matching */}}
-            {{/* Extract slug from URL: /ro/news/01-article-slug/ -> get "01-article-slug" */}}
-            {{ $url_parts := split .RelPermalink "/" }}
-            {{ $slug := index $url_parts 3 }}
+          {{/* Parse URL to determine page type and content */}}
+          {{ $url_parts := split .RelPermalink "/" }}
+          {{/* URL structure: ["", "ro", "news", "01-article-slug", ""] or ["", "news", "01-article-slug", ""] for RO */}}
+          {{ $section := "" }}
+          {{ $slug := "" }}
+
+          {{/* Determine section based on URL position */}}
+          {{ if eq (len $url_parts) 5 }}
+            {{/* Has language prefix: /ro/news/slug/ or /ru/pages/slug/ */}}
+            {{ $section = index $url_parts 2 }}
+            {{ $slug = index $url_parts 3 }}
+          {{ else if eq (len $url_parts) 4 }}
+            {{/* RO without prefix: /news/slug/ or /pages/slug/ */}}
+            {{ $section = index $url_parts 1 }}
+            {{ $slug = index $url_parts 2 }}
+          {{ else if eq (len $url_parts) 4 }}
+            {{/* Taxonomy or category: /ro/categories/slug/ */}}
+            {{ $section = index $url_parts 2 }}
+            {{ $slug = index $url_parts 3 }}
+          {{ end }}
+
+          {{/* Route based on URL section */}}
+          {{ if eq $section "news" }}
+            {{/* NEWS ARTICLES: Match by numeric prefix (01-, 02-, etc.) */}}
             {{ $prefix_parts := split $slug "-" }}
             {{ $prefix := index $prefix_parts 0 }}
 
-            {{/* Get all pages from target language news section */}}
+            {{/* Search target language news for matching prefix */}}
             {{ $target_news_path := printf "/%s/news/" $target_lang }}
             {{ $target_section := index (where .Site.AllPages "RelPermalink" $target_news_path) 0 }}
             {{ $target_pages := cond (ne $target_section nil) ($target_section.RegularPages | default $target_section.Pages) (slice) }}
 
-            {{/* Find matching article by numeric prefix */}}
             {{ $found := false }}
             {{ range $target_pages }}
               {{ $target_url_parts := split .RelPermalink "/" }}
-              {{ $target_slug := index $target_url_parts 3 }}
-              {{ $target_prefix_parts := split $target_slug "-" }}
-              {{ $target_prefix := index $target_prefix_parts 0 }}
-              {{ if eq $target_prefix $prefix }}
-                {{ $target_url = .RelPermalink }}
-                {{ $found = true }}
+              {{ $target_slug := "" }}
+              {{ if eq (len $target_url_parts) 5 }}
+                {{ $target_slug = index $target_url_parts 3 }}
+              {{ else if eq (len $target_url_parts) 4 }}
+                {{ $target_slug = index $target_url_parts 2 }}
+              {{ end }}
+              {{ if $target_slug }}
+                {{ $target_prefix_parts := split $target_slug "-" }}
+                {{ $target_prefix := index $target_prefix_parts 0 }}
+                {{ if eq $target_prefix $prefix }}
+                  {{ $target_url = .RelPermalink }}
+                  {{ $found = true }}
+                {{ end }}
               {{ end }}
             {{ end }}
 
-            {{/* Fallback to homepage if no translation found */}}
+            {{/* Fallback to homepage if no translation */}}
             {{ if not $found }}
-              {{ $target_url = printf "/%s/" $target_lang }}
-              {{ if eq $target_lang "ro" }}{{ $target_url = "/" }}{{ end }}
+              {{ $target_url = cond (eq $target_lang "ro") "/" (printf "/%s/" $target_lang) }}
             {{ end }}
 
-          {{ else if in (slice "categories" "formats" "authors" "tags" "series") .Type }}
-            {{/* TAXONOMIES: Switch to same term in other language */}}
-            {{ $term_slug := .Data.Term }}
+          {{ else if eq $section "pages" }}
+            {{/* STATIC PAGES: Direct slug match */}}
             {{ $target_prefix := cond (eq $target_lang "ro") "" (printf "/%s" $target_lang) }}
-            {{ $target_url = printf "%s/%s/%s/" $target_prefix .Type $term_slug }}
+            {{ $target_url = printf "%s/pages/%s/" $target_prefix $slug }}
 
-          {{ else if eq .Section "pages" }}
-            {{/* STATIC PAGES: Switch to same page in other language */}}
-            {{ $page_slug := path.Base .File.Dir }}
+          {{ else if in (slice "categories" "formats" "authors" "tags" "series") $section }}
+            {{/* TAXONOMIES: Same term in other language */}}
             {{ $target_prefix := cond (eq $target_lang "ro") "" (printf "/%s" $target_lang) }}
-            {{ $target_url = printf "%s/pages/%s/" $target_prefix $page_slug }}
+            {{ $target_url = printf "%s/%s/%s/" $target_prefix $section $slug }}
 
           {{ else }}
-            {{/* FALLBACK: Homepage of target language */}}
-            {{ $target_url = printf "/%s/" $target_lang }}
-            {{ if eq $target_lang "ro" }}{{ $target_url = "/" }}{{ end }}
+            {{/* HOMEPAGE or other: Target language homepage */}}
+            {{ $target_url = cond (eq $target_lang "ro") "/" (printf "/%s/" $target_lang) }}
           {{ end }}
 
           <a href="{{ $target_url }}" class="lang-option">{{ $target_lang | upper }}</a>
