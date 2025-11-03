@@ -2,19 +2,16 @@
   <div class="container">
     <nav class="footer-nav" aria-label="Secondary">
       <ul>
-        {{/* WORKAROUND: Extract language from URL since .Site.Language.Lang returns default lang */}}
+        {{/* WORKAROUND: Extract language from URL - matches header.html pattern */}}
         {{ $url_parts := split .RelPermalink "/" }}
         {{ $lang := index $url_parts 1 }}
         {{ if not (or (eq $lang "ro") (eq $lang "ru")) }}{{ $lang = .Site.Language.Lang }}{{ end }}
-        {{ $prefix := cond (eq $lang "ro") "" (printf "/%s" $lang) }}
-        {{ $about := printf "%s/pages/despre-noi/" $prefix }}
-        {{ $contact := printf "%s/pages/contact/" $prefix }}
-        {{ $terms := printf "%s/pages/termeni/" $prefix }}
-        {{ $privacy := printf "%s/pages/confidentialitate/" $prefix }}
-        <li><a href="{{ $about }}">{{ i18n "about_us" }}</a></li>
-        <li><a href="{{ $contact }}">{{ i18n "contact" }}</a></li>
-        <li><a href="{{ $terms }}">{{ i18n "terms" }}</a></li>
-        <li><a href="{{ $privacy }}">{{ i18n "privacy" }}</a></li>
+        {{/* Pages section requires explicit language prefix for BOTH languages */}}
+        {{ $prefix := printf "/%s" $lang }}
+        <li><a href="{{ $prefix }}/pages/despre-noi/">{{ i18n "about_us" }}</a></li>
+        <li><a href="{{ $prefix }}/pages/contact/">{{ i18n "contact" }}</a></li>
+        <li><a href="{{ $prefix }}/pages/termeni/">{{ i18n "terms" }}</a></li>
+        <li><a href="{{ $prefix }}/pages/confidentialitate/">{{ i18n "privacy" }}</a></li>
       </ul>
     </nav>
     <div class="footer-bottom">
