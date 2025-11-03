@@ -14,11 +14,11 @@
     - ro: "Trafic Vamal"
     - ro: "Căi Ferate"
     - ro: "Drumuri & rute"
-- slug: economie-fez
-  ro: "Economie & FEZ"
+- slug: economie-zel
+  ro: "Economie & ZEL"
   ru: "Экономика и СЭЗ"
   subsections:
-    - ro: "FEZ Ungheni-Business"
+    - ro: "ZEL Ungheni-Business"
     - ro: "IMM-uri"
     - ro: "Locuri de muncă"
 - slug: servicii-publice

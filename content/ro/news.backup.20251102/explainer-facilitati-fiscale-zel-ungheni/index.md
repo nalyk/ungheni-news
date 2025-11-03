@@ -3,7 +3,7 @@ title: "Explainer: Ce facilități fiscale oferă ZEL „Ungheni-Business” și
 date: 2025-10-07T11:00:00+03:00
 slug: "explainer-facilitati-fiscale-zel-ungheni"
 summary: "Zona Economică Liberă din Ungheni oferă un pachet atractiv de facilități fiscale și vamale. Vă explicăm care sunt acestea și ce trebuie să facă o companie pentru a beneficia de ele."
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["explainer"]
 authors: ["redactia"]
 ---

@@ -5,7 +5,7 @@ date: 2025-11-02T08:00:00+02:00
 publishDate: 2025-11-02T08:00:00+02:00
 draft: false
 featured: true
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["analiza"]
 series: ["dosarul-fez-ungheni"]
 series_part: 1

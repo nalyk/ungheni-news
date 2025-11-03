@@ -3,7 +3,7 @@ title: "Дело СЭЗ Унгены: Итоги спустя 3 года"
 summary: "Вторая часть: Что произошло между 2019-2022. Первые компании, первые неудачи, первые вопросы."
 date: 2025-10-20T08:00:00+02:00
 draft: false
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["analiza"]
 series: ["dosarul-fez-ungheni"]
 series_part: 2

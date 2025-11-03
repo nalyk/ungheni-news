@@ -202,7 +202,7 @@
 - http://localhost:1313/ro/categories/frontiera-transport/
 
 **Economie-FEZ** (4 articles):
-- http://localhost:1313/ro/categories/economie-fez/
+- http://localhost:1313/ro/categories/economie-zel/
 
 **Servicii-Publice** (3 articles):
 - http://localhost:1313/ro/categories/servicii-publice/

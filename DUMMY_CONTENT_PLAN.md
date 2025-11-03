@@ -45,7 +45,7 @@
 ### Category Distribution
 - **local**: 8 articles
 - **frontiera-transport**: 4 articles
-- **economie-fez**: 4 articles (includes FEZ series)
+- **economie-zel**: 4 articles (includes FEZ series)
 - **servicii-publice**: 3 articles
 - **educatie-sanatate**: 2 articles
 - **national**: 2 articles (with Cutia Ungheni)

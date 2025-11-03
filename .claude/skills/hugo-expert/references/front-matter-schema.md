@@ -29,7 +29,7 @@ featured: false                           # Homepage feature flag
 ### Local Categories
 - `local` - Local Ungheni news (60% of content)
 - `frontiera-transport` - Border & transport
-- `economie-fez` - Economy & FEZ
+- `economie-zel` - Economy & ZEL
 - `servicii-publice` - Public services
 - `educatie-sanatate` - Education & health
 

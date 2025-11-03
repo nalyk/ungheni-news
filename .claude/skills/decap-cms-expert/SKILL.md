@@ -213,7 +213,7 @@ collections:
         name: "categories"
         widget: "select"
         multiple: true
-        options: ["local", "frontiera-transport", "economie-fez", "servicii-publice", "educatie-sanatate", "national", "ue-romania"]
+        options: ["local", "frontiera-transport", "economie-zel", "servicii-publice", "educatie-sanatate", "national", "ue-romania"]
       - label: "Formats"
         name: "formats"
         widget: "select"

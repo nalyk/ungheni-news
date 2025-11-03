@@ -342,7 +342,7 @@ cutia_ungheni:                  # MANDATORY for national/ue-romania
 ```
 
 ### Categories
-- **Local**: `local`, `frontiera-transport`, `economie-fez`, `servicii-publice`, `educatie-sanatate`
+- **Local**: `local`, `frontiera-transport`, `economie-zel`, `servicii-publice`, `educatie-sanatate`
 - **Non-local** (require Cutia Ungheni): `national`, `ue-romania`
 
 ### Formats

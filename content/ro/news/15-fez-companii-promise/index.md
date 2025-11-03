@@ -4,7 +4,7 @@ summary: "Partea a treia: Investigăm ce s-a întâmplat cu cei 50 de investitor
 date: 2025-10-05T08:00:00+02:00
 publishDate: 2025-10-05T08:00:00+02:00
 draft: false
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["analiza"]
 series: ["dosarul-fez-ungheni"]
 series_part: 3

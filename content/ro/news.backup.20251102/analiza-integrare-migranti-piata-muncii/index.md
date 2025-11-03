@@ -3,7 +3,7 @@ title: "Analiză: Integrarea migranților, o soluție pentru criza forței de mu
 date: 2025-10-06T16:00:00+03:00
 slug: "analiza-integrare-migranti-piata-muncii"
 summary: "O masă rotundă organizată la ZEL „Ungheni-Business” a pus în discuție integrarea economică a migranților. Poate fi aceasta o soluție viabilă pentru deficitul de personal cu care se confruntă companiile locale?"
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["analiza"]
 authors: ["redactia"]
 ---

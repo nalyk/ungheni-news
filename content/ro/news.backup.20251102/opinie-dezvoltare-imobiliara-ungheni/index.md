@@ -3,7 +3,7 @@ title: "Opinie: Forumul imobiliar la Ungheni arată potențialul, dar dezvoltare
 date: 2025-10-05T13:00:00+03:00
 slug: "opinie-dezvoltare-imobiliara-ungheni"
 summary: "Vizita participanților la Forumul Moldova Real Estate la ZEL Ungheni este un semnal pozitiv. Însă, dezvoltarea imobiliară industrială și rezidențială trebuie să fie corelată cu infrastructura orașului."
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["opinie"]
 authors: ["redactia"]
 ---

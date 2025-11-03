@@ -24,10 +24,10 @@
   translation: "Local"
 - id: category_frontiera_transport
   translation: "Frontieră & Transport"
-- id: category_economie_fez
-  translation: "Economie & FEZ"
-- id: category_economie-fez
-  translation: "Economie & FEZ"
+- id: category_economie_zel
+  translation: "Economie & ZEL"
+- id: category_economie-zel
+  translation: "Economie & ZEL"
 - id: category_servicii_publice
   translation: "Servicii publice"
 - id: category_servicii-publice

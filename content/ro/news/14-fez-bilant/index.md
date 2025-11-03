@@ -4,7 +4,7 @@ summary: "Partea a doua: Ce s-a întâmplat între 2019-2022. Primele companii, 
 date: 2025-10-20T08:00:00+02:00
 publishDate: 2025-10-20T08:00:00+02:00
 draft: false
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["analiza"]
 series: ["dosarul-fez-ungheni"]
 series_part: 2

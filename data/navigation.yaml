@@ -22,11 +22,11 @@ main_menu:
       name: "Граница и транспорт" 
       description: "Таможня, железнодорожный и автомобильный транспорт"
     
-  - slug: "economie-fez"
+  - slug: "economie-zel"
     weight: 3
     icon: "trending-up"
     ro:
-      name: "Economie & FEZ"
+      name: "Economie & ZEL"
       description: "Zona Economică Liberă și business local"
     ru:
       name: "Экономика и СЭЗ"

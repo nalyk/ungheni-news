@@ -91,7 +91,7 @@ collections:
         options:
           - { label: "🏛️ Local Ungheni", value: "local" }
           - { label: "🚂 Frontieră & Transport", value: "frontiera-transport" }
-          - { label: "💼 Economie & FEZ", value: "economie-fez" }
+          - { label: "💼 Economie & ZEL", value: "economie-zel" }
           - { label: "🏥 Servicii Publice", value: "servicii-publice" }
           - { label: "🎓 Educație & Sănătate", value: "educatie-sanatate" }
           - { label: "🇲🇩 Național", value: "national" }
@@ -322,7 +322,7 @@ collections:
         options:
           - { label: "🏛️ Местные Унгень", value: "local" }
           - { label: "🚂 Граница и транспорт", value: "frontiera-transport" }
-          - { label: "💼 Экономика и СЭЗ", value: "economie-fez" }
+          - { label: "💼 Экономика и СЭЗ", value: "economie-zel" }
           - { label: "🏥 Общественные услуги", value: "servicii-publice" }
           - { label: "🎓 Образование и здоровье", value: "educatie-sanatate" }
           - { label: "🇲🇩 Национальные", value: "national" }

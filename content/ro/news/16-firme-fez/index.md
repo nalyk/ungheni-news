@@ -4,7 +4,7 @@ summary: "Explainer despre companiile care funcționează în FEZ Ungheni. Care 
 date: 2025-09-28T10:00:00+02:00
 publishDate: 2025-09-28T10:00:00+02:00
 draft: false
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["explainer"]
 authors: ["vasile-rusu"]
 related_articles: ["13-fez-inaugurare", "14-fez-bilant", "15-fez-companii-promise"]

@@ -24,9 +24,9 @@
   translation: "Местные"
 - id: category_frontiera_transport
   translation: "Граница и транспорт"
-- id: category_economie_fez
+- id: category_economie_zel
   translation: "Экономика и СЭЗ"
-- id: category_economie-fez
+- id: category_economie-zel
   translation: "Экономика и СЭЗ"
 - id: category_servicii_publice
   translation: "Общественные услуги"

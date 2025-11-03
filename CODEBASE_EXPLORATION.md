@@ -21,7 +21,7 @@ File: `data/categories.yaml`
   - Subsections: Administrație, Infrastructură, Comunitate & Evenimente, Siguranță, Cultură & Sport
 - `frontiera-transport` - Border & Transport
   - Subsections: Trafic Vamal, Căi Ferate, Drumuri & rute
-- `economie-fez` - Economy & FEZ
+- `economie-zel` - Economy & ZEL
   - Subsections: FEZ Ungheni-Business, IMM-uri, Locuri de muncă
 - `servicii-publice` - Public Services
   - Subsections: Întreruperi (apă/energie), Salubritate, Programări, Hărți utile
@@ -451,7 +451,7 @@ cutia_ungheni:
   - Educație & Sănătate: 5
   - UE & România: 5
   - Servicii Publice: 5
-  - Economie & FEZ: 5
+  - Economie & ZEL: 5
   - Frontieră & Transport: 5
   - Local: 5
   - Național: 5

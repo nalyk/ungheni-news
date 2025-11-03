@@ -3,7 +3,7 @@ title: "Компании в СЭЗ: Успехи и провалы"
 summary: "Эксплейнер о компаниях, работающих в СЭЗ Унгены. Кто выживает, кто потерпел неудачу и почему."
 date: 2025-09-28T10:00:00+02:00
 draft: false
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["explainer"]
 authors: ["vasile-rusu"]
 related_articles: ["13-fez-otkritiye", "14-fez-bilant", "15-fez-kompanii"]

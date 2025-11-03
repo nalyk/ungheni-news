@@ -49,7 +49,7 @@ const NewsPreview = createClass({
     const categoryLabels = {
       'local': 'Local Ungheni',
       'frontiera-transport': 'Frontieră & Transport',
-      'economie-fez': 'Economie & FEZ',
+      'economie-zel': 'Economie & ZEL',
       'servicii-publice': 'Servicii Publice',
       'educatie-sanatate': 'Educație & Sănătate',
       'national': 'Național',

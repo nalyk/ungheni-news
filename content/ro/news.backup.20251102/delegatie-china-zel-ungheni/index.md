@@ -3,7 +3,7 @@ title: "O delegație de oameni de afaceri din China a vizitat Zona Economică Li
 date: 2025-10-08T17:00:00+03:00
 slug: "delegatie-china-zel-ungheni"
 summary: "Oportunitățile de investiții din ZEL „Ungheni-Business” au fost prezentate unei delegații de antreprenori din China, deschizând posibilități pentru noi colaborări economice."
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["stire"]
 authors: ["redactia"]
 ---

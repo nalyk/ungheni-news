@@ -3,7 +3,7 @@ title: "Дело СЭЗ Унгены: Где обещанные компании
 summary: "Третья часть: Расследуем, что произошло с 50 инвесторами, которые 'твердо проявили интерес' в 2019. Ответы удивительны."
 date: 2025-10-05T08:00:00+02:00
 draft: false
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["analiza"]
 series: ["dosarul-fez-ungheni"]
 series_part: 3

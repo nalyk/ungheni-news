@@ -14,7 +14,7 @@
   let filteredArticles = [];
 
   // Category mappings for 60/30/10 ratio
-  const LOCAL_CATEGORIES = ['local', 'frontiera-transport', 'economie-fez', 'servicii-publice', 'educatie-sanatate'];
+  const LOCAL_CATEGORIES = ['local', 'frontiera-transport', 'economie-zel', 'servicii-publice', 'educatie-sanatate'];
   const NATIONAL_CATEGORIES = ['national'];
   const INTERNATIONAL_CATEGORIES = ['ue-romania'];
 

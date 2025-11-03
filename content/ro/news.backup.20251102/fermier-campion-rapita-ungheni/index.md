@@ -3,7 +3,7 @@ title: "Explainer: Cum a reușit un fermier din Ungheni să devină campion la c
 date: 2025-10-08T11:00:00+03:00
 slug: "fermier-campion-rapita-ungheni"
 summary: "Un agricultor din raionul Ungheni a atras atenția întregii țări după ce a obținut o producție record la hectar pentru cultura de rapiță. Vă explicăm ce stă în spatele acestui succes."
-categories: ["economie-fez"]
+categories: ["economie-zel"]
 formats: ["explainer"]
 authors: ["redactia"]
 ---
