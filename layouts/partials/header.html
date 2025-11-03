@@ -92,8 +92,8 @@
             {{ end }}
 
           {{ else if eq $section "pages" }}
-            {{/* STATIC PAGES: Direct slug match */}}
-            {{ $target_prefix := cond (eq $target_lang "ro") "" (printf "/%s" $target_lang) }}
+            {{/* STATIC PAGES: Direct slug match (both RO and RU have language prefix) */}}
+            {{ $target_prefix := printf "/%s" $target_lang }}
             {{ $target_url = printf "%s/pages/%s/" $target_prefix $slug }}
 
           {{ else if in (slice "categories" "formats" "authors" "tags" "series") $section }}
