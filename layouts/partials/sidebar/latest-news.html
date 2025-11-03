@@ -25,7 +25,7 @@
         <a href="{{ .RelPermalink }}" class="news-item-link">
           <span class="news-item-title">{{ .Title }}</span>
         </a>
-        <time class="news-item-time" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2 Jan, 15:04" }}</time>
+        <time class="news-item-time" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ partial "format-date.html" (dict "ctx" . "date" .Date "format" "short") }}</time>
       </li>
     {{ end }}
   </ul>

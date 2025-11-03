@@ -258,3 +258,55 @@
   translation: "Навигация по серии"
 - id: pagination
   translation: "Навигация по страницам"
+
+# Month names (full)
+- id: month_1
+  translation: "января"
+- id: month_2
+  translation: "февраля"
+- id: month_3
+  translation: "марта"
+- id: month_4
+  translation: "апреля"
+- id: month_5
+  translation: "мая"
+- id: month_6
+  translation: "июня"
+- id: month_7
+  translation: "июля"
+- id: month_8
+  translation: "августа"
+- id: month_9
+  translation: "сентября"
+- id: month_10
+  translation: "октября"
+- id: month_11
+  translation: "ноября"
+- id: month_12
+  translation: "декабря"
+
+# Month names (abbreviated)
+- id: month_short_1
+  translation: "янв"
+- id: month_short_2
+  translation: "фев"
+- id: month_short_3
+  translation: "мар"
+- id: month_short_4
+  translation: "апр"
+- id: month_short_5
+  translation: "май"
+- id: month_short_6
+  translation: "июн"
+- id: month_short_7
+  translation: "июл"
+- id: month_short_8
+  translation: "авг"
+- id: month_short_9
+  translation: "сен"
+- id: month_short_10
+  translation: "окт"
+- id: month_short_11
+  translation: "ноя"
+- id: month_short_12
+  translation: "дек"

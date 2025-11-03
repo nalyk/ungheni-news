@@ -119,7 +119,7 @@
           {{ end }}
 
           <time class="related-card__date" datetime="{{ .Date.Format "2006-01-02" }}">
-            {{ .Date.Format "2 January 2006" }}
+            {{ partial "format-date.html" (dict "ctx" $ "date" .Date "format" "long") }}
           </time>
         </div>
       </article>

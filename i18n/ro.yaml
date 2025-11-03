@@ -260,3 +260,55 @@
   translation: "Navigare serie"
 - id: pagination
   translation: "Navigare pagini"
+
+# Month names (full)
+- id: month_1
+  translation: "ianuarie"
+- id: month_2
+  translation: "februarie"
+- id: month_3
+  translation: "martie"
+- id: month_4
+  translation: "aprilie"
+- id: month_5
+  translation: "mai"
+- id: month_6
+  translation: "iunie"
+- id: month_7
+  translation: "iulie"
+- id: month_8
+  translation: "august"
+- id: month_9
+  translation: "septembrie"
+- id: month_10
+  translation: "octombrie"
+- id: month_11
+  translation: "noiembrie"
+- id: month_12
+  translation: "decembrie"
+
+# Month names (abbreviated)
+- id: month_short_1
+  translation: "ian"
+- id: month_short_2
+  translation: "feb"
+- id: month_short_3
+  translation: "mar"
+- id: month_short_4
+  translation: "apr"
+- id: month_short_5
+  translation: "mai"
+- id: month_short_6
+  translation: "iun"
+- id: month_short_7
+  translation: "iul"
+- id: month_short_8
+  translation: "aug"
+- id: month_short_9
+  translation: "sep"
+- id: month_short_10
+  translation: "oct"
+- id: month_short_11
+  translation: "nov"
+- id: month_short_12
+  translation: "dec"

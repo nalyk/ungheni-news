@@ -43,10 +43,10 @@
           {{ with (index ($hero.Params.categories | default slice) 0) }}
             <span class="story-category">{{ . | title }}</span>
           {{ end }}
-          <time datetime="{{ $hero.Date.Format "2006-01-02T15:04:05Z07:00" }}" 
-                class="story-date" 
+          <time datetime="{{ $hero.Date.Format "2006-01-02T15:04:05Z07:00" }}"
+                class="story-date"
                 itemprop="datePublished">
-            {{ $hero.Date.Format "2 January" }}
+            {{ partial "format-date.html" (dict "ctx" $ "date" $hero.Date "format" "day-month") }}
           </time>
         </div>
         

@@ -31,7 +31,7 @@
     <h3 class="card-title">{{ $page.Title }}</h3>
     <p class="card-summary">{{ $page.Params.summary | default $page.Summary | truncate 120 }}</p>
     <div class="card-meta">
-      <time datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "January 2, 2006" }}</time>
+      <time datetime="{{ $page.Date.Format "2006-01-02" }}">{{ partial "format-date.html" (dict "ctx" $page "date" $page.Date "format" "long") }}</time>
     </div>
   </div>
 </a>

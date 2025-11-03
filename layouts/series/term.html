@@ -120,7 +120,7 @@
             {{ end }}
 
             <time datetime="{{ $page.Date.Format "2006-01-02" }}">
-              {{ $page.Date.Format "2 January 2006" }}
+              {{ partial "format-date.html" (dict "ctx" $ "date" $page.Date "format" "long") }}
             </time>
           </div>
 

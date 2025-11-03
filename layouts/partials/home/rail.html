@@ -31,7 +31,7 @@
       </a>
       <div class="item">
         <a class="title" href="{{ .RelPermalink }}">{{ .Title }}</a>
-        <div class="meta">{{ .Date.Format "2006-01-02" }}</div>
+        <div class="meta"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ partial "format-date.html" (dict "ctx" $ctx "date" .Date "format" "long") }}</time></div>
       </div>
     </li>
   {{ end }}

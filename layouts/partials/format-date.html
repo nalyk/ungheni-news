@@ -1,0 +1,44 @@
+{{- $ctx := .ctx | default $ -}}
+{{- $date := .date -}}
+{{- $format := .format | default "long" -}}
+{{- $day := $date.Day -}}
+{{- $month := $date.Month | int -}}
+{{- $year := $date.Year -}}
+{{- $hour := $date.Format "15:04" -}}
+
+{{- /* WORKAROUND: Extract language from URL since .Site.Language.Lang returns default lang */ -}}
+{{- $lang := "ro" -}}
+{{- with $ctx -}}
+  {{- $url_parts := split .RelPermalink "/" -}}
+  {{- $detected := index $url_parts 1 -}}
+  {{- if or (eq $detected "ro") (eq $detected "ru") -}}
+    {{- $lang = $detected -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Month name arrays */ -}}
+{{- $months_ro := slice "ianuarie" "februarie" "martie" "aprilie" "mai" "iunie" "iulie" "august" "septembrie" "octombrie" "noiembrie" "decembrie" -}}
+{{- $months_short_ro := slice "ian" "feb" "mar" "apr" "mai" "iun" "iul" "aug" "sep" "oct" "nov" "dec" -}}
+{{- $months_ru := slice "января" "февраля" "марта" "апреля" "мая" "июня" "июля" "августа" "сентября" "октября" "ноября" "декабря" -}}
+{{- $months_short_ru := slice "янв" "фев" "мар" "апр" "май" "июн" "июл" "авг" "сен" "окт" "ноя" "дек" -}}
+
+{{- $month_name := "" -}}
+{{- $month_short := "" -}}
+{{- if eq $lang "ru" -}}
+  {{- $month_name = index $months_ru (sub $month 1) -}}
+  {{- $month_short = index $months_short_ru (sub $month 1) -}}
+{{- else -}}
+  {{- $month_name = index $months_ro (sub $month 1) -}}
+  {{- $month_short = index $months_short_ro (sub $month 1) -}}
+{{- end -}}
+
+{{- if eq $format "short" -}}
+  {{- /* Short format: "2 nov 15:04" */ -}}
+  {{- $day }} {{ $month_short }} {{ $hour -}}
+{{- else if eq $format "long" -}}
+  {{- /* Long format: "2 noiembrie 2025" */ -}}
+  {{- $day }} {{ $month_name }} {{ $year -}}
+{{- else if eq $format "day-month" -}}
+  {{- /* Day and month only: "2 ianuarie" */ -}}
+  {{- $day }} {{ $month_name -}}
+{{- end -}}
