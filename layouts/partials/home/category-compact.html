@@ -1,0 +1,33 @@
+{{ $category_slug := .category }}
+{{ $limit := .limit | default 3 }}
+{{/* Use language-specific news section */}}
+{{ $lang_news_path := printf "/%s/news" .context.Site.Language.Lang }}
+{{ $news_section := .context.Site.GetPage $lang_news_path }}
+{{ $all := cond (ne $news_section nil) ($news_section.Pages) (slice) }}
+
+{{/* Filter pages by category */}}
+{{ $pages := first $limit (union (where $all ".Params.categories" "intersect" (slice $category_slug)) (where $all ".Params.categories" "eq" $category_slug)) }}
+
+{{ if $pages }}
+<div class="category-compact">
+  <div class="category-header">
+    <h3 class="category-title"><a href="/categories/{{ $category_slug }}/">{{ i18n (printf "category_%s" $category_slug) | default $category_slug }}</a></h3>
+    <a href="/categories/{{ $category_slug }}/" class="category-link-all">{{ i18n "view_all" | default "Vezi tot" }}</a>
+  </div>
+  <ul class="category-list-compact">
+    {{ range $pages }}
+      <li>
+        <a href="{{ .RelPermalink }}" class="article-link">
+          {{ with index .Params.formats 0 }}
+            <span class="article-format">{{ i18n . | default . }}</span>
+          {{ end }}
+          <span class="article-title">{{ .Title }}</span>
+          <time class="article-date" datetime="{{ .Date.Format "2006-01-02" }}">
+            {{ .Date | time.Format ":date_medium" }}
+          </time>
+        </a>
+      </li>
+    {{ end }}
+  </ul>
+</div>
+{{ end }}

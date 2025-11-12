@@ -22,21 +22,17 @@
   translation: "Похожие материалы"
 - id: category_local
   translation: "Местные"
-- id: category_frontiera_transport
+- id: category_frontiera-transport
   translation: "Граница и транспорт"
-- id: category_economie_zel
-  translation: "Экономика и СЭЗ"
 - id: category_economie-zel
   translation: "Экономика и СЭЗ"
-- id: category_servicii_publice
-  translation: "Общественные услуги"
 - id: category_servicii-publice
   translation: "Общественные услуги"
-- id: category_educatie_sanatate
+- id: category_educatie-sanatate
   translation: "Образование и здоровье"
 - id: category_national
   translation: "Национальные"
-- id: category_ue_romania
+- id: category_ue-romania
   translation: "ЕС и Румыния"
 - id: format_stire
   translation: "Новость"

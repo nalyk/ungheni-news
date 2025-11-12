@@ -22,21 +22,17 @@
   translation: "Articole similare"
 - id: category_local
   translation: "Local"
-- id: category_frontiera_transport
+- id: category_frontiera-transport
   translation: "Frontieră & Transport"
-- id: category_economie_zel
-  translation: "Economie & ZEL"
 - id: category_economie-zel
   translation: "Economie & ZEL"
-- id: category_servicii_publice
-  translation: "Servicii publice"
 - id: category_servicii-publice
   translation: "Servicii publice"
-- id: category_educatie_sanatate
+- id: category_educatie-sanatate
   translation: "Educație & Sănătate"
 - id: category_national
   translation: "Național"
-- id: category_ue_romania
+- id: category_ue-romania
   translation: "UE & România"
 - id: format_stire
   translation: "Știre"

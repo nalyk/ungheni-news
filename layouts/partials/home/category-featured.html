@@ -1,0 +1,35 @@
+{{ $category_slug := .category }}
+{{ $limit := .limit | default 4 }}
+{{/* Use language-specific news section */}}
+{{ $lang_news_path := printf "/%s/news" .context.Site.Language.Lang }}
+{{ $news_section := .context.Site.GetPage $lang_news_path }}
+{{ $all := cond (ne $news_section nil) ($news_section.Pages) (slice) }}
+
+{{/* Filter pages by category */}}
+{{ $pages := first $limit (union (where $all ".Params.categories" "intersect" (slice $category_slug)) (where $all ".Params.categories" "eq" $category_slug)) }}
+
+{{ if $pages }}
+<section class="category-section">
+  <div class="category-header">
+    <h2 class="category-title"><a href="/categories/{{ $category_slug }}/">{{ i18n (printf "category_%s" $category_slug) | default $category_slug }}</a></h2>
+    <a href="/categories/{{ $category_slug }}/" class="category-link-all">{{ i18n "view_all" | default "Vezi tot" }}</a>
+  </div>
+
+  <div class="category-featured-layout">
+    {{/* First article - large featured card */}}
+    {{ with index $pages 0 }}
+      {{ partial "home/category-card.html" (dict "page" . "card_class" "card-category-featured") }}
+    {{ end }}
+
+    {{/* Next 3 articles stacked on right */}}
+    {{ $sidebar_pages := after 1 $pages | first 3 }}
+    {{ if $sidebar_pages }}
+    <div class="category-featured-sidebar">
+      {{ range $sidebar_pages }}
+        {{ partial "home/category-card.html" (dict "page" . "card_class" "card-category-small") }}
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
+</section>
+{{ end }}

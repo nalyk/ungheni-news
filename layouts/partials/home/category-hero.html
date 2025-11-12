@@ -1,0 +1,29 @@
+{{ $category_slug := .category }}
+{{ $limit := .limit | default 5 }}
+{{/* Use language-specific news section */}}
+{{ $lang_news_path := printf "/%s/news" .context.Site.Language.Lang }}
+{{ $news_section := .context.Site.GetPage $lang_news_path }}
+{{ $all := cond (ne $news_section nil) ($news_section.Pages) (slice) }}
+
+{{/* Filter pages by category */}}
+{{ $pages := first $limit (union (where $all ".Params.categories" "intersect" (slice $category_slug)) (where $all ".Params.categories" "eq" $category_slug)) }}
+
+{{ if $pages }}
+<section class="category-section category-section--hero">
+  <div class="category-header">
+    <h2 class="category-title"><a href="/categories/{{ $category_slug }}/">{{ i18n (printf "category_%s" $category_slug) | default $category_slug }}</a></h2>
+    <a href="/categories/{{ $category_slug }}/" class="category-link-all">{{ i18n "view_all" | default "Vezi tot" }}</a>
+  </div>
+
+  {{/* All 5 articles in grid: first spans 2 columns */}}
+  <div class="category-hero-grid">
+    {{ range $index, $page := $pages }}
+      {{ if eq $index 0 }}
+        {{ partial "home/category-card.html" (dict "page" . "card_class" "card-category-featured") }}
+      {{ else }}
+        {{ partial "home/category-card.html" (dict "page" . "card_class" "card-category-small") }}
+      {{ end }}
+    {{ end }}
+  </div>
+</section>
+{{ end }}

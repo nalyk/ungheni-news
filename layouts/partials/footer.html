@@ -1,5 +1,8 @@
 <footer class="site-footer">
   <div class="container">
+    <div class="footer-copyright">
+      <p>&copy; {{ now.Year }} {{ .Site.Title }}.</p>
+    </div>
     <nav class="footer-nav" aria-label="Secondary">
       <ul>
         {{/* WORKAROUND: Extract language from URL - matches header.html pattern */}}
@@ -14,9 +17,6 @@
         <li><a href="{{ $prefix }}/pages/confidentialitate/">{{ i18n "privacy" }}</a></li>
       </ul>
     </nav>
-    <div class="footer-bottom">
-        <p>&copy; {{ now.Year }} {{ .Site.Title }}.</p>
-    </div>
   </div>
 </footer>
 <script src="/js/news-filter.js" defer></script>

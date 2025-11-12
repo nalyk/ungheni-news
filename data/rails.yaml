@@ -2,21 +2,21 @@
   tag: ""
   limit: 6
   type: "latest"
-- key: category_servicii_publice
+- key: category_servicii-publice
   category: "servicii-publice"
   limit: 6
-- key: category_frontiera_transport
+- key: category_frontiera-transport
   category: "frontiera-transport"
   limit: 6
-- key: category_economie_fez
+- key: category_economie-zel
   category: "economie-zel"
   limit: 6
-- key: category_educatie_sanatate
+- key: category_educatie-sanatate
   category: "educatie-sanatate"
   limit: 6
 - key: category_national
   category: "national"
   limit: 6
-- key: category_ue_romania
+- key: category_ue-romania
   category: "ue-romania"
   limit: 6
