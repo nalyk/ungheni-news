@@ -1146,6 +1146,87 @@ hr {
 }
 
 /* ===============================================
+   SCROLL-TO-TOP BUTTON
+   =============================================== */
+
+.scroll-to-top {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  width: 48px;
+  height: 48px;
+  background-color: #0d47a1;
+  border: none;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 98;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  /* Animation states */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease,
+              visibility 0.3s ease,
+              transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              background-color 0.2s ease,
+              box-shadow 0.2s ease;
+
+  /* Icon color */
+  svg {
+    color: #ffffff;
+    transition: transform 0.2s ease;
+  }
+
+  /* Hover state */
+  &:hover {
+    background-color: #083770;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px) scale(1.05);
+
+    svg {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Active/visible state */
+  &.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  /* Focus state (keyboard navigation) */
+  &:focus {
+    outline: 2px solid #0d47a1;
+    outline-offset: 2px;
+  }
+
+  /* Active (click) state */
+  &:active {
+    transform: translateY(0) scale(0.95);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .scroll-to-top {
+    bottom: var(--space-4);
+    right: var(--space-4);
+    width: 44px;
+    height: 44px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+/* ===============================================
    MULTIMEDIA EMBEDS
    =============================================== */
 

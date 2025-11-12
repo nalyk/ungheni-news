@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "decapCmsDocs": {
+      "type": "http",
+      "url": "https://gitmcp.io/nalyk/decapDocs"
+    },
+    "hugoDocs": {
+      "type": "http",
+      "url": "https://gitmcp.io/nalyk/hugoDocs"
+    },
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "chrome-devtools-mcp@latest"
+      ],
+      "env": {}
+    }
+  }
+}
