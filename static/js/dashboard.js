@@ -7,7 +7,13 @@
   'use strict';
 
   // Load articles data from embedded JSON
-  const articlesData = JSON.parse(document.getElementById('articles-data').textContent);
+  const allArticles = JSON.parse(document.getElementById('articles-data').textContent);
+
+  // Load current page language
+  const pageLang = JSON.parse(document.getElementById('page-lang').textContent);
+
+  // Filter articles by current page language only
+  const articlesData = allArticles.filter(article => article.lang === pageLang);
 
   // State
   let currentTimeRange = 30; // days

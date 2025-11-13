@@ -1,7 +1,7 @@
 {{ define "main" }}
 <div class="editorial-dashboard">
   <header class="dashboard-header">
-    <h1>{{ .Title }}</h1>
+    <h1>{{ .Title }} <span class="lang-badge">{{ upper .Site.Language.Lang }}</span></h1>
     <p class="dashboard-subtitle">Monitorizare conformitate editorială &middot; Triunghi.md</p>
 
     <div class="dashboard-controls">
@@ -46,6 +46,10 @@
 
   <script id="articles-data" type="application/json">
 {{ $articles | jsonify | safeJS }}
+  </script>
+
+  <script id="page-lang" type="application/json">
+"{{ .Site.Language.Lang }}"
   </script>
 
   <div class="dashboard-grid">
@@ -264,6 +268,20 @@
 .dashboard-header h1 {
   margin: 0 0 0.5rem 0;
   font-size: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.lang-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .dashboard-subtitle {
