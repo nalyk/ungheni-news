@@ -111,6 +111,10 @@ content/ro/news/article-slug/
   - Two-step handshake required
   - String format postMessage (not object)
   - Explicit origin (never '*')
+- `newsletter.js` - Newsletter subscription endpoint
+  - Buttondown email service integration
+  - Email validation and duplicate detection
+  - CORS support for local dev
 
 ### `/i18n/` - Translation Strings
 **Internationalization**: Template translations
@@ -122,6 +126,9 @@ content/ro/news/article-slug/
 **Data-Driven UI**: YAML data for Hugo templates
 - `categories.yaml` - Category metadata (colors, descriptions)
 - `navigation.yaml` - Navigation structure
+- `series.yaml` - Series/investigative story metadata
+- `rails.yaml` - Service rail configurations
+- `site.yaml` - Site-wide settings
 - Accessed in templates: `.Site.Data.categories`
 
 ### `/scripts/` - Build Scripts
@@ -166,6 +173,28 @@ content/authors/
 - Simplifies media management
 - Enables Hugo's image processing
 - CMS configuration: `media_folder: ""`, `public_folder: ""`
+
+### `/layouts/shortcodes/` - Hugo Shortcodes
+**Content Embeds**: Multimedia embedding in markdown
+- `youtube.html` - YouTube videos (privacy-enhanced)
+- `tiktok.html` - TikTok vertical videos
+- `instagram.html` - Instagram posts
+- `facebook.html` - Facebook posts/videos (horizontal/vertical)
+- `twitter.html` - Twitter/X tweets
+- `telegram.html` - Telegram posts
+- `spotify.html` - Spotify audio (tracks, albums, podcasts)
+- `soundcloud.html` - SoundCloud audio
+- `vimeo.html` - Vimeo videos
+- `datawrapper.html` - Datawrapper charts
+- `flourish.html` - Flourish visualizations
+- `maps.html` - Google Maps
+- `embed.html` - Generic iframe fallback
+
+### `/layouts/partials/series-navigation.html`
+**Series Navigation**: Multi-part investigative stories
+- Displays prev/next navigation between series parts
+- Shows series progress and metadata
+- Integrates with `data/series.yaml`
 
 ## Build Output
 

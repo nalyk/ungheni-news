@@ -1,7 +1,7 @@
 ---
 title: "Tablou de bord editorial"
 date: 2025-01-15
-layout: dashboard
+type: dashboard
 draft: false
 ---
 

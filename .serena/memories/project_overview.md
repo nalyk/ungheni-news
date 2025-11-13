@@ -15,9 +15,21 @@ Every non-local article (categories: `national`, `ue-romania`) MUST include "Cut
 - **Hugo 0.127.0** - Static site generator
 - **Decap CMS** (formerly Netlify CMS) - Content management with GitHub backend
 - **Cloudflare Pages** - Hosting and deployment
+- **Cloudflare Functions** - Serverless API endpoints (OAuth, Newsletter)
 - **Cloudflare Workers** - Scheduled builds (every 5 minutes)
-- **Pagefind** - Search functionality
+- **Pagefind** - Static search index generation
+- **Buttondown** - Email newsletter service (Prut Brief)
 - **Go 1.22** - For Hugo modules
+
+## Key Features
+- **Multilingual**: Romanian (primary) + Russian, with language-specific content isolation
+- **Newsletter**: Prut Brief daily digest via Buttondown email service
+- **Search**: Pagefind static search (generated post-build)
+- **Dashboard**: Editorial analytics for 60/30/10 compliance, Cutia Ungheni tracking
+- **Multimedia Embeds**: 13 platforms supported (YouTube, TikTok, Instagram, etc.)
+- **Series System**: Multi-part investigative stories with navigation
+- **Scheduled Publishing**: Automatic publication via Cloudflare Workers (5-min interval)
+- **Validation**: Multi-layer content validation (CMS + build-time scripts)
 
 ## Hugo Binary Location
 **CRITICAL**: Hugo is installed at `/home/nalyk/bin/hugo` (version 0.127.0)

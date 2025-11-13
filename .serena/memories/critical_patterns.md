@@ -156,24 +156,43 @@ publishDate: 2025-01-20T10:00:00+02:00  # Future date = scheduled
 - `national` - Moldova-wide news
 - `ue-romania` - EU and Romania news
 
-**WRONG** ❌:
+**V2 Structure (Current, Simplified)** ✅:
 ```yaml
 ---
-categories: ["national"]
-# Missing cutia_ungheni!
+categories: [\"national\"]
+cutia_ungheni:
+  title: \"Optional custom title\"  # Optional
+  content: |                      # Required: Rich markdown content
+    - **Impact local**: Explanation of local effects
+    - **Ce se schimbă**: What changes for residents
+    - **Termene**: Important deadlines
+    
+    Supports **bold**, *italic*, [links](url), lists, headings, quotes.
 ---
 ```
 
-**CORRECT** ✅:
+**V1 Structure (Backward Compatible)** ✅:
 ```yaml
 ---
-categories: ["national"]
+categories: [\"national\"]
 cutia_ungheni:
-  impact_local: "How this affects Ungheni residents"
-  ce_se_schimba: "What changes locally"
-  termene: "Important deadlines or dates"
+  title: \"Optional custom title\"
+  impact_local: \"How this affects Ungheni residents\"
+  ce_se_schimba: \"What changes locally\"
+  termene: \"Important deadlines or dates\"
+  unde_aplici: \"Where to apply/get info (optional)\"
 ---
 ```
+
+**WRONG** ❌:
+```yaml
+---
+categories: [\"national\"]
+# Missing cutia_ungheni entirely!
+---
+```
+
+**Note**: Validation script accepts both v1 and v2 formats. CMS configuration provides v2 interface (simplified).
 
 ### Rule 3: Fact-Check Requirements
 **Validation**: `scripts/validate_content.sh`
@@ -336,6 +355,53 @@ See recent commits for language switcher implementation:
 - URL-based detection for static pages
 - Content parity checks
 - Intelligent fallback behavior
+
+---
+
+---
+
+## 9. CMS Field Configuration for Array Outputs (IMPORTANT)
+
+### The Problem
+Hugo expects certain front matter fields as arrays (categories, formats, tags) for proper taxonomy handling. Decap CMS must output arrays even for single-select fields.
+
+### WRONG Approach ❌
+```yaml
+# static/admin/config.yml
+- name: categories
+  widget: "select"  # Single select outputs STRING, not array
+  options: [...]
+```
+**Why it fails**: Outputs `categories: "local"` instead of `categories: ["local"]`
+
+### CORRECT Approach ✅
+```yaml
+# static/admin/config.yml
+- name: categories
+  widget: "select"
+  multiple: true  # Enables multi-select (outputs array)
+  min: 1          # Require at least one
+  max: 1          # Constrain to exactly one
+  options:
+    - { label: "🏛️ Local Ungheni", value: "local" }
+    - { label: "🇲🇩 Național", value: "national" }
+    # ...
+```
+
+**Why it works**: 
+- `multiple: true` makes widget output arrays: `["local"]`
+- `min: 1, max: 1` constrains to exactly one selection
+- Hugo templates receive consistent array format
+- Future extensibility if multi-category support needed
+
+### Apply To
+- `categories` field (currently single but outputs array)
+- `formats` field (currently single but outputs array)
+- `tags` field (truly multi-select, no max constraint)
+- `authors` field (truly multi-select, no max constraint)
+
+### Reference
+See `static/admin/config.yml` lines 86-99 (categories), 122-134 (formats) for implementation.
 
 ---
 
