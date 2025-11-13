@@ -55,20 +55,6 @@
   }
 
   /**
-   * Count today's articles
-   */
-  function countTodayArticles(articles) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return articles.filter(article => {
-      const articleDate = new Date(article.date);
-      articleDate.setHours(0, 0, 0, 0);
-      return articleDate.getTime() === today.getTime() && !article.draft;
-    }).length;
-  }
-
-  /**
    * Calculate 60/30/10 ratio
    */
   function calculate603010Ratio(articles) {
@@ -117,10 +103,6 @@
     document.getElementById('local-count').textContent = ratio.localCount;
     document.getElementById('national-count').textContent = ratio.nationalCount;
     document.getElementById('intl-count').textContent = ratio.internationalCount;
-
-    // Update today count
-    const todayCount = countTodayArticles(articlesData);
-    document.getElementById('today-count').textContent = todayCount;
 
     // Update bar widths
     document.querySelectorAll('.ratio-bar-fill').forEach((bar, index) => {
