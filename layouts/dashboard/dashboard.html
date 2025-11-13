@@ -21,28 +21,30 @@
 
   {{/* Generate JSON index of all articles for client-side processing */}}
   {{ $articles := slice }}
-  {{ range where .Site.RegularPages "Type" "news" }}
-    {{ $publishDate := "" }}
-    {{ with .PublishDate }}
-      {{ $publishDate = .Format "2006-01-02" }}
+  {{ range .Site.AllPages }}
+    {{ if and (eq .Kind "page") (in .RelPermalink "/news/") }}
+      {{ $publishDate := "" }}
+      {{ with .PublishDate }}
+        {{ $publishDate = .Format "2006-01-02" }}
+      {{ end }}
+      {{ $articles = $articles | append (dict
+        "title" .Title
+        "date" (.Date.Format "2006-01-02")
+        "publishDate" $publishDate
+        "categories" .Params.categories
+        "formats" .Params.formats
+        "draft" .Draft
+        "lang" .Lang
+        "cutiaUngheni" .Params.cutia_ungheni
+        "url" .RelPermalink
+        "summary" .Summary
+        "authors" .Params.authors
+      ) }}
     {{ end }}
-    {{ $articles = $articles | append (dict
-      "title" .Title
-      "date" (.Date.Format "2006-01-02")
-      "publishDate" $publishDate
-      "categories" .Params.categories
-      "formats" .Params.formats
-      "draft" .Draft
-      "lang" .Lang
-      "cutiaUngheni" .Params.cutia_ungheni
-      "url" .RelPermalink
-      "summary" .Summary
-      "authors" .Params.authors
-    ) }}
   {{ end }}
 
   <script id="articles-data" type="application/json">
-    {{ $articles | jsonify }}
+{{ $articles | jsonify | safeJS }}
   </script>
 
   <div class="dashboard-grid">
