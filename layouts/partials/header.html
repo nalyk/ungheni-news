@@ -113,8 +113,8 @@
             {{ $target_url = printf "%s/%s/%s/" $target_prefix $section $slug }}
 
           {{ else if eq $section "dashboard" }}
-            {{/* DASHBOARD: Direct translation via translationKey */}}
-            {{ $target_prefix := cond (eq $target_lang "ro") "" (printf "/%s" $target_lang) }}
+            {{/* DASHBOARD: Direct translation via translationKey (both RO and RU have language prefix) */}}
+            {{ $target_prefix := printf "/%s" $target_lang }}
             {{ $target_url = printf "%s/dashboard/" $target_prefix }}
 
           {{ else }}
