@@ -1,14 +1,24 @@
 ---
 title: "Parc nou în Ungheni: Investiție de 2 milioane lei"
-summary: "Primăria Ungheni inaugurează un parc modern în cartierul de vest, cu zone de joacă, alei pietonate și spații verzi. Lucrările au durat 8 luni."
+summary: Primăria Ungheni inaugurează un parc modern în cartierul de vest, cu
+  zone de joacă, alei pietonate și spații verzi. Lucrările au durat 8 luni.
+categories:
+  - local
+formats:
+  - stire
 date: 2025-11-01T10:00:00+02:00
 publishDate: 2025-11-01T10:00:00+02:00
 draft: false
 featured: true
-categories: ["local"]
-formats: ["stire"]
-authors: ["redactia"]
-tags: ["infrastructură", "parcuri", "investiții", "cartier-vest"]
+cover: parc.jpg
+cover_alt: Parc Ungheni
+authors:
+  - redactia
+tags:
+  - infrastructură
+  - parcuri
+  - investiții
+  - cartier-vest
 ---
 
 Primăria Ungheni a inaugurat astăzi un parc modern în cartierul de vest al orașului, o investiție de aproximativ 2 milioane de lei finanțată din bugetul local și fonduri europene.
