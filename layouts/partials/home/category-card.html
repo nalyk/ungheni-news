@@ -23,20 +23,28 @@
 {{ $format_slug := index $page.Params.formats 0 | default "" }}
 {{ $icon_filename := index $format_icon_map $format_slug }}
 
+{{/* Determine if this card should show an image */}}
+{{ $text_only_cards := slice "card-list-text" "card-text-only" }}
+{{ $show_image := not (in $text_only_cards $card_class) }}
+
+{{/* Determine if this card should show a summary */}}
+{{ $no_summary_cards := slice "card-featured" "card-hero-main" "card-hero-sub" "card-list-text" "card-text-only" }}
+{{ $show_summary := not (in $no_summary_cards $card_class) }}
+
 <div class="category-card {{ $card_class }}">
   {{ if or (eq $card_class "card-hero-sub") (in $card_class "card-hero-sub") }}
     <a href="{{ $page.RelPermalink }}" class="card-link" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%), url('{{ $src }}');">
   {{ else }}
     <a href="{{ $page.RelPermalink }}" class="card-link">
   {{ end }}
-    {{ if not (or (eq $card_class "card-hero-sub") (in $card_class "card-hero-sub")) }}
+    {{ if and $show_image (not (or (eq $card_class "card-hero-sub") (in $card_class "card-hero-sub"))) }}
       <div class="card-image-wrapper">
         <img src="{{ $src }}" alt="{{ $page.Title }}" class="card-image" loading="lazy" decoding="async">
       </div>
     {{ end }}
     <div class="card-content">
       <h3 class="card-title">{{ $page.Title }}</h3>
-      {{ if and (not (in $card_class "card-featured")) (not (in $card_class "card-hero-main")) (not (in $card_class "card-hero-sub")) }}
+      {{ if $show_summary }}
         <p class="card-summary">{{ $page.Summary | truncate 70 }}</p>
       {{ end }}
     </div>

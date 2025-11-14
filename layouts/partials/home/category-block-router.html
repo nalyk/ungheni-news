@@ -1,0 +1,33 @@
+{{/*
+  Category Block Router
+
+  Routes to the appropriate category layout based on configuration
+  in data/homepage-blocks.yaml
+
+  Each block in the configuration specifies:
+  - category: The category slug
+  - layout: The layout type (masonry, list-image-first, text-only, horizontal)
+  - limit: Maximum number of articles to display
+*/}}
+
+{{ $blocks := .Site.Data.homepage_blocks.blocks }}
+
+{{ range $block := $blocks }}
+  {{ $layout := $block.layout }}
+  {{ $category := $block.category }}
+  {{ $limit := $block.limit | default 4 }}
+
+  {{/* Route to the appropriate layout partial */}}
+  {{ if eq $layout "masonry" }}
+    {{ partial "home/category-masonry.html" (dict "context" $ "category" $category "limit" $limit) }}
+  {{ else if eq $layout "list-image-first" }}
+    {{ partial "home/category-list-image-first.html" (dict "context" $ "category" $category "limit" $limit) }}
+  {{ else if eq $layout "text-only" }}
+    {{ partial "home/category-text-only.html" (dict "context" $ "category" $category "limit" $limit) }}
+  {{ else if eq $layout "horizontal" }}
+    {{ partial "home/category-horizontal.html" (dict "context" $ "category" $category "limit" $limit) }}
+  {{ else }}
+    {{/* Fallback to horizontal if layout type unknown */}}
+    {{ partial "home/category-horizontal.html" (dict "context" $ "category" $category "limit" $limit) }}
+  {{ end }}
+{{ end }}

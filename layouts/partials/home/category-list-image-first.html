@@ -1,0 +1,53 @@
+{{/*
+  Category List with First Image Layout
+
+  First (most recent) article displays with image, rest are text-only
+
+  Parameters:
+  - context: The page context (.)
+  - category: Category slug
+  - limit: Number of articles to display
+*/}}
+
+{{ $context := .context }}
+{{ $category_slug := .category }}
+{{ $limit := .limit | default 5 }}
+
+{{/* Get current language */}}
+{{ $currentLang := $context.Language.Lang }}
+
+{{/* Get category data */}}
+{{ $category_list := where $context.Site.Data.categories "slug" $category_slug }}
+{{ $category_data := index $category_list 0 }}
+{{ $category_name := index $category_data $currentLang | default $category_data.ro }}
+
+{{/* Get articles from language-specific section */}}
+{{ $lang_news_path := printf "/%s/news" $currentLang }}
+{{ $news_section := $context.Site.GetPage $lang_news_path }}
+{{ $all_lang_pages := $news_section.Pages }}
+
+{{/* Filter by category */}}
+{{ $pages := where $all_lang_pages ".Params.categories" "intersect" (slice $category_slug) }}
+{{ $pages = first $limit $pages }}
+
+{{ if gt (len $pages) 0 }}
+<section class="category-section category-list-image-first-section">
+  <header class="category-header">
+    <h2 class="category-title">
+      <a href="/{{ $currentLang }}/categories/{{ $category_slug }}/">{{ $category_name }}</a>
+    </h2>
+  </header>
+
+  <div class="category-list-image-first-container">
+    {{ range $index, $page := $pages }}
+      {{ if eq $index 0 }}
+        {{/* First article with image */}}
+        {{ partial "home/category-card.html" (dict "page" . "card_class" "card-list-featured") }}
+      {{ else }}
+        {{/* Rest as text-only */}}
+        {{ partial "home/category-card.html" (dict "page" . "card_class" "card-list-text") }}
+      {{ end }}
+    {{ end }}
+  </div>
+</section>
+{{ end }}

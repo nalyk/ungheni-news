@@ -1,0 +1,35 @@
+# Homepage Category Blocks Configuration
+#
+# Layout types:
+#   - masonry: Pinterest-style grid layout
+#   - list-image-first: First article with image, rest text-only
+#   - text-only: Simple text list without images
+#   - horizontal: Image on left, content on right
+#
+# Each block can be repeated and customized independently
+
+blocks:
+  # 1. Local News - Masonry layout for visual prominence
+  - category: local
+    layout: masonry
+    limit: 6
+
+  # 2. Border & Transport - Horizontal cards with images
+  - category: frontiera-transport
+    layout: horizontal
+    limit: 4
+
+  # 3. Economy & ZEL - List with first image
+  - category: economie-zel
+    layout: list-image-first
+    limit: 5
+
+  # 4. Public Services - Text-only compact list
+  - category: servicii-publice
+    layout: text-only
+    limit: 4
+
+  # 5. Education & Health - Horizontal layout
+  - category: educatie-sanatate
+    layout: horizontal
+    limit: 3

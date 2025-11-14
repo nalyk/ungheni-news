@@ -7,24 +7,8 @@
     <div class="home-layout-grid">
       {{/* 2. Main Content Column */}}
       <main class="main-content">
-        {{/* Option C: Mixed Hierarchy Layout - 5 CATEGORY BLOCKS */}}
-
-        {{/* 1. Local - Hero Layout (5 articles: 1 large + 4 grid) */}}
-        {{ partial "home/category-hero.html" (dict "context" . "category" "local" "limit" 5) }}
-
-        {{/* 2. Frontieră & Transport - Featured Layout (4 articles: 1 large + 3) */}}
-        {{ partial "home/category-featured.html" (dict "context" . "category" "frontiera-transport" "limit" 4) }}
-
-        {{/* 3. Economie & ZEL + Servicii publice - Dual Compact (3+3 articles) */}}
-        <section class="category-section category-section--dual">
-          <div class="category-dual-grid">
-            {{ partial "home/category-compact.html" (dict "context" . "category" "economie-zel" "limit" 3) }}
-            {{ partial "home/category-compact.html" (dict "context" . "category" "servicii-publice" "limit" 3) }}
-          </div>
-        </section>
-
-        {{/* 4. Educație & Sănătate - Standard 3-card row (3 articles) */}}
-        {{ partial "home/category-block.html" (dict "context" . "category" "educatie-sanatate" "limit" 3) }}
+        {{/* Category blocks configured in data/homepage-blocks.yaml */}}
+        {{ partial "home/category-block-router.html" . }}
       </main>
 
       {{/* 3. Sidebar Column */}}
