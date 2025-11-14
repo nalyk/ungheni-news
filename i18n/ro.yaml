@@ -308,3 +308,93 @@
   translation: "nov"
 - id: month_short_12
   translation: "dec"
+
+# Dashboard
+- id: dashboard_subtitle
+  translation: "Monitorizare conformitate editorială · Triunghi.md"
+- id: dashboard_period
+  translation: "Perioadă:"
+- id: dashboard_today
+  translation: "Astăzi"
+- id: dashboard_7days
+  translation: "Ultimele 7 zile"
+- id: dashboard_30days
+  translation: "Ultimele 30 zile"
+- id: dashboard_90days
+  translation: "Ultimele 90 zile"
+- id: dashboard_alltime
+  translation: "Tot timpul"
+- id: dashboard_refresh
+  translation: "↻ Reîmprospătează"
+- id: dashboard_ratio_title
+  translation: "📊 Raportul 60/30/10"
+- id: dashboard_ratio_description
+  translation: "Distribuția Local / Național / Internațional"
+- id: dashboard_local
+  translation: "🏛️ Local"
+- id: dashboard_national
+  translation: "🇲🇩 Național"
+- id: dashboard_international
+  translation: "🌍 Internațional"
+- id: dashboard_target
+  translation: "Țintă:"
+- id: dashboard_total_articles
+  translation: "Total articole"
+- id: dashboard_local_count
+  translation: "Locale"
+- id: dashboard_national_count
+  translation: "Naționale"
+- id: dashboard_international_count
+  translation: "Internaționale"
+- id: dashboard_cutia_title
+  translation: "📦 Conformitate Cutia Ungheni"
+- id: dashboard_cutia_description
+  translation: "Articole non-locale cu impact local documentat"
+- id: dashboard_cutia_compliance
+  translation: "Conformitate"
+- id: dashboard_cutia_with
+  translation: "Cu Cutia Ungheni"
+- id: dashboard_cutia_without
+  translation: "Fără Cutia Ungheni"
+- id: dashboard_cutia_missing_title
+  translation: "Articole care necesită Cutia Ungheni:"
+- id: dashboard_formats_title
+  translation: "📝 Distribuție formate"
+- id: dashboard_formats_description
+  translation: "Tipuri de conținut publicat"
+- id: dashboard_format_stire
+  translation: "📰 Știri"
+- id: dashboard_format_analiza
+  translation: "📊 Analize"
+- id: dashboard_format_explainer
+  translation: "❓ Explainere"
+- id: dashboard_format_opinie
+  translation: "💭 Opinii"
+- id: dashboard_format_factcheck
+  translation: "✅ Fact-check"
+- id: dashboard_scheduled_title
+  translation: "📅 Conținut programat"
+- id: dashboard_scheduled_description
+  translation: "Articole cu publishDate în viitor"
+- id: dashboard_scheduled_empty
+  translation: "Niciun articol programat"
+- id: dashboard_activity_title
+  translation: "🕒 Activitate recentă"
+- id: dashboard_activity_description
+  translation: "Ultimele 10 articole publicate"
+- id: dashboard_health_title
+  translation: "💚 Scor sănătate editorială"
+- id: dashboard_health_description
+  translation: "Conformitate cu principiile Triunghi"
+- id: dashboard_health_ratio
+  translation: "Raport 60/30/10"
+- id: dashboard_health_cutia
+  translation: "Cutia Ungheni"
+- id: dashboard_health_formats
+  translation: "Diversitate formate"
+- id: dashboard_health_frequency
+  translation: "Frecvență publicare"
+- id: dashboard_loading
+  translation: "Se încarcă..."
+- id: dashboard_calculating
+  translation: "⏳ Se calculează..."

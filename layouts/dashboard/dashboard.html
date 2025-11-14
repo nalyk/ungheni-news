@@ -1,28 +1,28 @@
 {{ define "main" }}
 <div class="editorial-dashboard">
   <header class="dashboard-header">
-    <h1>{{ .Title }} <span class="lang-badge">{{ upper .Site.Language.Lang }}</span></h1>
-    <p class="dashboard-subtitle">Monitorizare conformitate editorială &middot; Triunghi.md</p>
+    <h1>{{ .Title }} <span class="lang-badge">{{ upper .Lang }}</span></h1>
+    <p class="dashboard-subtitle">{{ i18n "dashboard_subtitle" }}</p>
 
     <div class="dashboard-controls">
       <div class="time-range-selector">
-        <label for="time-range">Perioadă:</label>
+        <label for="time-range">{{ i18n "dashboard_period" }}</label>
         <select id="time-range">
-          <option value="1">Astăzi</option>
-          <option value="7">Ultimele 7 zile</option>
-          <option value="30" selected>Ultimele 30 zile</option>
-          <option value="90">Ultimele 90 zile</option>
-          <option value="all">Tot timpul</option>
+          <option value="1">{{ i18n "dashboard_today" }}</option>
+          <option value="7">{{ i18n "dashboard_7days" }}</option>
+          <option value="30" selected>{{ i18n "dashboard_30days" }}</option>
+          <option value="90">{{ i18n "dashboard_90days" }}</option>
+          <option value="all">{{ i18n "dashboard_alltime" }}</option>
         </select>
       </div>
 
-      <button id="refresh-data" class="btn-secondary">↻ Reîmprospătează</button>
+      <button id="refresh-data" class="btn-secondary">{{ i18n "dashboard_refresh" }}</button>
     </div>
   </header>
 
   {{/* Generate JSON index of articles for CURRENT LANGUAGE ONLY */}}
   {{ $articles := slice }}
-  {{ $currentLang := .Site.Language.Lang }}
+  {{ $currentLang := .Lang }}
   {{ $langNewsPath := printf "/%s/news/" $currentLang }}
   {{ range .Site.AllPages }}
     {{ if and (eq .Kind "page") (in .RelPermalink $langNewsPath) }}
