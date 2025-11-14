@@ -76,7 +76,7 @@ Each article displays as a horizontal card with image on left, content on right.
 
 ### Location
 
-`data/homepage-blocks.yaml`
+`data/homepage_blocks.yaml`
 
 ### Structure
 
