@@ -13,11 +13,35 @@
 
 {{ $cover := $page.Params.cover }}
 {{ $src := "" }}
+{{ $processed := false }}
+
 {{ if $cover }}
   {{ if or (hasPrefix $cover "http") (hasPrefix $cover "/") }}
+    {{/* External or absolute URL - serve as-is */}}
     {{ $src = ($cover | relURL) }}
   {{ else }}
-    {{ $src = printf "%s%s" $page.RelPermalink $cover }}
+    {{/* Try to get as page resource for Hugo processing */}}
+    {{ $res := $page.Resources.GetMatch $cover }}
+    {{ if $res }}
+      {{/* Process image based on hero card class - ensures uniform sizes */}}
+      {{ if eq $card_class "card-hero-main" }}
+        {{ $img := $res.Fill "1200x675 webp Smart" }}
+        {{ $src = $img.RelPermalink }}
+        {{ $processed = true }}
+      {{ else if eq $card_class "card-hero-sub" }}
+        {{ $img := $res.Fill "800x450 webp Smart" }}
+        {{ $src = $img.RelPermalink }}
+        {{ $processed = true }}
+      {{ else }}
+        {{/* Default for unknown hero card types */}}
+        {{ $img := $res.Resize "1200x webp" }}
+        {{ $src = $img.RelPermalink }}
+        {{ $processed = true }}
+      {{ end }}
+    {{ else }}
+      {{/* Resource not found, fallback to original path */}}
+      {{ $src = printf "%s%s" $page.RelPermalink $cover }}
+    {{ end }}
   {{ end }}
 {{ else }}
   {{ $src = ("img/placeholders/local.svg" | relURL) }}

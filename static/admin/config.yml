@@ -145,7 +145,7 @@ collections:
         label: "Imagine principală"
         widget: "image"
         required: false
-        hint: "Imagine pentru hero, social sharing și preview. Optimă: 1200x630px, sub 500KB"
+        hint: "Imagine pentru articol. Hugo va genera automat dimensiuni optime pentru fiecare poziție. Minim: 1200x675px (16:9), Recomandat: 1600x1000px sau mai mare. Format: JPG/PNG (WebP se generează automat)."
       - name: cover_alt
         label: "Text alternativ imagine"
         widget: "string"
@@ -376,7 +376,7 @@ collections:
         label: "Основное изображение"
         widget: "image"
         required: false
-        hint: "Изображение для hero, социальных сетей и preview. Оптимально: 1200x630px, менее 500KB"
+        hint: "Изображение для статьи. Hugo автоматически создаст оптимальные размеры для каждой позиции. Минимум: 1200x675px (16:9), Рекомендуется: 1600x1000px или больше. Формат: JPG/PNG (WebP создается автоматически)."
       - name: cover_alt
         label: "Альтернативный текст изображения"
         widget: "string"

@@ -13,11 +13,39 @@
 
 {{ $cover := $page.Params.cover }}
 {{ $src := "" }}
+{{ $processed := false }}
+
 {{ if $cover }}
   {{ if or (hasPrefix $cover "http") (hasPrefix $cover "/") }}
+    {{/* External or absolute URL - serve as-is */}}
     {{ $src = ($cover | relURL) }}
   {{ else }}
-    {{ $src = printf "%s%s" $page.RelPermalink $cover }}
+    {{/* Try to get as page resource for Hugo processing */}}
+    {{ $res := $page.Resources.GetMatch $cover }}
+    {{ if $res }}
+      {{/* Process image based on card class - ensures uniform sizes */}}
+      {{ if eq $card_class "card-split-featured" }}
+        {{ $img := $res.Fill "800x500 webp Smart" }}
+        {{ $src = $img.RelPermalink }}
+        {{ $processed = true }}
+      {{ else if eq $card_class "card-list-featured" }}
+        {{ $img := $res.Fill "400x225 webp Smart" }}
+        {{ $src = $img.RelPermalink }}
+        {{ $processed = true }}
+      {{ else if eq $card_class "card-horizontal" }}
+        {{ $img := $res.Fill "360x270 webp Smart" }}
+        {{ $src = $img.RelPermalink }}
+        {{ $processed = true }}
+      {{ else }}
+        {{/* Default for other card types with images */}}
+        {{ $img := $res.Resize "800x webp" }}
+        {{ $src = $img.RelPermalink }}
+        {{ $processed = true }}
+      {{ end }}
+    {{ else }}
+      {{/* Resource not found, fallback to original path */}}
+      {{ $src = printf "%s%s" $page.RelPermalink $cover }}
+    {{ end }}
   {{ end }}
 {{ else }}
   {{ $src = ("img/placeholders/local.svg" | relURL) }}
