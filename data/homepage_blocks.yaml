@@ -12,7 +12,7 @@ blocks:
   # 1. Local News - Masonry layout for visual prominence
   - category: local
     layout: masonry
-    limit: 3
+    limit: 4
 
   # 2. Border & Transport - Horizontal cards with images
   - category: frontiera-transport

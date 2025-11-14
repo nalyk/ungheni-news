@@ -34,11 +34,11 @@
 {{ $icon_filename := index $format_icon_map $format_slug }}
 
 {{/* Determine if this card should show an image */}}
-{{ $text_only_cards := slice "card-list-text" "card-text-only" }}
+{{ $text_only_cards := slice "card-list-text" "card-text-only" "card-split-list-item" }}
 {{ $show_image := not (in $text_only_cards $card_class) }}
 
 {{/* Determine if this card should show a summary */}}
-{{ $no_summary_cards := slice "card-list-text" "card-text-only" }}
+{{ $no_summary_cards := slice "card-list-text" "card-text-only" "card-split-list-item" }}
 {{ $show_summary := not (in $no_summary_cards $card_class) }}
 
 <div class="category-card {{ $card_class }}">
