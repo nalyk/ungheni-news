@@ -9,15 +9,55 @@
 {{ $all_pages := cond (ne $news_section nil) ($news_section.RegularPages | default $news_section.Pages) (slice) }}
 {{ $latest := first 10 ($all_pages.ByDate.Reverse | default (slice)) }}
 
+{{/* Map format slugs to icon filenames */}}
+{{ $format_icon_map := dict
+  "stire" "news.svg"
+  "analiza" "analysis.svg"
+  "explainer" "explainer.svg"
+  "opinie" "opinion.svg"
+  "factcheck" "factcheck.svg"
+}}
+
 <div class="widget widget-latest-news">
   <h3 class="widget-title">{{ i18n "latest_news" | default "Ultimele Știri" }}</h3>
   <ul class="news-list">
     {{ range $latest }}
+      {{/* Find Format Data */}}
+      {{ $format_slug := index .Params.formats 0 | default "" }}
+      {{ $format_list := where $.Site.Data.formats.formats "slug" $format_slug }}
+      {{ $format := index $format_list 0 | default (dict) }}
+      {{ $icon_filename := index $format_icon_map $format_slug }}
+
+      {{/* Find Category Data */}}
+      {{ $category_slug := index .Params.categories 0 | default "" }}
+      {{ $category_list := where $.Site.Data.categories "slug" $category_slug }}
+      {{ $category := index $category_list 0 | default (dict) }}
+
       <li class="news-item">
         <a href="{{ .RelPermalink }}" class="news-item-link">
           <span class="news-item-title">{{ .Title }}</span>
         </a>
-        <time class="news-item-time" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ partial "format-date.html" (dict "ctx" . "date" .Date "format" "short") }}</time>
+        <div class="news-item-meta">
+          <div class="news-item-meta-left">
+            <time class="news-item-time" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+              {{- partial "format-date.html" (dict "ctx" . "date" .Date "format" "short") -}}
+            </time>
+            {{ with $category }}
+              <span class="news-item-category">
+                &middot; {{ index . $currentLang | default .ro }}
+              </span>
+            {{ end }}
+          </div>
+          {{ with $format }}
+            <div class="news-item-meta-right">
+              {{ with $icon_filename }}
+                <span class="news-item-format" title="{{ index $format $currentLang "name" | default $format.ro.name }}">
+                  <img src="/img/news-type-icons/{{ . }}" alt="{{ index $format $currentLang "name" | default $format.ro.name }} icon" class="news-item-format-icon" />
+                </span>
+              {{ end }}
+            </div>
+          {{ end }}
+        </div>
       </li>
     {{ end }}
   </ul>
