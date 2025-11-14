@@ -10,8 +10,8 @@ logo_url: /img/brand/logo.svg
 
 publish_mode: editorial_workflow
 
-media_folder: "content/ro/news"          # Show all images from Romanian articles
-public_folder: "/ro/news"
+media_folder: "static/img/shared"        # Shared/reusable images (Media Library)
+public_folder: "/img/shared"            # Article-specific images use page bundles
 
 # Media uploads: Using local storage for now
 # Optional: Configure Cloudinary later if needed
