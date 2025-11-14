@@ -20,10 +20,12 @@
     </div>
   </header>
 
-  {{/* Generate JSON index of all articles for client-side processing */}}
+  {{/* Generate JSON index of articles for CURRENT LANGUAGE ONLY */}}
   {{ $articles := slice }}
+  {{ $currentLang := .Site.Language.Lang }}
+  {{ $langNewsPath := printf "/%s/news/" $currentLang }}
   {{ range .Site.AllPages }}
-    {{ if and (eq .Kind "page") (in .RelPermalink "/news/") }}
+    {{ if and (eq .Kind "page") (in .RelPermalink $langNewsPath) }}
       {{ $publishDate := "" }}
       {{ with .PublishDate }}
         {{ $publishDate = .Format "2006-01-02" }}
@@ -46,10 +48,6 @@
 
   <script id="articles-data" type="application/json">
 {{ $articles | jsonify | safeJS }}
-  </script>
-
-  <script id="page-lang" type="application/json">
-"{{ .Site.Language.Lang }}"
   </script>
 
   <div class="dashboard-grid">

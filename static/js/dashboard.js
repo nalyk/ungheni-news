@@ -6,14 +6,8 @@
 (function() {
   'use strict';
 
-  // Load articles data from embedded JSON
-  const allArticles = JSON.parse(document.getElementById('articles-data').textContent);
-
-  // Load current page language
-  const pageLang = JSON.parse(document.getElementById('page-lang').textContent);
-
-  // Filter articles by current page language only
-  const articlesData = allArticles.filter(article => article.lang === pageLang);
+  // Load articles data from embedded JSON (already filtered by Hugo for current language)
+  const articlesData = JSON.parse(document.getElementById('articles-data').textContent);
 
   // State
   let currentTimeRange = 30; // days
@@ -163,8 +157,14 @@
     const withCutia = nonLocalArticles.filter(article => {
       if (!article.cutiaUngheni) return false;
 
-      // Check if at least one field is filled
       const cutia = article.cutiaUngheni;
+
+      // Check for v2 format (title + content)
+      if (cutia.title || cutia.content) {
+        return (cutia.title && cutia.title.trim()) || (cutia.content && cutia.content.trim());
+      }
+
+      // Check for v1 format (individual fields)
       return (cutia.impact_local && cutia.impact_local.trim()) ||
              (cutia.ce_se_schimba && cutia.ce_se_schimba.trim()) ||
              (cutia.termene && cutia.termene.trim()) ||
