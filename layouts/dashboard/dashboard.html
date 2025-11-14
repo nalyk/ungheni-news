@@ -13,9 +13,9 @@
       <div class="time-range-selector">
         <label for="time-range">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_period" "lang" $currentLang) }}</label>
         <select id="time-range">
-          <option value="1">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_today" "lang" $currentLang) }}</option>
+          <option value="1" selected>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_today" "lang" $currentLang) }}</option>
           <option value="7">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_7days" "lang" $currentLang) }}</option>
-          <option value="30" selected>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_30days" "lang" $currentLang) }}</option>
+          <option value="30">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_30days" "lang" $currentLang) }}</option>
           <option value="90">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_90days" "lang" $currentLang) }}</option>
           <option value="all">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_alltime" "lang" $currentLang) }}</option>
         </select>
