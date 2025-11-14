@@ -37,23 +37,34 @@
 
           {{/* Parse URL to determine page type and content */}}
           {{ $url_parts := split .RelPermalink "/" }}
-          {{/* URL structure: ["", "ro", "news", "01-article-slug", ""] or ["", "news", "01-article-slug", ""] for RO */}}
+          {{/* URL structure examples:
+               /ro/news/slug/     -> ["", "ro", "news", "slug", ""]     (length 5)
+               /ro/dashboard/     -> ["", "ro", "dashboard", ""]        (length 4)
+               /news/slug/        -> ["", "news", "slug", ""]           (length 4, RO without prefix)
+               /dashboard/        -> ["", "dashboard", ""]              (length 3, RO without prefix)
+          */}}
           {{ $section := "" }}
           {{ $slug := "" }}
 
           {{/* Determine section based on URL position */}}
           {{ if eq (len $url_parts) 5 }}
-            {{/* Has language prefix: /ro/news/slug/ or /ru/pages/slug/ */}}
+            {{/* Has language prefix with slug: /ro/news/slug/ or /ru/pages/slug/ */}}
             {{ $section = index $url_parts 2 }}
             {{ $slug = index $url_parts 3 }}
           {{ else if eq (len $url_parts) 4 }}
-            {{/* RO without prefix: /news/slug/ or /pages/slug/ */}}
+            {{/* Length 4: could be /ro/dashboard/ or /news/slug/ */}}
+            {{ $part1 := index $url_parts 1 }}
+            {{ if or (eq $part1 "ro") (eq $part1 "ru") }}
+              {{/* Language prefix without slug: /ro/dashboard/ */}}
+              {{ $section = index $url_parts 2 }}
+            {{ else }}
+              {{/* RO without prefix: /news/slug/ */}}
+              {{ $section = index $url_parts 1 }}
+              {{ $slug = index $url_parts 2 }}
+            {{ end }}
+          {{ else if eq (len $url_parts) 3 }}
+            {{/* RO without prefix, no slug: /dashboard/ */}}
             {{ $section = index $url_parts 1 }}
-            {{ $slug = index $url_parts 2 }}
-          {{ else if eq (len $url_parts) 4 }}
-            {{/* Taxonomy or category: /ro/categories/slug/ */}}
-            {{ $section = index $url_parts 2 }}
-            {{ $slug = index $url_parts 3 }}
           {{ end }}
 
           {{/* Route based on URL section */}}
@@ -100,6 +111,11 @@
             {{/* TAXONOMIES: Same term in other language */}}
             {{ $target_prefix := cond (eq $target_lang "ro") "" (printf "/%s" $target_lang) }}
             {{ $target_url = printf "%s/%s/%s/" $target_prefix $section $slug }}
+
+          {{ else if eq $section "dashboard" }}
+            {{/* DASHBOARD: Direct translation via translationKey */}}
+            {{ $target_prefix := cond (eq $target_lang "ro") "" (printf "/%s" $target_lang) }}
+            {{ $target_url = printf "%s/dashboard/" $target_prefix }}
 
           {{ else }}
             {{/* HOMEPAGE or other: Target language homepage */}}

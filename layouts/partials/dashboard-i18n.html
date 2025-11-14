@@ -1,0 +1,32 @@
+{{/* Dashboard translation helper - manual i18n for custom type pages */}}
+{{/* Usage: {{ partial "dashboard-i18n.html" (dict "key" "dashboard_today" "lang" $currentLang) }} */}}
+
+{{ $key := .key }}
+{{ $lang := .lang }}
+
+{{ $translations := dict
+  "ro" (dict
+    "dashboard_subtitle" "Monitorizare conformitate editorială · Triunghi.md"
+    "dashboard_period" "Perioadă:"
+    "dashboard_today" "Astăzi"
+    "dashboard_7days" "Ultimele 7 zile"
+    "dashboard_30days" "Ultimele 30 zile"
+    "dashboard_90days" "Ultimele 90 zile"
+    "dashboard_alltime" "Tot timpul"
+    "dashboard_refresh" "↻ Reîmprospătează"
+  )
+  "ru" (dict
+    "dashboard_subtitle" "Мониторинг редакционного соответствия · Triunghi.md"
+    "dashboard_period" "Период:"
+    "dashboard_today" "Сегодня"
+    "dashboard_7days" "Последние 7 дней"
+    "dashboard_30days" "Последние 30 дней"
+    "dashboard_90days" "Последние 90 дней"
+    "dashboard_alltime" "Все время"
+    "dashboard_refresh" "↻ Обновить"
+  )
+}}
+
+{{ $langDict := index $translations $lang }}
+{{ $result := index $langDict $key }}
+{{ return $result }}

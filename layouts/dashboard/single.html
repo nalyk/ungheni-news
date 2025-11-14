@@ -1,28 +1,32 @@
 {{ define "main" }}
 <div class="editorial-dashboard">
+  {{/* WORKAROUND: Extract language from URL since .Lang doesn't work correctly for custom types */}}
+  {{ $url_parts := split .RelPermalink "/" }}
+  {{ $currentLang := index $url_parts 1 }}
+  {{ if not (or (eq $currentLang "ro") (eq $currentLang "ru")) }}{{ $currentLang = .Site.Language.Lang }}{{ end }}
+
   <header class="dashboard-header">
-    <h1>{{ .Title }} <span class="lang-badge">{{ upper .Lang }}</span></h1>
-    <p class="dashboard-subtitle">{{ i18n "dashboard_subtitle" }}</p>
+    <h1>{{ .Title }} <span class="lang-badge">{{ upper $currentLang }}</span></h1>
+    <p class="dashboard-subtitle">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_subtitle" "lang" $currentLang) }}</p>
 
     <div class="dashboard-controls">
       <div class="time-range-selector">
-        <label for="time-range">{{ i18n "dashboard_period" }}</label>
+        <label for="time-range">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_period" "lang" $currentLang) }}</label>
         <select id="time-range">
-          <option value="1">{{ i18n "dashboard_today" }}</option>
-          <option value="7">{{ i18n "dashboard_7days" }}</option>
-          <option value="30" selected>{{ i18n "dashboard_30days" }}</option>
-          <option value="90">{{ i18n "dashboard_90days" }}</option>
-          <option value="all">{{ i18n "dashboard_alltime" }}</option>
+          <option value="1">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_today" "lang" $currentLang) }}</option>
+          <option value="7">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_7days" "lang" $currentLang) }}</option>
+          <option value="30" selected>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_30days" "lang" $currentLang) }}</option>
+          <option value="90">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_90days" "lang" $currentLang) }}</option>
+          <option value="all">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_alltime" "lang" $currentLang) }}</option>
         </select>
       </div>
 
-      <button id="refresh-data" class="btn-secondary">{{ i18n "dashboard_refresh" }}</button>
+      <button id="refresh-data" class="btn-secondary">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_refresh" "lang" $currentLang) }}</button>
     </div>
   </header>
 
   {{/* Generate JSON index of articles for CURRENT LANGUAGE ONLY */}}
   {{ $articles := slice }}
-  {{ $currentLang := .Lang }}
   {{ $langNewsPath := printf "/%s/news/" $currentLang }}
   {{ range .Site.AllPages }}
     {{ if and (eq .Kind "page") (in .RelPermalink $langNewsPath) }}
