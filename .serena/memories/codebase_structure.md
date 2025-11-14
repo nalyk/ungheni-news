@@ -125,6 +125,7 @@ content/ro/news/article-slug/
 ### `/data/` - Data Files
 **Data-Driven UI**: YAML data for Hugo templates
 - `categories.yaml` - Category metadata (colors, descriptions)
+- `homepage_blocks.yaml` - Category block layout configuration (NOTE: underscore, not dash)
 - `navigation.yaml` - Navigation structure
 - `series.yaml` - Series/investigative story metadata
 - `rails.yaml` - Service rail configurations
@@ -189,6 +190,16 @@ content/authors/
 - `flourish.html` - Flourish visualizations
 - `maps.html` - Google Maps
 - `embed.html` - Generic iframe fallback
+
+### `/layouts/partials/home/` - Homepage Components
+**Category Block Layouts**: Four layout types for homepage category blocks
+- `category-block-router.html` - Routes to appropriate layout based on `data/homepage_blocks.yaml`
+- `category-split-featured.html` - Featured article left (with image) + text list right
+- `category-list-image-first.html` - First article with image, rest text-only
+- `category-text-only.html` - Compact text-only list
+- `category-horizontal.html` - Horizontal cards (image left, content right)
+- `category-card.html` - Reusable card component with multiple card classes
+- Styled in: `assets/css/_category-layouts.scss`
 
 ### `/layouts/partials/series-navigation.html`
 **Series Navigation**: Multi-part investigative stories

@@ -6,7 +6,7 @@ The homepage category blocks system provides a flexible, configuration-driven wa
 
 ## Features
 
-- **4 distinct layout types** (masonry, list-image-first, text-only, horizontal)
+- **4 distinct layout types** (split-featured, list-image-first, text-only, horizontal)
 - **Configuration-driven** via `data/homepage-blocks.yaml`
 - **Repeatable blocks** - display the same category multiple times with different layouts
 - **Parametrizable article counts** - control how many articles appear in each block
@@ -14,19 +14,25 @@ The homepage category blocks system provides a flexible, configuration-driven wa
 
 ## Layout Types
 
-### 1. Masonry Layout (`masonry`)
+### 1. Split-Featured Layout (`split-featured`)
 
-Pinterest-style grid with cards of equal width but varying content heights.
+Two-column layout with featured article (with image) on the left and text-only list on the right.
 
-**Best for:** Visual categories with strong imagery (e.g., Local news, Events)
+**Best for:** Categories where you want to highlight one main story while showing additional articles
 
 **Features:**
-- Responsive grid (3+ columns on desktop, 1 on mobile)
-- All cards show image, title, and format icon
-- No summary text for compact display
-- Hover effects with elevation
+- Left: ONE featured article with large image (16:10 aspect ratio) + title + summary
+- Right: Configurable text-only list (limit minus 1) with compact styling
+- 50/50 split on desktop, stacked on mobile
+- Featured card has border hover effect
+- List items have left border accent
 
-**CSS Class:** `.category-masonry-section` → `.category-masonry-grid` → `.card-masonry`
+**CSS Classes:**
+- Container: `.category-split-container`
+- Featured card: `.card-split-featured`
+- List items: `.card-split-list-item`
+
+**Recommended limit:** 5 (1 featured + 4 in list)
 
 ### 2. List with First Image (`list-image-first`)
 
@@ -45,6 +51,7 @@ First (most recent) article displays with image, rest are text-only items.
 - Rest: `.card-list-text`
 
 ### 3. Text-Only List (`text-only`)
+
 
 Compact list with no images, just titles and format icons.
 
@@ -97,7 +104,7 @@ blocks:
 
 - **category** (required): Category slug (must match slug in `data/categories.yaml`)
 - **layout** (required): Layout type - one of:
-  - `masonry`
+  - `split-featured`
   - `list-image-first`
   - `text-only`
   - `horizontal`
@@ -105,8 +112,8 @@ blocks:
 
 ### Default Limits
 
-- `masonry`: 6 articles
-- `list-image-first`: 5 articles
+- `split-featured`: 5 articles (1 featured + 4 in list)
+- `list-image-first`: 5 articles (1 with image + 4 text-only)
 - `text-only`: 4 articles
 - `horizontal`: 4 articles
 
@@ -119,7 +126,7 @@ The system uses a router pattern to delegate to the appropriate layout partial:
 ```
 layouts/index.html
   └→ layouts/partials/home/category-block-router.html
-       ├→ layouts/partials/home/category-masonry.html
+       ├→ layouts/partials/home/category-split-featured.html
        ├→ layouts/partials/home/category-list-image-first.html
        ├→ layouts/partials/home/category-text-only.html
        └→ layouts/partials/home/category-horizontal.html
@@ -128,11 +135,11 @@ layouts/index.html
 ### Files
 
 1. **Configuration:**
-   - `data/homepage-blocks.yaml` - Block configuration
+   - `data/homepage_blocks.yaml` - Block configuration (NOTE: underscore, not dash)
 
 2. **Templates:**
    - `layouts/partials/home/category-block-router.html` - Routes to layout partials
-   - `layouts/partials/home/category-masonry.html` - Masonry layout
+   - `layouts/partials/home/category-split-featured.html` - Split-featured layout
    - `layouts/partials/home/category-list-image-first.html` - List with first image
    - `layouts/partials/home/category-text-only.html` - Text-only list
    - `layouts/partials/home/category-horizontal.html` - Horizontal cards
@@ -147,7 +154,8 @@ layouts/index.html
 `layouts/partials/home/category-card.html` is a flexible component that adapts based on the `card_class` parameter:
 
 **Card Classes:**
-- `card-masonry` - Masonry grid cards
+- `card-split-featured` - Featured card in split layout (left side with image)
+- `card-split-list-item` - List items in split layout (right side, text-only)
 - `card-list-featured` - Featured card with image (first in list-image-first)
 - `card-list-text` - Text-only card (rest of list-image-first)
 - `card-text-only` - Text-only cards (text-only layout)
@@ -166,12 +174,12 @@ Display 5 categories with different layouts:
 ```yaml
 blocks:
   - category: local
-    layout: masonry
-    limit: 6
+    layout: horizontal
+    limit: 5
 
   - category: frontiera-transport
-    layout: horizontal
-    limit: 4
+    layout: split-featured
+    limit: 5
 
   - category: economie-zel
     layout: list-image-first
@@ -193,8 +201,8 @@ Show the same category twice with different layouts:
 ```yaml
 blocks:
   - category: local
-    layout: masonry
-    limit: 6
+    layout: split-featured
+    limit: 5
 
   - category: local
     layout: text-only
@@ -208,8 +216,8 @@ Alternate between visual and compact layouts:
 ```yaml
 blocks:
   - category: local
-    layout: masonry
-    limit: 6
+    layout: split-featured
+    limit: 5
 
   - category: frontiera-transport
     layout: text-only
@@ -244,13 +252,13 @@ blocks:
 All layouts are fully responsive:
 
 **Desktop (>768px):**
-- Masonry: Multi-column grid
+- Split-featured: 50/50 two-column layout
 - List-image-first: Full-width cards
 - Text-only: Full-width list
 - Horizontal: 180px image + content
 
 **Mobile (<768px):**
-- Masonry: Single column
+- Split-featured: Stacked (featured on top, list below)
 - List-image-first: Smaller featured image (120px)
 - Text-only: Full-width compact
 - Horizontal: 100px image, no summary
@@ -302,11 +310,12 @@ All layout styles are in `assets/css/_category-layouts.scss`. Each layout sectio
 
 ## Best Practices
 
-1. **Visual variety:** Alternate between image-heavy (masonry, horizontal) and compact (text-only) layouts
-2. **Hierarchy:** Use masonry or list-image-first for most important categories
+1. **Visual variety:** Alternate between image-heavy (split-featured, horizontal) and compact (text-only) layouts
+2. **Hierarchy:** Use split-featured or list-image-first for most important categories
 3. **Performance:** Don't display too many blocks (5-7 recommended)
 4. **Article limits:** Keep limits reasonable (4-6 articles per block)
 5. **Testing:** Always test in both RO and RU, and on mobile
+6. **Split-featured usage:** Best with 5+ articles (1 featured + 4+ list items)
 
 ## Migration from Old System
 

@@ -18,9 +18,7 @@
   {{ $limit := $block.limit | default 4 }}
 
   {{/* Route to the appropriate layout partial */}}
-  {{ if eq $layout "masonry" }}
-    {{ partial "home/category-masonry.html" (dict "context" $ "category" $category "limit" $limit) }}
-  {{ else if eq $layout "split-featured" }}
+  {{ if eq $layout "split-featured" }}
     {{ partial "home/category-split-featured.html" (dict "context" $ "category" $category "limit" $limit) }}
   {{ else if eq $layout "list-image-first" }}
     {{ partial "home/category-list-image-first.html" (dict "context" $ "category" $category "limit" $limit) }}
