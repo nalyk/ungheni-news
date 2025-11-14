@@ -57,59 +57,59 @@
   <div class="dashboard-grid">
     {{/* 60/30/10 Ratio Tracker */}}
     <section class="dashboard-card ratio-tracker">
-      <h2>📊 Raportul 60/30/10</h2>
-      <p class="card-description">Distribuția Local / Național / Internațional</p>
+      <h2>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_ratio_title" "lang" $currentLang) }}</h2>
+      <p class="card-description">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_ratio_description" "lang" $currentLang) }}</p>
 
       <div class="ratio-visualization">
         <div class="ratio-bars" id="ratio-bars">
           <div class="ratio-bar" data-category="local">
             <div class="ratio-bar-fill" data-target="60"></div>
             <div class="ratio-bar-label">
-              <span class="ratio-bar-name">🏛️ Local</span>
+              <span class="ratio-bar-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_local" "lang" $currentLang) }}</span>
               <span class="ratio-bar-value"><span id="local-percent">0</span>%</span>
             </div>
-            <div class="ratio-bar-target">Țintă: 60%</div>
+            <div class="ratio-bar-target">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_target" "lang" $currentLang) }} 60%</div>
           </div>
 
           <div class="ratio-bar" data-category="national">
             <div class="ratio-bar-fill" data-target="30"></div>
             <div class="ratio-bar-label">
-              <span class="ratio-bar-name">🇲🇩 Național</span>
+              <span class="ratio-bar-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_national" "lang" $currentLang) }}</span>
               <span class="ratio-bar-value"><span id="national-percent">0</span>%</span>
             </div>
-            <div class="ratio-bar-target">Țintă: 30%</div>
+            <div class="ratio-bar-target">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_target" "lang" $currentLang) }} 30%</div>
           </div>
 
           <div class="ratio-bar" data-category="international">
             <div class="ratio-bar-fill" data-target="10"></div>
             <div class="ratio-bar-label">
-              <span class="ratio-bar-name">🌍 Internațional</span>
+              <span class="ratio-bar-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_international" "lang" $currentLang) }}</span>
               <span class="ratio-bar-value"><span id="intl-percent">0</span>%</span>
             </div>
-            <div class="ratio-bar-target">Țintă: 10%</div>
+            <div class="ratio-bar-target">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_target" "lang" $currentLang) }} 10%</div>
           </div>
         </div>
 
         <div class="ratio-status" id="ratio-status">
-          <div class="status-indicator">⏳ Se calculează...</div>
+          <div class="status-indicator">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_calculating" "lang" $currentLang) }}</div>
         </div>
       </div>
 
       <div class="ratio-details">
         <div class="stat">
-          <span class="stat-label">Total articole</span>
+          <span class="stat-label">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_total_articles" "lang" $currentLang) }}</span>
           <span class="stat-value" id="total-articles">0</span>
         </div>
         <div class="stat">
-          <span class="stat-label">Locale</span>
+          <span class="stat-label">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_local_count" "lang" $currentLang) }}</span>
           <span class="stat-value" id="local-count">0</span>
         </div>
         <div class="stat">
-          <span class="stat-label">Naționale</span>
+          <span class="stat-label">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_national_count" "lang" $currentLang) }}</span>
           <span class="stat-value" id="national-count">0</span>
         </div>
         <div class="stat">
-          <span class="stat-label">Internaționale</span>
+          <span class="stat-label">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_international_count" "lang" $currentLang) }}</span>
           <span class="stat-value" id="intl-count">0</span>
         </div>
       </div>
@@ -117,8 +117,8 @@
 
     {{/* Cutia Ungheni Compliance */}}
     <section class="dashboard-card cutia-compliance">
-      <h2>📦 Conformitate Cutia Ungheni</h2>
-      <p class="card-description">Articole non-locale cu impact local documentat</p>
+      <h2>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_cutia_title" "lang" $currentLang) }}</h2>
+      <p class="card-description">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_cutia_description" "lang" $currentLang) }}</p>
 
       <div class="compliance-score" id="cutia-score">
         <div class="score-circle">
@@ -137,55 +137,55 @@
       <div class="compliance-details">
         <div class="compliance-stat compliance-stat-good">
           <span class="stat-icon">✓</span>
-          <span class="stat-label">Cu Cutia Ungheni</span>
+          <span class="stat-label">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_cutia_with" "lang" $currentLang) }}</span>
           <span class="stat-value" id="cutia-with">0</span>
         </div>
         <div class="compliance-stat compliance-stat-bad">
           <span class="stat-icon">✗</span>
-          <span class="stat-label">Fără Cutia Ungheni</span>
+          <span class="stat-label">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_cutia_without" "lang" $currentLang) }}</span>
           <span class="stat-value" id="cutia-without">0</span>
         </div>
       </div>
 
       <div class="missing-cutia-list" id="missing-cutia">
-        <h3>Articole care necesită Cutia Ungheni:</h3>
+        <h3>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_cutia_missing_title" "lang" $currentLang) }}</h3>
         <ul id="missing-cutia-items"></ul>
       </div>
     </section>
 
     {{/* Format Distribution */}}
     <section class="dashboard-card format-distribution">
-      <h2>📝 Distribuție formate</h2>
-      <p class="card-description">Tipuri de conținut publicat</p>
+      <h2>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_formats_title" "lang" $currentLang) }}</h2>
+      <p class="card-description">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_formats_description" "lang" $currentLang) }}</p>
 
       <div class="format-chart" id="format-chart">
         <div class="format-item" data-format="stire">
           <span class="format-icon">📰</span>
-          <span class="format-name">Știri</span>
+          <span class="format-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_format_stire" "lang" $currentLang) | replaceRE "📰 " "" }}</span>
           <span class="format-count" id="format-stire">0</span>
           <div class="format-bar"><div class="format-bar-fill"></div></div>
         </div>
         <div class="format-item" data-format="analiza">
           <span class="format-icon">📊</span>
-          <span class="format-name">Analize</span>
+          <span class="format-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_format_analiza" "lang" $currentLang) | replaceRE "📊 " "" }}</span>
           <span class="format-count" id="format-analiza">0</span>
           <div class="format-bar"><div class="format-bar-fill"></div></div>
         </div>
         <div class="format-item" data-format="explainer">
           <span class="format-icon">❓</span>
-          <span class="format-name">Explainere</span>
+          <span class="format-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_format_explainer" "lang" $currentLang) | replaceRE "❓ " "" }}</span>
           <span class="format-count" id="format-explainer">0</span>
           <div class="format-bar"><div class="format-bar-fill"></div></div>
         </div>
         <div class="format-item" data-format="opinie">
           <span class="format-icon">💭</span>
-          <span class="format-name">Opinii</span>
+          <span class="format-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_format_opinie" "lang" $currentLang) | replaceRE "💭 " "" }}</span>
           <span class="format-count" id="format-opinie">0</span>
           <div class="format-bar"><div class="format-bar-fill"></div></div>
         </div>
         <div class="format-item" data-format="factcheck">
           <span class="format-icon">✅</span>
-          <span class="format-name">Fact-check</span>
+          <span class="format-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_format_factcheck" "lang" $currentLang) | replaceRE "✅ " "" }}</span>
           <span class="format-count" id="format-factcheck">0</span>
           <div class="format-bar"><div class="format-bar-fill"></div></div>
         </div>
@@ -194,49 +194,49 @@
 
     {{/* Scheduled Content Calendar */}}
     <section class="dashboard-card scheduled-content">
-      <h2>📅 Conținut programat</h2>
-      <p class="card-description">Articole cu publishDate în viitor</p>
+      <h2>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_scheduled_title" "lang" $currentLang) }}</h2>
+      <p class="card-description">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_scheduled_description" "lang" $currentLang) }}</p>
 
       <div class="scheduled-list" id="scheduled-list">
         <div class="empty-state">
-          <p>Niciun articol programat</p>
+          <p>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_scheduled_empty" "lang" $currentLang) }}</p>
         </div>
       </div>
     </section>
 
     {{/* Recent Activity */}}
     <section class="dashboard-card recent-activity">
-      <h2>🕒 Activitate recentă</h2>
-      <p class="card-description">Ultimele 10 articole publicate</p>
+      <h2>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_activity_title" "lang" $currentLang) }}</h2>
+      <p class="card-description">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_activity_description" "lang" $currentLang) }}</p>
 
       <div class="activity-list" id="activity-list">
-        <div class="loading">Se încarcă...</div>
+        <div class="loading">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_loading" "lang" $currentLang) }}</div>
       </div>
     </section>
 
     {{/* Editorial Health Score */}}
     <section class="dashboard-card health-score">
-      <h2>💚 Scor sănătate editorială</h2>
-      <p class="card-description">Conformitate cu principiile Triunghi</p>
+      <h2>{{ partial "dashboard-i18n.html" (dict "key" "dashboard_health_title" "lang" $currentLang) }}</h2>
+      <p class="card-description">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_health_description" "lang" $currentLang) }}</p>
 
       <div class="health-metrics">
         <div class="health-metric">
-          <span class="metric-name">Raport 60/30/10</span>
+          <span class="metric-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_health_ratio" "lang" $currentLang) }}</span>
           <span class="metric-score" id="health-ratio">-</span>
           <span class="metric-status" id="health-ratio-status">⏳</span>
         </div>
         <div class="health-metric">
-          <span class="metric-name">Cutia Ungheni</span>
+          <span class="metric-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_health_cutia" "lang" $currentLang) }}</span>
           <span class="metric-score" id="health-cutia">-</span>
           <span class="metric-status" id="health-cutia-status">⏳</span>
         </div>
         <div class="health-metric">
-          <span class="metric-name">Diversitate formate</span>
+          <span class="metric-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_health_formats" "lang" $currentLang) }}</span>
           <span class="metric-score" id="health-formats">-</span>
           <span class="metric-status" id="health-formats-status">⏳</span>
         </div>
         <div class="health-metric">
-          <span class="metric-name">Frecvență publicare</span>
+          <span class="metric-name">{{ partial "dashboard-i18n.html" (dict "key" "dashboard_health_frequency" "lang" $currentLang) }}</span>
           <span class="metric-score" id="health-frequency">-</span>
           <span class="metric-status" id="health-frequency-status">⏳</span>
         </div>
