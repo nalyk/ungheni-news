@@ -10,7 +10,7 @@
 */
 
 /* ============================================
-   1. MASONRY LAYOUT
+   1. MASONRY LAYOUT - TRUE ASYMMETRIC MASONRY
    ============================================ */
 
 .category-masonry-section {
@@ -20,15 +20,18 @@
 .category-masonry-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-auto-rows: 80px; /* Base row height */
+  grid-auto-flow: dense; /* Fill gaps intelligently */
   gap: var(--space-4);
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    grid-auto-rows: auto;
     gap: var(--space-3);
   }
 }
 
-/* Masonry card style */
+/* Masonry card style - base */
 .category-card.card-masonry {
   display: flex;
   flex-direction: column;
@@ -37,6 +40,7 @@
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border: 1px solid var(--color-border);
+  position: relative;
 
   &:hover {
     transform: translateY(-2px);
@@ -45,9 +49,9 @@
 
   .card-image-wrapper {
     width: 100%;
-    aspect-ratio: 16 / 9;
     overflow: hidden;
     background: var(--color-muted);
+    flex-shrink: 0;
   }
 
   .card-image {
@@ -59,6 +63,9 @@
   .card-content {
     padding: var(--space-3);
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .card-title {
@@ -75,6 +82,53 @@
     width: 24px;
     height: 24px;
     opacity: 0.9;
+    z-index: 2;
+  }
+}
+
+/* MASONRY HEIGHT PATTERN - Creates asymmetric layout
+   Pattern repeats every 6 cards: tall, short, medium, short, tall, medium
+   This creates visual interest while perfectly filling space
+*/
+
+/* Desktop masonry height variations */
+@media (min-width: 769px) {
+  /* Tall cards (3 rows = 280px) - 1st and 5th in pattern */
+  .category-masonry-grid .card-masonry:nth-child(6n+1),
+  .category-masonry-grid .card-masonry:nth-child(6n+5) {
+    grid-row: span 3;
+
+    .card-image-wrapper {
+      height: 160px;
+    }
+  }
+
+  /* Short cards (2 rows = 200px) - 2nd and 4th in pattern */
+  .category-masonry-grid .card-masonry:nth-child(6n+2),
+  .category-masonry-grid .card-masonry:nth-child(6n+4) {
+    grid-row: span 2;
+
+    .card-image-wrapper {
+      height: 120px;
+    }
+  }
+
+  /* Medium cards (2.5 rows = 240px) - 3rd and 6th in pattern */
+  .category-masonry-grid .card-masonry:nth-child(6n+3),
+  .category-masonry-grid .card-masonry:nth-child(6n) {
+    grid-row: span 3;
+
+    .card-image-wrapper {
+      height: 140px;
+    }
+  }
+}
+
+/* Mobile - all cards same height, no masonry */
+@media (max-width: 768px) {
+  .category-card.card-masonry .card-image-wrapper {
+    aspect-ratio: 16 / 9;
+    height: auto;
   }
 }
 
