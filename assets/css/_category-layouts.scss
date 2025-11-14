@@ -20,12 +20,10 @@
 .category-masonry-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  grid-auto-rows: 10px; /* Micro-rows: cards span multiple of these */
   gap: var(--space-4);
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    grid-auto-rows: auto;
     gap: var(--space-3);
   }
 }
@@ -99,21 +97,22 @@
 
 /* Desktop masonry height variations */
 @media (min-width: 769px) {
-  /* Odd cards (1st, 3rd, 5th...) - TALL (40 rows = 400px) */
-  .category-masonry-grid .card-masonry:nth-child(odd) {
-    grid-row: span 40;
+  /* Remove summary from masonry cards to keep them compact */
+  .category-masonry-grid .card-masonry .card-summary {
+    display: none;
+  }
 
+  /* Odd cards (1st, 3rd, 5th...) - TALL */
+  .category-masonry-grid .card-masonry:nth-child(odd) {
     .card-image-wrapper {
-      height: 200px;
+      aspect-ratio: 3 / 4; /* Vertical image */
     }
   }
 
-  /* Even cards (2nd, 4th, 6th...) - SHORT (30 rows = 300px) */
+  /* Even cards (2nd, 4th, 6th...) - SHORT */
   .category-masonry-grid .card-masonry:nth-child(even) {
-    grid-row: span 30;
-
     .card-image-wrapper {
-      height: 140px;
+      aspect-ratio: 16 / 9; /* Horizontal image */
     }
   }
 }
