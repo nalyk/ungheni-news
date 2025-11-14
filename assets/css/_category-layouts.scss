@@ -20,13 +20,12 @@
 .category-masonry-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  grid-auto-rows: 80px; /* Base row height */
-  grid-auto-flow: dense; /* Fill gaps intelligently */
+  grid-auto-rows: 1fr; /* Equal row heights for alignment */
   gap: var(--space-4);
+  align-items: start; /* Align cards to top */
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    grid-auto-rows: auto;
     gap: var(--space-3);
   }
 }
@@ -87,28 +86,23 @@
 }
 
 /* MASONRY HEIGHT PATTERN - Creates asymmetric layout
-   Flexible pattern that works with ANY number of cards
-   Uses alternating heights: tall, short, tall, short...
-   Dense packing fills all gaps automatically
+   Varying image heights but ALIGNED top/bottom edges
+   All cards span 1 row but have different internal image heights
 */
 
 /* Desktop masonry height variations */
 @media (min-width: 769px) {
-  /* Odd cards (1st, 3rd, 5th, 7th...) - TALL */
+  /* Odd cards (1st, 3rd, 5th, 7th...) - TALL images */
   .category-masonry-grid .card-masonry:nth-child(odd) {
-    grid-row: span 3;
-
     .card-image-wrapper {
-      height: 160px;
+      height: 220px;
     }
   }
 
-  /* Even cards (2nd, 4th, 6th, 8th...) - SHORT */
+  /* Even cards (2nd, 4th, 6th, 8th...) - SHORT images */
   .category-masonry-grid .card-masonry:nth-child(even) {
-    grid-row: span 2;
-
     .card-image-wrapper {
-      height: 120px;
+      height: 160px;
     }
   }
 }
