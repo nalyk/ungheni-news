@@ -38,16 +38,18 @@
           <span class="news-item-title">{{ .Title }}</span>
         </a>
         <div class="news-item-meta">
-          <div class="news-item-meta-left">
-            <time class="news-item-time" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
-              {{- partial "format-date.html" (dict "ctx" . "date" .Date "format" "short") -}}
-            </time>
+          <ul class="news-item-meta-left">
+            <li class="news-item-time">
+              <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                {{- partial "format-date.html" (dict "ctx" . "date" .Date "format" "short") -}}
+              </time>
+            </li>
             {{ with $category }}
-              <span class="news-item-category">
-                &middot; {{ index . $currentLang | default .ro }}
-              </span>
+              <li class="news-item-category">
+                {{ index . $currentLang | default .ro }}
+              </li>
             {{ end }}
-          </div>
+          </ul>
           {{ with $format }}
             <div class="news-item-meta-right">
               {{ with $icon_filename }}
