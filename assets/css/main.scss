@@ -2005,10 +2005,9 @@ hr {
 }
 
 .widget-latest-news .news-item-category {
-  display: inline-flex;
-  align-items: center;
   white-space: nowrap;
   flex-shrink: 0; /* Prevent category from wrapping */
+  line-height: 1; /* Match line height with time element */
 }
 
 .widget-latest-news .news-item-format-icon {
