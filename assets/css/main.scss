@@ -1963,3 +1963,115 @@ hr {
 
 /* Import category boxes styles */
 @import '_category-boxes';
+
+/* Styles for Latest News Widget Meta - Second Revision */
+.widget-latest-news .news-item-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  margin-top: var(--space-2);
+}
+
+.widget-latest-news .news-item-meta-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: nowrap;
+  min-width: 0; /* Prevent flexbox from overflowing */
+}
+
+.widget-latest-news .news-item-format {
+  color: var(--color-muted);
+}
+
+.widget-latest-news .news-item-format svg {
+  width: 14px;
+  height: 14px;
+}
+
+.widget-latest-news .news-item-time {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.widget-latest-news .news-item-time svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.widget-latest-news .news-item-category {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0; /* Prevent category from wrapping */
+}
+
+.widget-latest-news .news-item-format-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.widget-latest-news .news-item-format:hover .news-item-format-icon {
+  opacity: 1;
+}
+
+/* Import category boxes styles */
+@import '_category-boxes';
+
+/* ===============================================
+   CARD FORMAT ICON OVERLAY
+   =============================================== */
+
+.card-format-icon {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  width: 28px;
+  height: 28px;
+  filter: invert(1) brightness(1.5) opacity(0.7);
+  transition: filter 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+  pointer-events: none; /* So it doesn't interfere with the card link */
+}
+
+.category-card .card-link:hover .card-format-icon {
+  filter: invert(1) brightness(1.5) opacity(1);
+  transform: scale(1.1);
+}
+
+/* Specific adjustments for hero sub-cards with background images */
+.card-hero-sub .card-format-icon {
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 32px;
+  height: 32px;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .card-format-icon {
+    width: 24px;
+    height: 24px;
+    top: var(--space-2);
+    right: var(--space-2);
+  }
+  .card-hero-sub .card-format-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-hero-main .card-format-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
