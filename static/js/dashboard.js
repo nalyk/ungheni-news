@@ -10,7 +10,7 @@
   const articlesData = JSON.parse(document.getElementById('articles-data').textContent);
 
   // State
-  let currentTimeRange = 30; // days
+  let currentTimeRange = 1; // days (default: today)
   let filteredArticles = [];
 
   // Category mappings for 60/30/10 ratio
@@ -45,8 +45,22 @@
   function filterArticlesByTimeRange(articles, days) {
     if (days === Infinity) return articles;
 
+    // For "today", compare dates only (not datetime)
+    if (days === 1) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      return articles.filter(article => {
+        const articleDate = new Date(article.date);
+        articleDate.setHours(0, 0, 0, 0);
+        return articleDate.getTime() === today.getTime() && !article.draft;
+      });
+    }
+
+    // For other ranges, use datetime comparison
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
+    cutoffDate.setHours(0, 0, 0, 0); // Start of day
 
     return articles.filter(article => {
       const articleDate = new Date(article.date);
@@ -56,6 +70,7 @@
 
   /**
    * Calculate 60/30/10 ratio
+   * IMPORTANT: Each article is counted ONCE based on its PRIMARY (first) matching category
    */
   function calculate603010Ratio(articles) {
     let localCount = 0;
@@ -65,17 +80,26 @@
     articles.forEach(article => {
       const categories = Array.isArray(article.categories) ? article.categories : [article.categories];
 
-      categories.forEach(cat => {
-        if (LOCAL_CATEGORIES.includes(cat)) localCount++;
-        else if (NATIONAL_CATEGORIES.includes(cat)) nationalCount++;
-        else if (INTERNATIONAL_CATEGORIES.includes(cat)) internationalCount++;
-      });
+      // Count each article ONCE in the FIRST matching category
+      let counted = false;
+      for (const cat of categories) {
+        if (!counted && LOCAL_CATEGORIES.includes(cat)) {
+          localCount++;
+          counted = true;
+        } else if (!counted && NATIONAL_CATEGORIES.includes(cat)) {
+          nationalCount++;
+          counted = true;
+        } else if (!counted && INTERNATIONAL_CATEGORIES.includes(cat)) {
+          internationalCount++;
+          counted = true;
+        }
+      }
     });
 
     const total = localCount + nationalCount + internationalCount;
 
     if (total === 0) {
-      return { local: 0, national: 0, international: 0, total: 0 };
+      return { local: 0, national: 0, international: 0, total: 0, localCount: 0, nationalCount: 0, internationalCount: 0 };
     }
 
     return {
