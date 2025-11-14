@@ -13,6 +13,16 @@
   {{ $src = ("img/placeholders/local.svg" | relURL) }}
 {{ end }}
 
+{{ $format_icon_map := dict
+  "stire" "news.svg"
+  "analiza" "analysis.svg"
+  "explainer" "explainer.svg"
+  "opinie" "opinion.svg"
+  "factcheck" "factcheck.svg"
+}}
+{{ $format_slug := index $page.Params.formats 0 | default "" }}
+{{ $icon_filename := index $format_icon_map $format_slug }}
+
 <div class="category-card {{ $card_class }}">
   {{ if or (eq $card_class "card-hero-sub") (in $card_class "card-hero-sub") }}
     <a href="{{ $page.RelPermalink }}" class="card-link" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%), url('{{ $src }}');">
@@ -25,15 +35,13 @@
       </div>
     {{ end }}
     <div class="card-content">
-      {{ $rf := $page.Params.formats }}
-      {{ $fmt := cond (reflect.IsSlice $rf) (index ($rf | default (slice)) 0) $rf }}
-      {{ with $fmt }}
-        <span class="card-format">{{ . }}</span>
-      {{ end }}
       <h3 class="card-title">{{ $page.Title }}</h3>
       {{ if and (not (in $card_class "card-featured")) (not (in $card_class "card-hero-main")) (not (in $card_class "card-hero-sub")) }}
         <p class="card-summary">{{ $page.Summary | truncate 70 }}</p>
       {{ end }}
     </div>
+    {{ with $icon_filename }}
+      <img src="/img/news-type-icons/{{ . }}" alt="{{ $format_slug }} icon" class="card-format-icon" />
+    {{ end }}
   </a>
 </div>

@@ -19,7 +19,7 @@
       <li>
         <a href="{{ .RelPermalink }}" class="article-link">
           {{ with index .Params.formats 0 }}
-            <span class="article-format">{{ i18n . | default . }}</span>
+            <span class="article-format">{{ i18n (printf "format_%s" .) | default . }}</span>
           {{ end }}
           <span class="article-title">{{ .Title }}</span>
           <time class="article-date" datetime="{{ .Date.Format "2006-01-02" }}">
