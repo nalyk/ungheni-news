@@ -10,8 +10,8 @@ logo_url: /img/brand/logo.svg
 
 publish_mode: editorial_workflow
 
-media_folder: "static/uploads"          # Fallback bucket in repo (small assets only)
-public_folder: "/uploads"
+media_folder: "content/ro/news"          # Show all images from Romanian articles
+public_folder: "/ro/news"
 
 # Media uploads: Using local storage for now
 # Optional: Configure Cloudinary later if needed
