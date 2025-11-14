@@ -32,19 +32,19 @@
     {{ with $local_story }}
       <div class="hero-main">
         {{ range . }}
-          {{ partial "home/category-card.html" (dict "page" . "card_class" "card-hero-main") }}
+          {{ partial "home/hero-card.html" (dict "page" . "card_class" "card-hero-main") }}
         {{ end }}
       </div>
     {{ end }}
     <div class="hero-sub">
       {{ with $national_story }}
         {{ range . }}
-          {{ partial "home/category-card.html" (dict "page" . "card_class" "card-hero-sub") }}
+          {{ partial "home/hero-card.html" (dict "page" . "card_class" "card-hero-sub") }}
         {{ end }}
       {{ end }}
       {{ with $service_story }}
         {{ range . }}
-          {{ partial "home/category-card.html" (dict "page" . "card_class" "card-hero-sub card-service-alert") }}
+          {{ partial "home/hero-card.html" (dict "page" . "card_class" "card-hero-sub card-service-alert") }}
         {{ end }}
       {{ end }}
     </div>
