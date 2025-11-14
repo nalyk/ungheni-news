@@ -87,15 +87,15 @@
 }
 
 /* MASONRY HEIGHT PATTERN - Creates asymmetric layout
-   Pattern repeats every 6 cards: tall, short, medium, short, tall, medium
-   This creates visual interest while perfectly filling space
+   Flexible pattern that works with ANY number of cards
+   Uses alternating heights: tall, short, tall, short...
+   Dense packing fills all gaps automatically
 */
 
 /* Desktop masonry height variations */
 @media (min-width: 769px) {
-  /* Tall cards (3 rows = 280px) - 1st and 5th in pattern */
-  .category-masonry-grid .card-masonry:nth-child(6n+1),
-  .category-masonry-grid .card-masonry:nth-child(6n+5) {
+  /* Odd cards (1st, 3rd, 5th, 7th...) - TALL */
+  .category-masonry-grid .card-masonry:nth-child(odd) {
     grid-row: span 3;
 
     .card-image-wrapper {
@@ -103,23 +103,12 @@
     }
   }
 
-  /* Short cards (2 rows = 200px) - 2nd and 4th in pattern */
-  .category-masonry-grid .card-masonry:nth-child(6n+2),
-  .category-masonry-grid .card-masonry:nth-child(6n+4) {
+  /* Even cards (2nd, 4th, 6th, 8th...) - SHORT */
+  .category-masonry-grid .card-masonry:nth-child(even) {
     grid-row: span 2;
 
     .card-image-wrapper {
       height: 120px;
-    }
-  }
-
-  /* Medium cards (2.5 rows = 240px) - 3rd and 6th in pattern */
-  .category-masonry-grid .card-masonry:nth-child(6n+3),
-  .category-masonry-grid .card-masonry:nth-child(6n) {
-    grid-row: span 3;
-
-    .card-image-wrapper {
-      height: 140px;
     }
   }
 }
