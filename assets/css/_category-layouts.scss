@@ -77,9 +77,18 @@
   .card-title {
     font-size: var(--font-size-xl);
     line-height: 1.3;
-    margin: 0 0 var(--space-3) 0;
+    margin: 0 0 var(--space-1) 0;
     color: var(--color-text);
     font-weight: 600;
+  }
+
+  .card-date {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.01em;
   }
 
   .card-summary {
@@ -127,9 +136,8 @@
 
   .card-content {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2);
+    flex-direction: column;
+    gap: var(--space-1);
   }
 
   .card-title {
@@ -137,8 +145,14 @@
     line-height: 1.4;
     margin: 0;
     color: var(--color-text);
-    flex: 1;
     font-weight: 500;
+  }
+
+  .card-date {
+    font-size: 0.6875rem;
+    color: var(--color-muted);
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
   .card-summary {
@@ -150,9 +164,9 @@
     height: 16px;
     opacity: 0.6;
     flex-shrink: 0;
-    position: relative;
-    top: auto;
-    right: auto;
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
   }
 }
 
@@ -214,12 +228,21 @@
   .card-title {
     font-size: var(--font-size-lg);
     line-height: 1.4;
-    margin: 0;
+    margin: 0 0 var(--space-1) 0;
     color: var(--color-text);
   }
 
+  .card-date {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.01em;
+  }
+
   .card-summary {
-    margin-top: var(--space-2);
+    margin-top: 0;
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
     line-height: 1.5;
@@ -254,8 +277,9 @@
 
   .card-content {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1;
   }
 
   .card-title {
@@ -263,7 +287,13 @@
     line-height: 1.4;
     margin: 0;
     color: var(--color-text);
-    flex: 1;
+  }
+
+  .card-date {
+    font-size: 0.6875rem;
+    color: var(--color-muted);
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
   .card-summary {
@@ -274,8 +304,10 @@
     width: 18px;
     height: 18px;
     opacity: 0.7;
-    margin-left: var(--space-2);
     flex-shrink: 0;
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
   }
 }
 
@@ -301,6 +333,7 @@
   border-radius: var(--radius-sm);
   border-left: 3px solid var(--color-accent);
   transition: all 0.2s ease;
+  position: relative;
 
   &:hover {
     background: var(--color-hover);
@@ -313,8 +346,8 @@
 
   .card-content {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: var(--space-1);
   }
 
   .card-title {
@@ -322,7 +355,13 @@
     line-height: 1.4;
     margin: 0;
     color: var(--color-text);
-    flex: 1;
+  }
+
+  .card-date {
+    font-size: 0.6875rem;
+    color: var(--color-muted);
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
   .card-summary {
@@ -333,8 +372,10 @@
     width: 16px;
     height: 16px;
     opacity: 0.6;
-    margin-left: var(--space-2);
     flex-shrink: 0;
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
   }
 }
 
@@ -398,12 +439,21 @@
   .card-title {
     font-size: var(--font-size-lg);
     line-height: 1.4;
-    margin: 0;
+    margin: 0 0 var(--space-1) 0;
     color: var(--color-text);
   }
 
+  .card-date {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.01em;
+  }
+
   .card-summary {
-    margin-top: var(--space-2);
+    margin-top: var(--space-1);
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
     line-height: 1.5;

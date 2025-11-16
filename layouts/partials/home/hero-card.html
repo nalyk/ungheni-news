@@ -57,6 +57,26 @@
 {{ $format_slug := index $page.Params.formats 0 | default "" }}
 {{ $icon_filename := index $format_icon_map $format_slug }}
 
+{{/* Get category for display */}}
+{{ $rawCat := $page.Params.categories }}
+{{ $category_slug := "" }}
+{{ if $rawCat }}
+  {{ if reflect.IsSlice $rawCat }}
+    {{ $category_slug = index ($rawCat | default (slice)) 0 }}
+  {{ else }}
+    {{ $category_slug = $rawCat }}
+  {{ end }}
+{{ end }}
+{{ $category_name := "" }}
+{{ if $category_slug }}
+  {{/* Look up category name from data file */}}
+  {{ range site.Data.categories }}
+    {{ if eq .slug $category_slug }}
+      {{ $category_name = index . $page.Language.Lang }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
 {{/* Hero cards always use background image style for card-hero-sub */}}
 <div class="category-card {{ $card_class }}">
   {{ if eq $card_class "card-hero-sub" }}
@@ -64,6 +84,20 @@
   {{ else }}
     <a href="{{ $page.RelPermalink }}" class="card-link">
   {{ end }}
+    {{/* Metadata overlay - category and date on top left */}}
+    <div class="hero-card-meta">
+      {{ with $category_name }}
+        <span class="hero-card-meta__category">{{ . }}</span>
+      {{ end }}
+      {{ if and $category_name $page.Date }}
+        <span class="hero-card-meta__separator">•</span>
+      {{ end }}
+      {{ with $page.Date }}
+        <time datetime="{{ .Format "2006-01-02" }}" class="hero-card-meta__date">
+          {{ partial "format-date.html" (dict "ctx" $page "date" . "format" "short") }}
+        </time>
+      {{ end }}
+    </div>
     {{ if eq $card_class "card-hero-main" }}
       <div class="card-image-wrapper">
         <img src="{{ $src }}" alt="{{ $page.Title }}" class="card-image" loading="lazy" decoding="async">

@@ -78,6 +78,11 @@
     {{ end }}
     <div class="card-content">
       <h3 class="card-title">{{ $page.Title }}</h3>
+      {{ with $page.Date }}
+        <time datetime="{{ .Format "2006-01-02" }}" class="card-date">
+          {{ partial "format-date.html" (dict "ctx" $page "date" . "format" "short") }}
+        </time>
+      {{ end }}
       {{ if $show_summary }}
         <p class="card-summary">{{ $page.Summary | truncate 70 }}</p>
       {{ end }}
