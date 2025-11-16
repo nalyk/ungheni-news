@@ -1,6 +1,16 @@
 {{ define "main" }}
 <article>
-  <header class="article-header">
+  {{/* Get cover image for header background */}}
+  {{ $cover := .Params.cover }}
+  {{ $headerStyle := "" }}
+  {{ if $cover }}
+    {{ $res := .Resources.GetMatch $cover }}
+    {{ if $res }}
+      {{ $headerStyle = printf "style=\"--header-bg-image: url('%s');\"" $res.RelPermalink }}
+    {{ end }}
+  {{ end }}
+
+  <header class="article-header" {{ $headerStyle | safeHTMLAttr }}>
     {{/* Normalize category to single slug whether front matter is string or list */}}
     {{ $rawCat := .Params.categories }}
     {{ $category_slug := cond (reflect.IsSlice $rawCat) (index ($rawCat | default (slice)) 0) $rawCat }}

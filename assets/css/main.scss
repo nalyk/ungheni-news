@@ -552,13 +552,106 @@ hr {
    =============================================== */
 
 .article-header {
+  position: relative;
   text-align: center;
-  padding: var(--space-8) 0;
+  padding: var(--space-8) var(--layout-padding);
   margin-bottom: var(--space-8);
   border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
+  /* Break out of container to be full width */
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
 }
 
-.article-header .category-link {
+/* Articles with cover image */
+.article-header[style] {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Blurred background image */
+.article-header[style]::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background-image: var(--header-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(10px);
+  z-index: 1;
+}
+
+/* Black to transparent gradient overlay (top to bottom) */
+.article-header[style]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+  z-index: 2;
+}
+
+/* All direct children need to be above pseudo-elements */
+.article-header[style] > * {
+  position: relative;
+  z-index: 3;
+}
+
+/* Styling for headers with cover images */
+.article-header[style] .category-link {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.2s ease;
+}
+
+.article-header[style] .category-link:hover {
+  opacity: 0.8;
+}
+
+.article-header[style] .article-title {
+  font-size: var(--text-4xl);
+  max-width: 20ch;
+  margin: var(--space-4) auto;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.article-header[style] .article-standfirst {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  color: rgba(255, 255, 255, 0.95);
+  max-width: 50ch;
+  margin: 0 auto var(--space-6) auto;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.article-header[style] .article-meta {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Fallback styling for articles without cover image */
+.article-header:not([style]) {
+  background: transparent;
+}
+
+.article-header:not([style]) .category-link {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: 700;
@@ -568,13 +661,13 @@ hr {
   border: none;
 }
 
-.article-header .article-title {
+.article-header:not([style]) .article-title {
   font-size: var(--text-4xl);
   max-width: 20ch;
   margin: var(--space-4) auto;
 }
 
-.article-header .article-standfirst {
+.article-header:not([style]) .article-standfirst {
   font-family: var(--font-serif);
   font-size: var(--text-lg);
   color: var(--color-muted);
