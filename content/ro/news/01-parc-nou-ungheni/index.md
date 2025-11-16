@@ -2,6 +2,7 @@
 title: "Parc nou în Ungheni: Investiție de 2 milioane lei"
 summary: Primăria Ungheni inaugurează un parc modern în cartierul de vest, cu
   zone de joacă, alei pietonate și spații verzi. Lucrările au durat 8 luni.
+translationKey: "parc-nou-ungheni"
 categories:
   - local
 formats:

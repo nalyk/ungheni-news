@@ -1,10 +1,12 @@
 ---
 title: "Новый парк в Унгень: Инвестиция 2 миллиона леев"
 summary: "Мэрия Унгень открывает современный парк в западном районе города с игровыми площадками, пешеходными аллеями и зелеными зонами. Работы длились 8 месяцев."
+translationKey: "parc-nou-ungheni"
 date: 2025-11-01T10:00:00+02:00
 publishDate: 2025-11-01T10:00:00+02:00
 draft: false
 featured: true
+cover: parc.jpg
 categories: ["local"]
 formats: ["stire"]
 authors: ["redactia"]
