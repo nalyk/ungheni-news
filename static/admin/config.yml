@@ -151,6 +151,12 @@ collections:
         widget: "string"
         required: false
         hint: "Descriere pentru accesibilitate și SEO (obligatoriu dacă există imagine)"
+      - name: show_cover_in_article
+        label: "Afișează imaginea în articol"
+        widget: "boolean"
+        default: true
+        required: false
+        hint: "Controlează dacă imaginea principală apare în header-ul articolului. Când este dezactivat, imaginea va fi folosită doar pentru carduri și social sharing."
       - name: gallery
         label: "Galerie imagini"
         widget: "list"
@@ -382,6 +388,12 @@ collections:
         widget: "string"
         required: false
         hint: "Описание для доступности и SEO (обязательно при наличии изображения)"
+      - name: show_cover_in_article
+        label: "Показать изображение в статье"
+        widget: "boolean"
+        default: true
+        required: false
+        hint: "Контролирует, отображается ли основное изображение в заголовке статьи. Когда отключено, изображение будет использоваться только для карточек и социальных сетей."
       - name: gallery
         label: "Галерея изображений"
         widget: "list"
